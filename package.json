@@ -1,6 +1,6 @@
 {
   "name": "@foundation/yeti",
-  "version": "7.0.0-alpha.0",
+  "version": "7.0.0-alpha.1",
   "description": "Yeti: a CSS-first, native, zero-build layout and styling framework by Foundation.",
   "license": "FSL-1.1-MIT",
   "type": "module",
