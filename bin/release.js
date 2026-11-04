@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Release preparation. Stamps the version, builds dist/, regenerates docs/,
 // and zips dist/. It never commits, tags, or publishes; those stay manual
-// git-flow steps so a human reviews the diff first. Runs validate and both
-// test suites first, so a red tree cannot be released.
+// steps so a human reviews the diff first. A release merges back into
+// develop, never master, which still holds Foundation 6, so git flow's own
+// finish must not be used. Runs validate and both test suites first, so a
+// red tree cannot be released.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -94,5 +96,5 @@ if (isMain) {
 	}
 
 	console.log(`release: ${version} stamped, dist/ built, ${docs.written.length} docs written, ${zip} created`);
-	console.log('release: nothing committed. Review the diff, commit, then finish the git-flow release.');
+	console.log('release: nothing committed. Review the diff, commit, publish, then merge into develop. Never merge into master or run git flow release finish: master is Foundation 6.');
 }

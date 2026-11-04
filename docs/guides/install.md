@@ -38,7 +38,7 @@ It links `../yeti.css`, so it opens straight from the package; moved anywhere el
 
 ## Getting the files
 
-Yeti is in alpha, so the package is published under the `next` tag and a plain `npm install` of the name finds nothing yet. There are three ways to have it. The examples on the rest of this page use the npm paths.
+Yeti is in alpha, and each alpha is published under the `next` tag, so ask for that tag to get the newest one. There are three ways to have it. The examples on the rest of this page use the npm paths.
 
 With npm:
 
