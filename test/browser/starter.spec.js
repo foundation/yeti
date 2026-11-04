@@ -65,7 +65,9 @@ test.describe('starter page', () => {
 			await expect.poll(() => clearance('#about-heading')).toBeGreaterThanOrEqual(0);
 			// The skip link, on a fresh load scrolled past the content's start.
 			await load();
-			await page.evaluate(() => window.scrollTo(0, 900));
+			// Instant: the page's links turn on smooth scrolling, and a scroll
+			// still animating when the link is followed would race its jump.
+			await page.evaluate(() => window.scrollTo({ top: 900, behavior: 'instant' }));
 			// Focused directly: WebKit leaves links out of Tab order by default.
 			await page.focus('body > a:first-child');
 			await page.keyboard.press('Enter');

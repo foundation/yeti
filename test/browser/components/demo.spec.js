@@ -251,12 +251,14 @@ test.describe('demo', () => {
 		await open(page);
 		const counts = await page.evaluate(() => [...document.querySelectorAll('.demo')].map((f) => f.querySelectorAll(':scope > [role="separator"]').length));
 		expect(counts.every((n) => n === 1)).toBe(true);
+		// The module writes the values from a ResizeObserver, which runs at the
+		// next rendering step, so they are polled until they land, the end state.
+		const lg = await token(page, '--yeti-width-lg');
+		await expect.poll(async () => Number((await attrs(page, gripOf('#direct-preview')))['aria-valuenow'])).toBeCloseTo(lg, 0);
 		const a = await attrs(page, gripOf('#direct-preview'));
 		expect(a['aria-orientation']).toBe('vertical');
 		expect(a['aria-label']).toBe('Resize Direct card');
 		expect(a.tabindex).toBe('0');
-		const lg = await token(page, '--yeti-width-lg');
-		expect(Number(a['aria-valuenow'])).toBeCloseTo(lg, 0);
 		expect(Number(a['aria-valuemin'])).toBeCloseTo(await token(page, '--yeti-width-xs'), 0);
 		expect(Number(a['aria-valuemax'])).toBeGreaterThan(lg);
 		expect(a['aria-valuetext']).toBe(`lg, ${Math.round(lg)} pixels`);

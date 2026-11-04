@@ -148,6 +148,9 @@ test.describe('button', () => {
 			expect(await fg(page, '#black-medium')).toEqual([0, 0, 0, 255]);
 			await page.hover('#black');
 			await expect.poll(() => bg(page, '#black')).not.toEqual([0, 0, 0, 255]);
+			// The pointer stays where it was through the next load, and an
+			// engine may hover #black again before its color is read.
+			await page.mouse.move(0, 0);
 		}
 	});
 });
