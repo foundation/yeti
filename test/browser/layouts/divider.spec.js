@@ -39,9 +39,11 @@ test.describe('divider', () => {
 		await open(page, 'divider', 320);
 		const [before, after, text] = await Promise.all([line(page, '#long', '::before'), line(page, '#long', '::after'), rect(page, '#long-text')]);
 		expect(text.height).toBeGreaterThan(50);
+		// The rules give way with the text, and neither disappears.
 		const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
-		expect(before.width).toBeGreaterThanOrEqual(1.5 * rem - 0.5);
-		expect(after.width).toBeGreaterThanOrEqual(1.5 * rem - 0.5);
+		expect(before.width).toBeLessThan(1.5 * rem);
+		expect(before.width).toBeGreaterThan(0);
+		expect(after.width).toBeGreaterThan(0);
 		const page_ = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 		expect(page_).toBeLessThanOrEqual(0);
 	});

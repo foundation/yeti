@@ -68,7 +68,16 @@ Anything after the value sits below the row at the full width, which is where a 
 </div>
 ```
 
-`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the border color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
+A row can stand alone. `data-row` makes the element the row itself, for a name and a price among other content, with no wrapper around it:
+
+```html
+<article class="stack">
+	<figure>…</figure>
+	<div class="leaders" data-row><h3>Trout</h3><strong>$21</strong></div>
+</article>
+```
+
+`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the muted text color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
 
 ## Why this name
 
@@ -81,12 +90,13 @@ Leaders are what typesetters call the line of dots that leads the eye across a p
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `sm` | Space between rows. |
+| `data-row` | boolean |  |  | This element is a single row: its first child is the name and its second the value, with no wrapper. |
 
 </div>
 
 ## Children
 
-- `> *`: at least 1. A row. Its first child is the name and its second the value; anything after them sits below at the full width.
+- `> *`: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value; anything after them sits below at the full width.
 
 ## Tokens
 

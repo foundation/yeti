@@ -59,6 +59,32 @@ test.describe('leaders', () => {
 		expect((await leader(page, '#short')).content).not.toBe('none');
 	});
 
+	test('a row with no value gives its name the whole row', async ({ page }) => {
+		await open(page, 'leaders', 600);
+		const [row, name] = await Promise.all([rect(page, '#no-value'), rect(page, '#no-value > dt')]);
+		expect(name.width).toBeCloseTo(row.width, 0);
+	});
+
+	test('data-row makes one element a row, with no wrapper', async ({ page }) => {
+		await open(page, 'leaders', 600);
+		const [row, name, price, text] = await Promise.all(['#solo', '#solo-name', '#solo-price', '#solo-text'].map((s) => rect(page, s)));
+		expect(price.right).toBeCloseTo(row.right, 1);
+		expect(name.left).toBeCloseTo(row.left, 1);
+		expect((await leader(page, '#solo')).border).toBe('dotted');
+		expect(text.top).toBeGreaterThanOrEqual(name.bottom);
+		// A child of the row is not a row of its own.
+		expect((await leader(page, '#solo-name')).content).toBe('none');
+		// With no value it is a plain block, like any other row.
+		expect((await leader(page, '#solo-empty')).content).toBe('none');
+		expect((await rect(page, '#solo-empty-name')).width).toBeCloseTo((await rect(page, '#solo-empty')).width, 0);
+	});
+
+	test('the name and the value have no measure, and what sits below keeps its own', async ({ page }) => {
+		await open(page, 'leaders', 1400);
+		expect(await page.evaluate(() => getComputedStyle(document.getElementById('long-name')).maxInlineSize)).toBe('none');
+		expect(await page.evaluate(() => getComputedStyle(document.getElementById('dish-text')).maxInlineSize)).not.toBe('none');
+	});
+
 	test('--yeti-leaders-line sets the line', async ({ page }) => {
 		await open(page, 'leaders', 600);
 		await page.addStyleTag({ content: '#prices { --yeti-leaders-line: 3px dashed rgb(200, 0, 0); }' });

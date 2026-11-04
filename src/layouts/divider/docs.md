@@ -16,7 +16,7 @@ The class goes on the element that holds the text, and the rules are that elemen
 <h2 class="divider" data-align="start">Mains</h2>
 ```
 
-Long text wraps into balanced lines, and each rule keeps at least 1.5rem. The element's children each take a place in the row, so text with an inline element in it goes in one `span`:
+Long text wraps into balanced lines, and the rules give way a little with it. The element's children each take a place in the row, so text with an inline element in it goes in one `span`:
 
 ```html
 <p class="divider"><span>Served from <time datetime="12:00">noon</time></span></p>

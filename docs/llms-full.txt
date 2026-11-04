@@ -401,7 +401,7 @@ The class goes on the element that holds the text, and the rules are that elemen
 <h2 class="divider" data-align="start">Mains</h2>
 ```
 
-Long text wraps into balanced lines, and each rule keeps at least 1.5rem. The element's children each take a place in the row, so text with an inline element in it goes in one `span`:
+Long text wraps into balanced lines, and the rules give way a little with it. The element's children each take a place in the row, so text with an inline element in it goes in one `span`:
 
 ```html
 <p class="divider"><span>Served from <time datetime="12:00">noon</time></span></p>
@@ -626,6 +626,7 @@ Rows of a name and a value joined by a dotted line, for menus, price lists, hour
 
 Attributes:
 - data-gap: none | xs | sm (default) | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between rows.
+- data-row (boolean) — This element is a single row: its first child is the name and its second the value, with no wrapper.
 
 ### When to use it
 
@@ -665,14 +666,23 @@ Anything after the value sits below the row at the full width, which is where a 
 </div>
 ```
 
-`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the border color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
+A row can stand alone. `data-row` makes the element the row itself, for a name and a price among other content, with no wrapper around it:
+
+```html
+<article class="stack">
+	<figure>…</figure>
+	<div class="leaders" data-row><h3>Trout</h3><strong>$21</strong></div>
+</article>
+```
+
+`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the muted text color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
 
 ### Why this name
 
 Leaders are what typesetters call the line of dots that leads the eye across a page. Foundation 6 had nothing for it.
 
 Children:
-- > *: at least 1. A row. Its first child is the name and its second the value; anything after them sits below at the full width.
+- > *: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value; anything after them sits below at the full width.
 
 Tokens:
 - --yeti-leaders-line — The line between the name and the value, written as a border.
@@ -3100,7 +3110,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-link-color (color): var(--yeti-color-primary) — Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. A theme whose primary is too light to read as text points this at the hue's text step, --yeti-color-primary-text.
 - --yeti-link-color-hover (color): var(--yeti-color-primary-strong) — Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links.
 - --yeti-divider-line (layout): var(--yeti-border-width) solid var(--yeti-color-border) — The rule beside the text in a divider layout, written as a border.
-- --yeti-leaders-line (layout): 2px dotted var(--yeti-color-border) — The line between a name and a value in a leaders layout, written as a border.
+- --yeti-leaders-line (layout): 2px dotted var(--yeti-color-text-muted) — The line between a name and a value in a leaders layout, written as a border.
 - --yeti-cover-height (layout): 100dvh — Minimum block size of a cover layout or a filled stack. Set to auto for one that is only as tall as its content.
 - --yeti-sticky-offset (layout): var(--yeti-space-md) — How far from the leading edge of the scrollport a child carrying data-sticky stops. Set it to a sticky bar's height on whatever holds the things that stick below it.
 - --yeti-scroll-padding (layout): var(--yeti-sticky-offset) — Where a scroll-into-view stops below the top edge: a fragment jump, scrollIntoView, a focused control. The sticky offset by default; set it alone for more room above a jumped-to heading than the things that stick need. Root-level: it is read by the root's scroll padding.

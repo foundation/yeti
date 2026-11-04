@@ -36,7 +36,16 @@ Anything after the value sits below the row at the full width, which is where a 
 </div>
 ```
 
-`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the border color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
+A row can stand alone. `data-row` makes the element the row itself, for a name and a price among other content, with no wrapper around it:
+
+```html
+<article class="stack">
+	<figure>…</figure>
+	<div class="leaders" data-row><h3>Trout</h3><strong>$21</strong></div>
+</article>
+```
+
+`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the muted text color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
 
 ## Why this name
 
