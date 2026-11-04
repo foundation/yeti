@@ -113,6 +113,7 @@ Attributes that descendants carry, not the root.
 <details><summary>Internal tokens (may change between minor versions)</summary>
 
 - `--_yeti-gap`
+- `--_yeti-shell-gap`
 - `--_yeti-width`
 
 </details>

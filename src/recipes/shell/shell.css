@@ -15,7 +15,10 @@
 	.shell:not([data-gap]) { --_yeti-gap: var(--yeti-space-md); }
 	.shell:not([data-width]) { --_yeti-width: var(--yeti-width-sm); }
 	.shell > * { margin: 0; }
-	.shell > :is(header, nav, main, footer, div:has(main)) ~ :is(header, nav, main, footer, div:has(main)) { margin-block-start: var(--_yeti-gap); }
+	/* Re-exported under a name a part never sets, because a part that is a
+	   layout defines --_yeti-gap for itself, with or without data-gap. */
+	.shell { --_yeti-shell-gap: var(--_yeti-gap); }
+	.shell > :is(header, nav, main, footer, div:has(main)) ~ :is(header, nav, main, footer, div:has(main)) { margin-block-start: var(--_yeti-shell-gap); }
 	.shell > :is(main, div:has(> :is(nav, main, aside))) { flex-grow: 1; }
 
 	/* The body row. align-content: start keeps its regions at their natural

@@ -74,6 +74,7 @@ The word everyone already uses for the brick-wall arrangement. Foundation 6 had 
 <details><summary>Internal tokens (may change between minor versions)</summary>
 
 - `--_yeti-gap`
+- `--_yeti-masonry-gap`
 - `--_yeti-min`
 - `--_yeti-column-count`
 - `--_yeti-column-cap`

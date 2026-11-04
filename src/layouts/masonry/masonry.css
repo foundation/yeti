@@ -20,9 +20,12 @@
 		--_yeti-column-count: 1;
 		--_yeti-column-cap: 100%;
 	}
-	/* The layout sets the space under each item; the item never does. */
+	/* The layout sets the space under each item; the item never does. The gap
+	   is re-exported because an item that is a layout defines --_yeti-gap for
+	   itself, with or without data-gap. */
+	.masonry { --_yeti-masonry-gap: var(--_yeti-gap); }
 	.masonry > * {
-		margin: 0 0 var(--_yeti-gap);
+		margin: 0 0 var(--_yeti-masonry-gap);
 		break-inside: avoid;
 	}
 

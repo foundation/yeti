@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { open, stage, rects, style, token, axe } from '../lib/layout.js';
+import { open, stage, rects, style, px, token, axe } from '../lib/layout.js';
 
 const columns = async (page, selector) => new Set((await rects(page, `${selector} > *`)).map((r) => Math.round(r.left))).size;
 const expected = (width, min, gap) => Math.floor((width + gap) / (min + gap));
@@ -12,6 +12,20 @@ test.describe('masonry', () => {
 		expect(await columns(page, '#masonry')).toBe(expected(1000, min, gap));
 		await stage(page, 500);
 		expect(await columns(page, '#masonry')).toBe(expected(500, min, gap));
+	});
+
+	test('a child with a layout class of its own keeps the masonry\'s gap below it', async ({ page }) => {
+		await open(page, 'masonry', 1000);
+		test.skip(await native(page), 'native masonry spaces items with gap, not a margin');
+		await page.evaluate(() => {
+			document.querySelector('#stage').insertAdjacentHTML('beforeend', `<div class="masonry" data-gap="sm">
+				<article id="own-gap" class="stack" data-gap="2xl"><p>One</p></article>
+				<article id="default-gap" class="stack"><p>Two</p></article>
+			</div>`);
+		});
+		const sm = await token(page, '--yeti-space-sm');
+		expect(await px(page, '#own-gap', 'margin-bottom')).toBeCloseTo(sm, 1);
+		expect(await px(page, '#default-gap', 'margin-bottom')).toBeCloseTo(sm, 1);
 	});
 
 	test('data-columns caps the count', async ({ page }) => {

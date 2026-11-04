@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, token, expectNoChildMargins, same, axe } from '../lib/layout.js';
+import { stage, rect, px, token, expectNoChildMargins, same, axe } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/recipes/shell.html');
@@ -23,6 +23,22 @@ test.describe('shell recipe', () => {
 		expect(nav.top).toBeCloseTo(main.top, 1);
 		// flex-grow: 1 against main's 999 leaves nav a fraction of a pixel over its basis (see sidebar.spec.js).
 		expect(Math.abs(nav.width - await token(page, '--yeti-width-sm'))).toBeLessThan(2);
+	});
+
+	test('a part with a layout class of its own keeps the shell\'s gap above it', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => {
+			document.querySelector('#stage').insertAdjacentHTML('beforeend', `<div class="shell" data-gap="sm">
+				<header>Header</header>
+				<main id="gapped-main" class="stack" data-gap="2xl"><p>One</p><p>Two</p></main>
+				<footer id="gapped-footer" class="stack"><p>Footer</p></footer>
+			</div>`);
+		});
+		const sm = await token(page, '--yeti-space-sm');
+		expect(await px(page, '#gapped-main', 'margin-top')).toBeCloseTo(sm, 1);
+		expect(await px(page, '#gapped-footer', 'margin-top')).toBeCloseTo(sm, 1);
+		// Falsification: main's own gap still spaces its children.
+		expect(await px(page, '#gapped-main', 'row-gap')).toBeCloseTo(await token(page, '--yeti-space-2xl'), 1);
 	});
 
 	test('matches the composed form stacked', async ({ page }) => {

@@ -18,6 +18,7 @@
     { "name": "--yeti-width-xs", "public": true, "description": "The default minimum column width." },
     { "name": "--yeti-space-md", "public": true, "description": "The default gap." },
     { "name": "--_yeti-gap", "public": false },
+    { "name": "--_yeti-masonry-gap", "public": false },
     { "name": "--_yeti-min", "public": false },
     { "name": "--_yeti-column-count", "public": false },
     { "name": "--_yeti-column-cap", "public": false }

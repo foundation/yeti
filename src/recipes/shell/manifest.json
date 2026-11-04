@@ -25,6 +25,7 @@
     { "name": "--yeti-space-md", "public": true, "description": "The default gap." },
     { "name": "--yeti-width-sm", "public": true, "description": "The default nav and aside width." },
     { "name": "--_yeti-gap", "public": false },
+    { "name": "--_yeti-shell-gap", "public": false },
     { "name": "--_yeti-width", "public": false }
   ],
   "a11y": { "requiredAttributes": [], "keyboard": [], "notes": "Meant for body or the page's outermost element. The landmarks do the work: one main; a label on nav when the page has more than one; aside for content that is complementary, not primary." },
