@@ -35,6 +35,7 @@
 		--yeti-nav-border: var(--yeti-color-border);
 		--yeti-nav-surface: var(--yeti-color-surface);
 		--yeti-nav-panel: var(--yeti-color-surface-raised);
+		--yeti-nav-panel-text: var(--yeti-color-text);
 		/* The brand is a wordmark; a theme sets it apart from the links here. */
 		--yeti-nav-brand-weight: var(--yeti-weight-strong);
 		--yeti-nav-brand-size: 1em;

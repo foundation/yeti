@@ -40,13 +40,15 @@ The name is the link's text, so the logo beside it is decoration: `aria-hidden` 
 
 Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
 
-A bar that stays dark in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
+A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
 ```css
 .nav { color-scheme: dark; --yeti-nav-surface: oklch(30% 0.05 40); }
 ```
 
-Setting `--yeti-color-text` on the nav instead reaches the bar but also the open panel, which keeps its own light surface, so the panel's words disappear.
+The hover and current tints are the dark scheme's own. A design with its own colors for them, or a bar whose color differs between light and dark, keeps its own rules for the bar and its states instead.
+
+The open panel has its own pair, `--yeti-nav-panel` and `--yeti-nav-panel-text`. Set them together: the panel's links and close button follow the text token, and `--yeti-nav-link` does not reach them.
 
 A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 

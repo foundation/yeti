@@ -116,7 +116,7 @@
 		padding: var(--yeti-nav-padding);
 		border: 0;
 		background-color: var(--yeti-nav-panel);
-		color: var(--yeti-color-text);
+		color: var(--yeti-nav-panel-text);
 		box-shadow: var(--yeti-shadow-md);
 		overflow: auto;
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease), translate var(--yeti-duration-fast) var(--yeti-ease);

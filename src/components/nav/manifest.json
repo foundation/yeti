@@ -147,6 +147,11 @@
       "description": "Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller."
     },
     {
+      "name": "--yeti-nav-panel-text",
+      "public": true,
+      "description": "Text of the open panel, its links and its close button. Set it with --yeti-nav-panel."
+    },
+    {
       "name": "--yeti-nav-link",
       "public": true,
       "description": "Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color."

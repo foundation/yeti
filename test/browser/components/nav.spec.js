@@ -17,6 +17,27 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
+	test('a painted panel sets its own text, and the links and the close button follow it', async ({ page }) => {
+		await open(page, 300);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-panel: rgb(30, 40, 50); --yeti-nav-panel-text: rgb(250, 240, 230); --yeti-nav-link: rgb(1, 2, 3); }' });
+		await page.evaluate(() => document.querySelector('#menu').insertAdjacentHTML('afterbegin', '<li data-close><button type="button" id="close" popovertarget="menu" popovertargetaction="hide" aria-label="Close">x</button></li>'));
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#menu', 'color')).toBe('rgb(250, 240, 230)');
+		expect(await style(page, '#plain', 'color')).toBe('rgb(250, 240, 230)');
+		expect(await style(page, '#close', 'color')).toBe('rgb(250, 240, 230)');
+	});
+
+	test('text set on the bar does not reach the open panel', async ({ page }) => {
+		await open(page, 300);
+		const panelText = await page.evaluate(() => { const p = document.createElement('p'); p.style.color = 'var(--yeti-color-text)'; document.body.append(p); const c = getComputedStyle(p).color; p.remove(); return c; });
+		await page.addStyleTag({ content: '#nav { --yeti-color-text: rgb(250, 240, 230); }' });
+		expect(await style(page, '#nav', 'color')).toBe('rgb(250, 240, 230)');
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#menu', 'color')).toBe(panelText);
+	});
+
 	test('a sticky bar sits flush with the top edge, whatever the token says for everything else', async ({ page }) => {
 		await open(page, 1000);
 		await page.evaluate(() => document.querySelector('#nav').setAttribute('data-sticky', ''));

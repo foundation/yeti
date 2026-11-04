@@ -16,7 +16,7 @@ Most of what a page needs is an attribute or a token. Look here before writing a
 - The site's colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.
 - One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.
 - Links: `--yeti-link-color` and `--yeti-link-color-hover`, on `:root` for the site or on any element for everything below it. Do not remap primary for them. On `:root` use a token such as `var(--yeti-color-primary-text)`, because a plain color does not change in dark mode or a dark region. A token set on `:root` resolves there, so a region that re-points that token must set the link color too.
-- A nav bar: links read `--yeti-nav-link`. A bar that stays dark in both modes is `.nav { color-scheme: dark; --yeti-nav-surface: <color>; }`, which also covers hover, the current link, the toggle and the open panel. Do not set `--yeti-color-text` on the nav: the open panel reads it too.
+- A nav bar: links read `--yeti-nav-link`. A bar with one dark color in both modes is `.nav { color-scheme: dark; --yeti-nav-surface: <color>; }`, which also gives dark-scheme hover and current tints, the toggle and the open panel. The open panel has its own pair: set `--yeti-nav-panel` and `--yeti-nav-panel-text` together, because `--yeti-nav-link` does not reach it.
 - Entrances: `class="enter" data-enter="rise"` with `data-stagger` on the row. To animate in as it scrolls into view, use `data-once`, which plays one time as it comes near and needs enter.js. `data-view` is the other choice, a scroll-linked effect that plays backwards on the way up.
 - Case and tracking on a button: no token; write `.button { text-transform: uppercase; letter-spacing: .08em; }`, unlayered.
 
@@ -2112,13 +2112,15 @@ The name is the link's text, so the logo beside it is decoration: `aria-hidden` 
 
 Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
 
-A bar that stays dark in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
+A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
 ```css
 .nav { color-scheme: dark; --yeti-nav-surface: oklch(30% 0.05 40); }
 ```
 
-Setting `--yeti-color-text` on the nav instead reaches the bar but also the open panel, which keeps its own light surface, so the panel's words disappear.
+The hover and current tints are the dark scheme's own. A design with its own colors for them, or a bar whose color differs between light and dark, keeps its own rules for the bar and its states instead.
+
+The open panel has its own pair, `--yeti-nav-panel` and `--yeti-nav-panel-text`. Set them together: the panel's links and close button follow the text token, and `--yeti-nav-link` does not reach them.
 
 A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
@@ -2150,6 +2152,7 @@ Tokens:
 - --yeti-nav-brand-weight — Weight of the brand.
 - --yeti-nav-brand-size — Size of the brand; 1em keeps the bar's.
 - --yeti-nav-logo-size — Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller.
+- --yeti-nav-panel-text — Text of the open panel, its links and its close button. Set it with --yeti-nav-panel.
 - --yeti-nav-link — Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color.
 - --yeti-stretch-small — font-stretch of a link.
 - --yeti-control-size — Minimum height of the bar, the toggle, and each link.
@@ -3140,6 +3143,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-nav-brand-weight (nav): var(--yeti-weight-strong) — Weight of the nav's brand.
 - --yeti-nav-brand-size (nav): 1em — Size of the nav's brand; 1em is the bar's own size.
 - --yeti-nav-logo-size (nav): var(--yeti-control-size) — Height of a logo in the nav's brand; its width follows the image.
+- --yeti-nav-panel-text (nav): var(--yeti-color-text) — Text of the open panel, its links and its close button. Set it with --yeti-nav-panel.
 - --yeti-nav-link (nav): currentColor — Color of a plain link in the bar; the bar's own color unless set. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
 - --yeti-breadcrumbs-separator (breadcrumbs): "/" — The string between crumbs; a theme may prefer "›".
 - --yeti-pagination-radius (pagination): var(--yeti-radius-md) — Corner of each page target.
