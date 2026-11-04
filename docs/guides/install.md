@@ -38,25 +38,51 @@ It links `../yeti.css`, so it opens straight from the package; moved anywhere el
 
 ## Getting the files
 
-Yeti is not released yet. There is no package on npm and nothing to download, so there is nothing to install today. This section will describe npm, the zip on the GitHub release page and a CDN path once there is a release to describe.
+Yeti is in alpha, so the package is published under the `next` tag and a plain `npm install` of the name finds nothing yet. There are three ways to have it. The examples on the rest of this page use the npm paths.
 
-Everything below is written the way it will work then. The package will ship `dist/`: the bundled `yeti.css` and its minified twin `yeti.min.css`, the same source tree unbundled under `css/`, the nine modules under `js/` and all of them in one `yeti.js` with `yeti.min.js` beside it, the two example themes under `themes/`, the starter page and theme under `starter/`, and the machine-readable files described further down.
+With npm:
 
-To try Yeti before the release, clone the repository and run `npm run build`. That writes the same `dist/` the package will ship, so read `dist/` wherever a path below says `node_modules/yeti-css/dist/`.
+```sh
+npm install @foundation/yeti@next
+```
+
+The package ships `dist/`: the bundled `yeti.css` and its minified twin `yeti.min.css`, the same source tree unbundled under `css/`, the nine modules under `js/` and all of them in one `yeti.js` with `yeti.min.js` beside it, the two example themes under `themes/`, the starter page and theme under `starter/`, and the machine-readable files described further down.
+
+Without Node, for a PHP site or anything else with no `node_modules`, copy the files into the project as one folder. Take `llms.txt` with them, so the docs on disk always match the stylesheet they describe, and the licence, which has to travel with any copy:
+
+```sh
+mkdir -p public/assets/yeti && cd public/assets/yeti
+base=https://cdn.jsdelivr.net/npm/@foundation/yeti@next
+for file in dist/yeti.min.css dist/yeti.min.js dist/yeti.min.js.map dist/llms.txt LICENSE; do
+	curl -fsSLO "$base/$file"
+done
+```
+
+To update, run it again and let the new files replace the old. The first line of `yeti.min.css` and of `llms.txt` says which version you have. A folder like this needs no build, and it is the [module](#a-module) and [stylesheet](#the-stylesheet) sections below with your own path in place of `node_modules/@foundation/yeti/dist/`.
+
+From the CDN, to try something on a page with nothing to install:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@foundation/yeti@next/dist/yeti.min.css">
+```
+
+`next` moves with every release, so pin a version such as `@7.0.0-alpha.1` on anything that stays up.
+
+To work on Yeti itself, clone the repository and run `npm run build`. That writes the same `dist/` the package ships.
 
 ## The stylesheet
 
 One link, before your own styles:
 
 ```html
-<link rel="stylesheet" href="node_modules/yeti-css/dist/yeti.css">
+<link rel="stylesheet" href="node_modules/@foundation/yeti/dist/yeti.css">
 ```
 
 Yeti's rules live in cascade layers, so anything you write outside a layer wins over them without a specificity fight. A theme is a second stylesheet of token values that loads after the first:
 
 ```html
-<link rel="stylesheet" href="node_modules/yeti-css/dist/yeti.css">
-<link rel="stylesheet" href="node_modules/yeti-css/dist/themes/soft.css">
+<link rel="stylesheet" href="node_modules/@foundation/yeti/dist/yeti.css">
+<link rel="stylesheet" href="node_modules/@foundation/yeti/dist/themes/soft.css">
 ```
 
 ## The minified copies
@@ -64,8 +90,8 @@ Yeti's rules live in cascade layers, so anything you write outside a layer wins 
 `dist/yeti.min.css` is the same stylesheet with the whitespace and the comments taken out, and `dist/yeti.min.js` is the same module bundle minified, names shortened and whitespace gone, with `yeti.min.js.map` beside it so a stack trace still points at a line of `yeti.js` — in both, save for the one-line licence banner every shipped file carries. Link them instead when you are counting bytes:
 
 ```html
-<link rel="stylesheet" href="node_modules/yeti-css/dist/yeti.min.css">
-<script type="module" src="node_modules/yeti-css/dist/yeti.min.js"></script>
+<link rel="stylesheet" href="node_modules/@foundation/yeti/dist/yeti.min.css">
+<script type="module" src="node_modules/@foundation/yeti/dist/yeti.min.js"></script>
 ```
 
 The package's `style` field and its `.` export still point at the readable `yeti.css`, because that is the one worth stepping through in devtools; name the minified file yourself when you want it.
@@ -74,18 +100,18 @@ Minified is not transpiled. `light-dark()`, `@starting-style`, container queries
 
 ## A custom build
 
-`yeti.css` is every part of Yeti in one file. A site that never shows a demo, a carousel or a tooltip can leave them out. `dist/css/` is the same stylesheet as separate files, and `dist/css/yeti.css` is a list of `@import` lines, one per file, in the order the full build uses. Copy that file into your project, delete the lines you don't want, and point the paths at `node_modules/yeti-css/dist/css/`:
+`yeti.css` is every part of Yeti in one file. A site that never shows a demo, a carousel or a tooltip can leave them out. `dist/css/` is the same stylesheet as separate files, and `dist/css/yeti.css` is a list of `@import` lines, one per file, in the order the full build uses. Copy that file into your project, delete the lines you don't want, and point the paths at `node_modules/@foundation/yeti/dist/css/`:
 
 ```css
 /* site.css: Yeti without the demo, the carousel or the tooltip */
-@import "../node_modules/yeti-css/dist/css/layers.css";
-@import "../node_modules/yeti-css/dist/css/tokens/scale.css";
+@import "../node_modules/@foundation/yeti/dist/css/layers.css";
+@import "../node_modules/@foundation/yeti/dist/css/tokens/scale.css";
 /* ...the rest of the list, as it came... */
-@import "../node_modules/yeti-css/dist/css/components/dialog/dialog.css";
+@import "../node_modules/@foundation/yeti/dist/css/components/dialog/dialog.css";
 /* @import ".../components/tooltip/tooltip.css"; */
 /* @import ".../components/carousel/carousel.css"; */
 /* @import ".../components/demo/demo.css"; */
-@import "../node_modules/yeti-css/dist/css/utilities/attention/attention.css";
+@import "../node_modules/@foundation/yeti/dist/css/utilities/attention/attention.css";
 ```
 
 Four groups always stay, whatever you remove:
@@ -109,9 +135,9 @@ Scripts need no build: load only the modules for the components you kept, one `s
 
 ```js
 // site.js: the modules for the dialog, the tabs and the contents list
-import "yeti-css/js/dialog.js";
-import "yeti-css/js/tabs.js";
-import "yeti-css/js/toc.js";
+import "@foundation/yeti/js/dialog.js";
+import "@foundation/yeti/js/tabs.js";
+import "@foundation/yeti/js/toc.js";
 ```
 
 and bundle it with the same tool:
@@ -120,7 +146,7 @@ and bundle it with the same tool:
 npx esbuild site.js --bundle --minify --outfile=site.min.js
 ```
 
-Load `site.min.js` with `<script type="module">`, as you would `yeti.js`. The paths are `yeti-css/js/…`, not `yeti-css/dist/js/…`: the package exports its modules under `js/`, and a bundler that honors the exports refuses the other.
+Load `site.min.js` with `<script type="module">`, as you would `yeti.js`. The paths are `@foundation/yeti/js/…`, not `@foundation/yeti/dist/js/…`: the package exports its modules under `js/`, and a bundler that honors the exports refuses the other.
 
 ## Bare HTML
 
@@ -143,13 +169,13 @@ There is no class to remember, because that is where a skip link goes anyway. Th
 Every component works with no script. Some do more with one: the alert's close button, the tabs' roving focus, the dialog's backdrop and focus return, a dropdown that opens on hover, the carousel's dots, a range's filled track, a form's validation messages, a toc that follows the reader, and a demo's frame built from the code beneath it. Each is a module you load once, anywhere in the page, with nothing to call:
 
 ```html
-<script type="module" src="node_modules/yeti-css/dist/js/dialog.js"></script>
+<script type="module" src="node_modules/@foundation/yeti/dist/js/dialog.js"></script>
 ```
 
 A module finds its own elements and is safe on a page that has none of them. Leave it out and the component is still there, minus what the module adds; the [components guide](components.md) says what that is for each. A page that would rather not pick loads all nine at once, about nine kilobytes compressed:
 
 ```html
-<script type="module" src="node_modules/yeti-css/dist/yeti.js"></script>
+<script type="module" src="node_modules/@foundation/yeti/dist/yeti.js"></script>
 ```
 
 ## Events
@@ -183,7 +209,7 @@ Yeti configures components through `data-*` attributes with fixed value lists, a
 VS Code, Cursor and Windsurf read a custom-data file. One setting, in `.vscode/settings.json`:
 
 ```json
-{ "html.customData": ["./node_modules/yeti-css/dist/yeti.html-data.json"] }
+{ "html.customData": ["./node_modules/@foundation/yeti/dist/yeti.html-data.json"] }
 ```
 
 PhpStorm and WebStorm read web-types and find the file through `package.json` on their own. Install the package and the completions are there.
@@ -193,8 +219,8 @@ One limit is worth knowing. Neither format can tie a completion to a class, and 
 For a TypeScript project the package ships types for the two JSON files and the vocabularies they are built from:
 
 ```ts
-import manifest from 'yeti-css/manifest';
-import type { YetiGap, YetiManifest } from 'yeti-css';
+import manifest from '@foundation/yeti/manifest';
+import type { YetiGap, YetiManifest } from '@foundation/yeti';
 ```
 
 Both resolve with no configuration beyond the default in a modern project. They exist for tools built on those files; a page needs nothing from them.
@@ -204,11 +230,27 @@ Both resolve with no configuration beyond the default in a modern project. They 
 The same manifest validates rendered HTML. `bin/validate-html.js` in the Yeti repository reads a folder of built pages and checks every element carrying a Yeti class the way the examples and guides are checked: an attribute a component does not take, a value outside its list, a bare attribute that needs one, a set with one member (an `accordion` with one panel, a `timeline` with one entry), a required accessibility attribute missing. Point it at the manifest the package ships:
 
 ```sh
-node path/to/yeti/bin/validate-html.js ./build --manifest node_modules/yeti-css/dist/yeti.manifest.json
+node path/to/yeti/bin/validate-html.js ./build --manifest node_modules/@foundation/yeti/dist/yeti.manifest.json
 ```
 
 It exits non-zero on any problem and names the file and line of each, so it belongs in the site's build after the pages are rendered. A card grid whose `data-rows` has no value collapses its rows silently in the browser and is one line of output here; run it before looking for the fault by hand.
 
 ## For a language model
 
-`llms.txt` and `llms-full.txt` sit at the root of the docs site and in the package. The first lists every component with its class, attributes, legal values and defaults in a few hundred lines; the second adds each component's guidance, accessibility notes and the token catalogue. They are generated from the manifest, so they describe exactly the surface the validator enforces, and nothing else. Point an assistant at the first and it can write valid Yeti; give it the second and it can explain why.
+`llms.txt` and `llms-full.txt` are in the package and on the docs site at [`/yeti/llms.txt`](https://foundationcss.com/yeti/llms.txt) and [`/yeti/llms-full.txt`](https://foundationcss.com/yeti/llms-full.txt). The first lists every component with its class, attributes, legal values and defaults; the second adds each component's guidance, accessibility notes and the token catalogue. They are generated from the manifest, so they describe exactly the surface the validator enforces, and nothing else. Point an assistant at the first and it can write valid Yeti; give it the second and it can explain why.
+
+Every built stylesheet and bundle names `llms.txt` on its first line, at its own version on the CDN, so an assistant that opens a copied file can find the docs for exactly what it has. A project should say so outright, and point at its own copy, because that one always matches the installed version. Add this to its `AGENTS.md` or `CLAUDE.md`. The paths are for a copied folder; with npm, use `node_modules/@foundation/yeti/dist/` instead of `public/assets/yeti/`:
+
+```md
+## Yeti
+
+This site is built on Yeti, a plain-CSS framework, in `public/assets/yeti/`.
+The first line of `yeti.min.css` gives the version.
+
+- Read `public/assets/yeti/llms.txt` before writing markup or CSS. Search
+  `https://foundationcss.com/yeti/llms-full.txt` for anything it leaves out.
+- Use what Yeti provides before writing CSS: most layouts, entrances and
+  color changes are an attribute or a token.
+- Set only public `--yeti-*` tokens. Never set `--_yeti-*`: those are private
+  and may change in any release.
+```

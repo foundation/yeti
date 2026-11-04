@@ -7,8 +7,8 @@ import { stampVersion, checkGitState, CHECKS, runChecks } from '../../bin/releas
 import { makeTree } from './helpers.js';
 
 test('stampVersion replaces only the version and keeps two-space formatting', () => {
-	const input = '{\n  "name": "yeti-css",\n  "version": "7.0.0-alpha.0",\n  "license": "MIT"\n}\n';
-	assert.equal(stampVersion(input, '7.0.0-beta.1'), '{\n  "name": "yeti-css",\n  "version": "7.0.0-beta.1",\n  "license": "MIT"\n}\n');
+	const input = '{\n  "name": "@foundation/yeti",\n  "version": "7.0.0-alpha.0",\n  "license": "MIT"\n}\n';
+	assert.equal(stampVersion(input, '7.0.0-beta.1'), '{\n  "name": "@foundation/yeti",\n  "version": "7.0.0-beta.1",\n  "license": "MIT"\n}\n');
 });
 
 test('stampVersion rejects malformed versions', () => {

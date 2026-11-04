@@ -39,7 +39,7 @@ The tokens, reset, [base layer](docs/guides/base.md), seventeen layout primitive
 <link rel="stylesheet" href="src/yeti.css">
 ```
 
-Or install the package and follow the [installation guide](docs/guides/install.md), which also covers editor completion and the `llms.txt` files for assistants.
+Or install the alpha with `npm install @foundation/yeti@next`, or copy the files into a project with no Node, and follow the [installation guide](docs/guides/install.md), which also covers editor completion and the `llms.txt` files for assistants.
 
 Or run the fixtures locally:
 

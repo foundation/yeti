@@ -159,14 +159,14 @@ test('an enum with inline values and no vocabulary still gets a value set', () =
 	assert.equal(attr.valueSet, 'yeti-data-orientation');
 	assert.deepEqual(html.valueSets.find((s) => s.name === 'yeti-data-orientation').values.map((v) => v.name), ['horizontal', 'vertical']);
 
-	const types = webTypes(withInline, {}, { name: 'yeti-css', version: '7.0.0-beta.0' });
+	const types = webTypes(withInline, {}, { name: '@foundation/yeti', version: '7.0.0-beta.0' });
 	const wtAttr = types.contributions.html.attributes.find((a) => a.name === 'data-orientation');
 	assert.deepEqual(wtAttr.values.map((v) => v.name), ['horizontal', 'vertical']);
 });
 
 test('webTypes carries the package name and version and lists values for enumerated attributes', () => {
-	const out = webTypes(merged, vocabulary, { name: 'yeti-css', version: '7.0.0-beta.0' });
-	assert.equal(out.name, 'yeti-css');
+	const out = webTypes(merged, vocabulary, { name: '@foundation/yeti', version: '7.0.0-beta.0' });
+	assert.equal(out.name, '@foundation/yeti');
 	assert.equal(out.version, '7.0.0-beta.0');
 	const attrs = out.contributions.html.attributes;
 	const gap = attrs.find((a) => a.name === 'data-gap');

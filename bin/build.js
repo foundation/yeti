@@ -19,10 +19,17 @@ export function readPackage(root) {
 	return JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 }
 
+// A shipped file's own version on the CDN, so an agent holding any copy reads
+// the docs for what it has rather than the latest. It resolves once that
+// version is published, which a release does.
+export const cdnUrl = (pkg, file) => `https://cdn.jsdelivr.net/npm/${pkg.name}@${pkg.version}/dist/${file}`;
+
 export function bundle({ root, pkg }) {
 	const { files, errors } = resolveImports(path.join(root, 'src', 'yeti.css'));
 	if (errors.length) return { css: null, errors };
-	const header = `/*! ${pkg.name} ${pkg.version} | ${pkg.license} | ${pkg.homepage} */\n`;
+	// A copied file may be the only trace of Yeti a project keeps, so the banner
+	// says where the docs an agent can read are, as well as what it is.
+	const header = `/*! ${pkg.name} ${pkg.version} | ${pkg.license} | ${pkg.homepage} | for agents: ${cdnUrl(pkg, 'llms.txt')} */\n`;
 	const body = files.map((f) => `\n/* ${path.relative(root, f.path)} */\n${f.css.trim()}\n`).join('');
 	// The banner and the stylesheet come back separately as well as joined:
 	// the minified file needs the banner prepended to output that has had

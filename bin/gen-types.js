@@ -6,7 +6,7 @@
 //
 // Three files, because a .json entry point cannot carry its own types: each
 // JSON export gets a sibling declaration file that package.json's `types`
-// condition points at. A `declare module 'yeti-css/manifest'` block inside
+// condition points at. A `declare module '@foundation/yeti/manifest'` block inside
 // yeti.d.ts would be a module augmentation of a specifier that resolves to
 // JSON, which every modern resolution mode rejects.
 import fs from 'node:fs';

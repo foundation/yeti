@@ -49,7 +49,7 @@ test('renderTypes types the manifest and token catalogue shapes', () => {
 	assert.ok(out.includes('components: Record<YetiComponentName, YetiComponent>;'));
 });
 
-test('renderTypes augments no module, since yeti-css/manifest resolves to JSON', () => {
+test('renderTypes augments no module, since @foundation/yeti/manifest resolves to JSON', () => {
 	const out = renderTypes(merged, vocabulary, tokensSchema);
 	assert.ok(!out.includes('declare module'), 'a module augmentation of a JSON specifier is a compile error');
 });

@@ -1,5 +1,5 @@
 {
-  "name": "yeti-css",
+  "name": "@foundation/yeti",
   "version": "7.0.0-alpha.0",
   "description": "Yeti: a CSS-first, native, zero-build layout and styling framework by Foundation.",
   "license": "FSL-1.1-MIT",
@@ -8,6 +8,9 @@
   "web-types": "./dist/yeti.web-types.json",
   "types": "./dist/yeti.d.ts",
   "repository": "github:foundation/yeti",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=24"
   },
@@ -48,7 +51,8 @@
     "test:screenshots": "YETI_SCREENSHOTS=1 playwright test --project=chromium --grep @screenshot",
     "screenshots:update": "YETI_SCREENSHOTS=1 playwright test --project=chromium --grep @screenshot --update-snapshots",
     "fixtures": "node test/browser/serve.js",
-    "release": "node bin/release.js"
+    "release": "node bin/release.js",
+    "prepublishOnly": "node bin/build.js"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4",
