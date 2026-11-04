@@ -12,7 +12,7 @@ Most of what a page needs is an attribute or a token. Look here before writing a
 - Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only; a rule on a component stays unlayered.
 - Modules: every component works with no script, and a module adds to it. Load one with `<script type="module" src=".../js/enter.js"></script>`, or all of them with `yeti.js`. Each block below names its module.
 - Light and dark: nothing to switch on. The root declares `color-scheme: light dark`, so a page follows the reader with no meta tag, class or attribute. Pin it with `html { color-scheme: dark; }`.
-- A region that is always dark: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`. All three are needed: the scheme alone flips links and buttons, but the text color is inherited already resolved. Use the same three with `light`.
+- A region that is always dark: `<section class="box band" data-surface="base">` with `.band { color-scheme: dark; }`. A surface sets its fill and its text. Any other element needs all three: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`, because the scheme alone flips links and buttons, but the text color is inherited already resolved. Use `light` the same way.
 - The site's colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.
 - One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.
 - Links: `--yeti-link-color` and `--yeti-link-color-hover`, on any element, for everything below it. Set them on the region that should change, not on `:root`, and do not remap primary for them. Links in a nav bar read `--yeti-nav-link`.
@@ -27,7 +27,7 @@ Attributes:
 - data-gap: none | xs | sm | md (default) | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Padding on every side.
 - data-gap-inline: none | xs | sm | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Padding on the two sides only, over whatever data-gap set: a band wide at the sides and ordinary top and bottom.
 - data-gap-block: none | xs | sm | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Padding top and bottom only, over whatever data-gap set.
-- data-surface: base | raised | sunken — Fill the box with one of the three surface tones, making it a visible panel. Absent, the box is transparent and only its padding does anything.
+- data-surface: base | raised | sunken — Fill the box with one of the three surface tones and set the page text on it, making it a visible panel. Absent, the box is transparent and only its padding does anything.
 
 On children:
 - data-border on * (boolean) — Draw a border of the border width, in the border color. Works on any element; it is a box's most common marker, which is why it is listed here.
@@ -42,7 +42,7 @@ A box is the thing to reach for when content needs breathing room from its edges
 
 `padding` on all four sides from `data-gap`, a border of `--yeti-border-width` in `--yeti-color-border` when `data-border` is present (the marker works on any element, not only a box), and a fill from `data-surface`. Nothing else. Unlike the spacing layouts, a box does not reset its children's margins, so paragraphs inside it keep their prose rhythm.
 
-`data-surface` takes the three surface tones. `raised` is a step above the page and is what a panel usually wants; `sunken` is a step below, for a well that content sits in; `base` is the page's own surface, for a panel inside a sunken area that should not change tone. Without it a box is transparent and only its padding does anything, which is right when the thing behind it is already a surface.
+`data-surface` takes the three surface tones. `raised` is a step above the page and is what a panel usually wants; `sunken` is a step below, for a well that content sits in; `base` is the page's own surface, for a panel inside a sunken area that should not change tone. Without it a box is transparent and only its padding does anything, which is right when the thing behind it is already a surface. A surface sets the page text as well as the fill, so its words read on it wherever it sits, and `color-scheme` on the box is all a band that stays dark needs.
 
 `data-gap-inline` and `data-gap-block` pad one axis over whatever `data-gap` set, so a band that is wide at the sides and ordinary top and bottom is `data-gap-inline="xl"` and nothing else. They take the same words as `data-gap`, fluid pairs included. This is the whole of Yeti's padding utility: any element becomes a box with the class, and the box says how much.
 
@@ -67,6 +67,7 @@ There is no plainer word for a padded rectangle. Foundation 6's Callout was a st
 
 Tokens:
 - --yeti-space-md — The default padding.
+- --yeti-color-text — The words on any data-surface.
 - --yeti-color-surface — The fill at data-surface="base"; the page's own surface.
 - --yeti-color-surface-raised — The fill at data-surface="raised", a step above the page.
 - --yeti-color-surface-sunken — The fill at data-surface="sunken", a step below the page.
@@ -3281,7 +3282,17 @@ Yeti declares `color-scheme: light dark` on the root, so the page follows the re
 
 A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way.
 
-Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A band that is always dark says all three:
+Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A `box` with `data-surface` does both, so a band that is always dark needs only the scheme:
+
+```html
+<section class="box band" data-surface="base">…</section>
+```
+
+```css
+.band { color-scheme: dark; }
+```
+
+Any other element says all three:
 
 ```css
 .band {

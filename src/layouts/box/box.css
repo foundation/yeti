@@ -12,7 +12,10 @@
 	   can see is a panel. base is the page's own surface, for a panel that sits
 	   on a sunken area without changing tone; raised and sunken step away from
 	   it in either direction. No corner radius: a box is square, and a rounded
-	   panel with a shadow is a card. */
+	   panel with a shadow is a card. A surface sets its text as well: text is
+	   inherited already resolved, so in a forced scheme, or on paint, the words
+	   would otherwise be the ones chosen for what is behind the box. */
+	.box[data-surface] { color: var(--yeti-color-text); }
 	.box[data-surface="base"] { background-color: var(--yeti-color-surface); }
 	.box[data-surface="raised"] { background-color: var(--yeti-color-surface-raised); }
 	.box[data-surface="sunken"] { background-color: var(--yeti-color-surface-sunken); }

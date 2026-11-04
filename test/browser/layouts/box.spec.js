@@ -31,6 +31,17 @@ test.describe('box', () => {
 		expect(await px(page, '#bordered', 'border-top-width')).toBe(await token(page, '--yeti-border-width'));
 	});
 
+	test('a surface sets the page text, so its words read on it', async ({ page }) => {
+		await open(page, 'box');
+		// Text is inherited already resolved, so a box in a forced scheme would
+		// paint the dark surface and keep the light page's dark words.
+		const forced = await style(page, '#forced', 'color');
+		expect(forced).toBe(await style(page, '#forced-text', 'color'));
+		expect(forced).not.toBe(await style(page, 'body', 'color'));
+		// On paint it must not keep the on-primary words meant for the paint.
+		expect(await style(page, '#on-paint', 'color')).toBe(await style(page, 'body', 'color'));
+	});
+
 	test('data-surface fills the box from the matching token, and nothing fills it without one', async ({ page }) => {
 		await open(page, 'box');
 		// A box with no data-surface is transparent: the thing behind it shows

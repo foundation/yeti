@@ -139,7 +139,17 @@ Yeti declares `color-scheme: light dark` on the root, so the page follows the re
 
 A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way.
 
-Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A band that is always dark says all three:
+Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A `box` with `data-surface` does both, so a band that is always dark needs only the scheme:
+
+```html
+<section class="box band" data-surface="base">…</section>
+```
+
+```css
+.band { color-scheme: dark; }
+```
+
+Any other element says all three:
 
 ```css
 .band {

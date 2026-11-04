@@ -29,7 +29,7 @@
       "name": "data-surface",
       "type": "enum",
       "vocabulary": "surface",
-      "description": "Fill the box with one of the three surface tones, making it a visible panel. Absent, the box is transparent and only its padding does anything."
+      "description": "Fill the box with one of the three surface tones and set the page text on it, making it a visible panel. Absent, the box is transparent and only its padding does anything."
     }
   ],
   "classes": [],
@@ -61,6 +61,11 @@
       "name": "--yeti-space-md",
       "public": true,
       "description": "The default padding."
+    },
+    {
+      "name": "--yeti-color-text",
+      "public": true,
+      "description": "The words on any data-surface."
     },
     {
       "name": "--yeti-color-surface",

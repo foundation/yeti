@@ -37,7 +37,7 @@ A box is the thing to reach for when content needs breathing room from its edges
 
 `padding` on all four sides from `data-gap`, a border of `--yeti-border-width` in `--yeti-color-border` when `data-border` is present (the marker works on any element, not only a box), and a fill from `data-surface`. Nothing else. Unlike the spacing layouts, a box does not reset its children's margins, so paragraphs inside it keep their prose rhythm.
 
-`data-surface` takes the three surface tones. `raised` is a step above the page and is what a panel usually wants; `sunken` is a step below, for a well that content sits in; `base` is the page's own surface, for a panel inside a sunken area that should not change tone. Without it a box is transparent and only its padding does anything, which is right when the thing behind it is already a surface.
+`data-surface` takes the three surface tones. `raised` is a step above the page and is what a panel usually wants; `sunken` is a step below, for a well that content sits in; `base` is the page's own surface, for a panel inside a sunken area that should not change tone. Without it a box is transparent and only its padding does anything, which is right when the thing behind it is already a surface. A surface sets the page text as well as the fill, so its words read on it wherever it sits, and `color-scheme` on the box is all a band that stays dark needs.
 
 `data-gap-inline` and `data-gap-block` pad one axis over whatever `data-gap` set, so a band that is wide at the sides and ordinary top and bottom is `data-gap-inline="xl"` and nothing else. They take the same words as `data-gap`, fluid pairs included. This is the whole of Yeti's padding utility: any element becomes a box with the class, and the box says how much.
 
@@ -69,7 +69,7 @@ There is no plainer word for a padded rectangle. Foundation 6's Callout was a st
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `md` | Padding on every side. |
 | `data-gap-inline` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` |  | Padding on the two sides only, over whatever data-gap set: a band wide at the sides and ordinary top and bottom. |
 | `data-gap-block` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` |  | Padding top and bottom only, over whatever data-gap set. |
-| `data-surface` | enum | `base`, `raised`, `sunken` |  | Fill the box with one of the three surface tones, making it a visible panel. Absent, the box is transparent and only its padding does anything. |
+| `data-surface` | enum | `base`, `raised`, `sunken` |  | Fill the box with one of the three surface tones and set the page text on it, making it a visible panel. Absent, the box is transparent and only its padding does anything. |
 
 </div>
 
@@ -98,6 +98,7 @@ No structural requirements.
 | Token | Description |
 | --- | --- |
 | `--yeti-space-md` | The default padding. |
+| `--yeti-color-text` | The words on any data-surface. |
 | `--yeti-color-surface` | The fill at data-surface="base"; the page's own surface. |
 | `--yeti-color-surface-raised` | The fill at data-surface="raised", a step above the page. |
 | `--yeti-color-surface-sunken` | The fill at data-surface="sunken", a step below the page. |
