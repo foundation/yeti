@@ -25,9 +25,9 @@
 	.table [data-numeric] {
 		text-align: end;
 	}
-	/* data-nowrap on the table keeps every cell's line; on a single th/td it
-	   keeps that one cell's line. A wide result goes in a scroller. */
-	.table[data-nowrap] :is(th, td), .table :is(th, td)[data-nowrap] { white-space: nowrap; }
+	/* data-nowrap on the table keeps every cell's line. A wide result goes in
+	   a scroller. */
+	.table[data-nowrap] :is(th, td) { white-space: nowrap; }
 	/* data-fixed shares the width equally between the columns, whatever their
 	   content, which is what a comparison reads across; a width on a first-row
 	   cell still sets that column's, and the rest share what is left. */

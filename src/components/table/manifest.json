@@ -22,7 +22,7 @@
   ],
   "markers": [
     { "name": "data-numeric", "type": "boolean", "on": "*", "description": "Tabular figures, so digits line up, on any element; on a table's cells and headers the column is end-aligned too." },
-    { "name": "data-nowrap", "type": "boolean", "on": "th, td", "description": "This cell keeps its line." },
+    { "name": "data-nowrap", "type": "boolean", "on": "*", "description": "Keeps this text on one line, on any element." },
     { "name": "data-align", "type": "enum", "values": ["start", "center", "end"], "on": "th, td, tr", "description": "Aligns the text of this cell, or of every cell in this row. A cell's own data-align or data-numeric outranks its row's." }
   ],
   "tokens": [

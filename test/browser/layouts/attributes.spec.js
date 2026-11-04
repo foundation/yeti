@@ -24,6 +24,13 @@ test.describe('attribute vocabulary', () => {
 		expect((await rect(page, '#gap-sm-lg')).width).toBeCloseTo(await token(page, '--yeti-space-lg'), 1);
 	});
 
+	test('data-nowrap keeps any element on one line', async ({ page }) => {
+		await open(page, 'attributes');
+		await page.evaluate(() => document.querySelector('main').insertAdjacentHTML('beforeend', '<p><span id="kept" data-nowrap>one line</span><span id="free">wraps</span></p>'));
+		expect(await style(page, '#kept', 'white-space')).toBe('nowrap');
+		expect(await style(page, '#free', 'white-space')).toBe('normal');
+	});
+
 	test('data-numeric gives any element tabular figures', async ({ page }) => {
 		await open(page, 'attributes');
 		expect(await style(page, '#numeric', 'font-variant-numeric')).toBe('tabular-nums');

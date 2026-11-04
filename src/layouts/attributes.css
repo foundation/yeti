@@ -498,6 +498,10 @@
 	   also end-align; that half stays with the table. */
 	[data-numeric] { font-variant-numeric: tabular-nums; }
 
+	/* data-nowrap: a line that stays whole, on any element. A table takes it
+	   too, and hands it to every cell. */
+	[data-nowrap] { white-space: nowrap; }
+
 	/* data-border: the border width in the border color, on any element. The
 	   table is left out: its data-border means borders on every cell, and an
 	   outer line on top of those would double the edge. */

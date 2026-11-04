@@ -51,7 +51,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-justify` | `start`, `center`, `end`, `between`, `around`, `evenly` | pagination |
 | `data-lift` | `rise`, `scale` | lift |
 | `data-max` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog |
-| `data-nowrap` | boolean | table, table (th, td) |
+| `data-nowrap` | boolean | table, table (*) |
 | `data-numbered` | boolean | toc |
 | `data-numeric` | boolean | table (*) |
 | `data-once` | boolean | enter |

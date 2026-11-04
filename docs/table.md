@@ -91,7 +91,7 @@ Attributes that descendants carry, not the root.
 | Attribute | Type | Values | On | Description |
 | --- | --- | --- | --- | --- |
 | `data-numeric` | boolean |  | `*` | Tabular figures, so digits line up, on any element; on a table's cells and headers the column is end-aligned too. |
-| `data-nowrap` | boolean |  | `th, td` | This cell keeps its line. |
+| `data-nowrap` | boolean |  | `*` | Keeps this text on one line, on any element. |
 | `data-align` | enum | `start`, `center`, `end` | `th, td, tr` | Aligns the text of this cell, or of every cell in this row. A cell's own data-align or data-numeric outranks its row's. |
 
 </div>
