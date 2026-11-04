@@ -203,7 +203,7 @@ Attributes:
 - data-row (boolean) — This element is a single row: its first child is the name and its second the value, with no wrapper.
 
 Children:
-- > *: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value; anything after them sits below at the full width.
+- > *: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value, left empty for a row with none; anything after them sits below at the full width.
 
 ## masonry (layout, class="masonry")
 

@@ -11,7 +11,7 @@
   ],
   "classes": [],
   "children": [
-    { "selector": "> *", "min": 1, "max": null, "description": "A row, unless data-row makes the element one. Its first child is the name and its second the value; anything after them sits below at the full width." }
+    { "selector": "> *", "min": 1, "max": null, "description": "A row, unless data-row makes the element one. Its first child is the name and its second the value, left empty for a row with none; anything after them sits below at the full width." }
   ],
   "tokens": [
     { "name": "--yeti-leaders-line", "public": true, "description": "The line between the name and the value, written as a border." },

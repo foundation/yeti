@@ -652,7 +652,7 @@ The rows can be any elements, so a contents page is a list. `role="list"` takes 
 </ol>
 ```
 
-A row with no value draws no line. A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
+A row with no value draws no line. The second child is always the value, so a row with a description but no price keeps an empty element in that place, with nothing inside it, not even a space: `<h3>Market fish</h3><strong></strong><p>Ask what came in today.</p>`. A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
 
 Anything after the value sits below the row at the full width, which is where a dish's description goes:
 
@@ -682,7 +682,7 @@ A row can stand alone. `data-row` makes the element the row itself, for a name a
 Leaders are what typesetters call the line of dots that leads the eye across a page. Foundation 6 had nothing for it.
 
 Children:
-- > *: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value; anything after them sits below at the full width.
+- > *: at least 1. A row, unless data-row makes the element one. Its first child is the name and its second the value, left empty for a row with none; anything after them sits below at the full width.
 
 Tokens:
 - --yeti-leaders-line — The line between the name and the value, written as a border.

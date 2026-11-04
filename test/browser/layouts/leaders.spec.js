@@ -65,6 +65,15 @@ test.describe('leaders', () => {
 		expect(name.width).toBeCloseTo(row.width, 0);
 	});
 
+	test('an empty value draws no line, and what follows it stays below', async ({ page }) => {
+		await open(page, 'leaders', 600);
+		expect((await leader(page, '#unpriced-row')).content).toBe('none');
+		expect((await leader(page, '#unpriced-solo')).content).toBe('none');
+		const [row, name, text] = await Promise.all(['#unpriced-row', '#unpriced-name', '#unpriced-text'].map((s) => rect(page, s)));
+		expect(name.width).toBeCloseTo(row.width, 0);
+		expect(text.top).toBeGreaterThanOrEqual(name.bottom);
+	});
+
 	test('data-row makes one element a row, with no wrapper', async ({ page }) => {
 		await open(page, 'leaders', 600);
 		const [row, name, price, text] = await Promise.all(['#solo', '#solo-name', '#solo-price', '#solo-text'].map((s) => rect(page, s)));
