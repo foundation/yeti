@@ -1,0 +1,24 @@
+/* Divider: a line of text with a rule filling the room beside it. The rules
+   are the element's own ::before and ::after, so a heading stays one heading
+   with nothing extra inside it. hr and a stack's data-rule cannot hold text. */
+@layer yeti.layouts {
+	.divider {
+		display: flex;
+		align-items: center;
+		gap: var(--_yeti-gap);
+		max-inline-size: none;
+		text-align: center;
+		text-wrap: balance;
+	}
+	.divider:not([data-gap]) { --_yeti-gap: var(--yeti-space-md); }
+	.divider::before,
+	.divider::after {
+		content: "";
+		flex: 1 0 1.5rem;
+		border-block-start: var(--yeti-divider-line);
+	}
+	.divider[data-align="start"] { text-align: start; }
+	.divider[data-align="end"] { text-align: end; }
+	.divider[data-align="start"]::before,
+	.divider[data-align="end"]::after { content: none; }
+}

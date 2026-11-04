@@ -314,6 +314,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 | Token | Default | Description |
 | --- | --- | --- |
+| `--yeti-divider-line` | `var(--yeti-border-width) solid var(--yeti-color-border)` | The rule beside the text in a divider layout, written as a border. |
 | `--yeti-leaders-line` | `2px dotted var(--yeti-color-border)` | The line between a name and a value in a leaders layout, written as a border. |
 | `--yeti-cover-height` | `100dvh` | Minimum block size of a cover layout or a filled stack. Set to auto for one that is only as tall as its content. |
 | `--yeti-sticky-offset` | `var(--yeti-space-md)` | How far from the leading edge of the scrollport a child carrying data-sticky stops. Set it to a sticky bar's height on whatever holds the things that stick below it. |

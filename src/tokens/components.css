@@ -3,6 +3,7 @@
 @layer yeti.base {
 	:root {
 		--yeti-leaders-line: 2px dotted var(--yeti-color-border);
+		--yeti-divider-line: var(--yeti-border-width) solid var(--yeti-color-border);
 		--yeti-button-radius: var(--yeti-radius-md);
 		--yeti-button-weight: var(--yeti-weight-strong);
 		--yeti-button-padding: 2;

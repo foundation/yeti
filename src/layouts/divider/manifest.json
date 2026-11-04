@@ -1,0 +1,25 @@
+{
+  "$schema": "../../../schema/manifest.schema.json",
+  "name": "divider",
+  "kind": "layout",
+  "group": "Boxes and Stacks",
+  "description": "A heading or short line with a rule filling the room beside it, for section heads, dates and an \"or\" between choices.",
+  "class": "divider",
+  "attributes": [
+    { "name": "data-align", "type": "enum", "values": ["start", "center", "end"], "default": "center", "description": "Where the text sits. start and end leave one rule, filling the rest." },
+    { "name": "data-gap", "type": "enum", "vocabulary": "gap", "default": "md", "description": "Space either side of the text." }
+  ],
+  "classes": [],
+  "children": [],
+  "tokens": [
+    { "name": "--yeti-divider-line", "public": true, "description": "The rule beside the text, written as a border." },
+    { "name": "--yeti-space-md", "public": true, "description": "The default gap." },
+    { "name": "--_yeti-gap", "public": false }
+  ],
+  "a11y": { "requiredAttributes": [], "keyboard": [], "notes": "The rules are decoration and are not read out. Keep the heading level the element would have without them." },
+  "js": null,
+  "support": { "unguarded": ["flexbox gap", "text-wrap: balance"], "guarded": [] },
+  "since": "7.0.0",
+  "example": "example.html",
+  "demo": { "height": "sm" }
+}

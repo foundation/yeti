@@ -1,7 +1,7 @@
 ---
 raw: true
 title: "Layouts"
-description: "Eighteen intrinsic layouts that respond to their container, one attribute vocabulary, and the responsive model behind them."
+description: "Nineteen intrinsic layouts that respond to their container, one attribute vocabulary, and the responsive model behind them."
 nav_group: "Guides"
 nav_order: 3
 ---
@@ -15,7 +15,7 @@ nav_order: 3
 
 Yeti has three ways to make a page respond to its context, and they apply in a fixed order.
 
-Intrinsic layouts come first. The eighteen on this page arrange their children by reading their own width, not the viewport's. A `sidebar` drops to a stack when it runs low on room, wherever on the page it sits and whatever else is happening at the edge of the browser window. Reach for one of these before reaching for anything else.
+Intrinsic layouts come first. The nineteen on this page arrange their children by reading their own width, not the viewport's. A `sidebar` drops to a stack when it runs low on room, wherever on the page it sits and whatever else is happening at the edge of the browser window. Reach for one of these before reaching for anything else.
 
 Container queries come second. They let a single component change shape based on the width of the box that holds it rather than the window: a card that goes from one column to two once its own container is wide enough, in a sidebar or in a full-width section alike. These arrive in phase 3. A Yeti layout may query itself and change its children, never itself; the thresholds are the width tokens' defaults, written as numbers because a container condition cannot read a token. When something must change its own shape, put it in a `container` and query that.
 
@@ -89,6 +89,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 | Attribute | Values | Read by |
 | --- | --- | --- |
 | `data-align` | `start`, `center`, `end`, `stretch`, `baseline` | cluster, columns, grid, hero, icon, layer, media, sidebar, stack |
+| `data-align` | `start`, `center`, `end` | divider |
 | `data-align-self` | `start`, `center`, `end`, `stretch`, `baseline` | layer (> *) |
 | `data-alternate` | boolean | timeline |
 | `data-bleed` | boolean | breakout (> *) |
@@ -98,7 +99,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 | `data-fill` | boolean | overlay (> [data-over]), stack |
 | `data-fixed` | boolean | overlay |
 | `data-fold` | boolean | grid |
-| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | box, breakout, center, cluster, columns, cover, grid, hero, icon, leaders, masonry, media, overlay, scroller, shell, sidebar, stack, timeline |
+| `data-gap` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | box, breakout, center, cluster, columns, cover, divider, grid, hero, icon, leaders, masonry, media, overlay, scroller, shell, sidebar, stack, timeline |
 | `data-gap-block` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | box |
 | `data-gap-inline` | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | box |
 | `data-height` | `sm`, `md`, `lg`, `xl`, `half`, `full` | cover, hero |
@@ -148,7 +149,7 @@ Type can answer a container too. The [billboard](../billboard.md) utility's `dat
 
 Two more names in the table belong to a container rather than to a layout. `data-show` and `data-hide` take a width from the same scale and mean the same direction as `data-threshold`: `data-show="md"` shows the element from `md` up, `data-hide="md"` removes it from `md` up. They measure the nearest size container, so the same markup decides differently in a sidebar and across a page, and outside a size container they do nothing at all. They are the last tool to reach for, not the first — a component that can change shape should — and the [visibility guide](visibility.md) says when the trade is worth it.
 
-## The eighteen
+## The nineteen
 
 - [stack](../stack.md): stacks its children vertically with one consistent gap between them.
 - [cluster](../cluster.md): lays its children out in a row that wraps, keeping one gap between them on both axes.
@@ -164,6 +165,7 @@ Two more names in the table belong to a container rather than to a layout. `data
 - [icon](../icon.md): sizes an inline SVG to the surrounding text and aligns it with the text beside it.
 - [masonry](../masonry.md): packs items of uneven height into columns with no gaps under the short ones.
 - [leaders](../leaders.md): joins a name and a value with a dotted line, for menus, price lists, hours and contents pages.
+- [divider](../divider.md): sets a heading or short line beside a rule, for section heads, dates and an "or" between choices.
 - [breakout](../breakout.md): keeps its children in a centered reading column with gutters, and lets any child carrying data-bleed span the full width.
 - [layer](../layer.md): stacks its children in one box, later ones on top, with the box as tall as the tallest of them.
 - [container](../container.md): makes its box the thing a container query measures, so what is inside can respond to its width instead of the viewport's.
