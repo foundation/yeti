@@ -90,6 +90,23 @@ test.describe('shell recipe', () => {
 		expect(footer.bottom).toBeCloseTo(before[3].bottom, 1);
 	});
 
+	test('a nav that is the shell\'s own child is a part, a gap above main', async ({ page }) => {
+		await open(page, 1000);
+		// The starter's top bar: a sticky nav straight in the shell, with no
+		// header around it (a header would stop it sticking past itself).
+		await page.evaluate(() => {
+			const shell = document.createElement('div');
+			shell.className = 'shell';
+			shell.id = 'bar';
+			shell.innerHTML = '<a href="#m">Skip</a><nav id="bar-nav">Bar</nav><main id="m">Main</main><footer id="bar-footer">Foot</footer>';
+			document.body.append(shell);
+		});
+		const gap = await token(page, '--yeti-space-md');
+		const [nav, main, footer] = await Promise.all(['#bar-nav', '#m', '#bar-footer'].map((s) => rect(page, s)));
+		expect(main.top - nav.bottom).toBeCloseTo(gap, 1);
+		expect(footer.top - main.bottom).toBeCloseTo(gap, 1);
+	});
+
 	test('children have no margins', async ({ page }) => {
 		await open(page);
 		// The shell spaces its parts with a top margin on each part after the
