@@ -146,6 +146,8 @@ and bundle it with the same tool:
 npx esbuild site.js --bundle --minify --outfile=site.min.js
 ```
 
+Vite needs one setting. By default it rewrites `light-dark()` for older browsers, and Yeti's colors all use it, so tell it to leave modern CSS alone with `build: { cssTarget: 'esnext' }` in `vite.config.js`. It doesn't warn you.
+
 Load `site.min.js` with `<script type="module">`, as you would `yeti.js`. The paths are `@foundation/yeti/js/…`, not `@foundation/yeti/dist/js/…`: the package exports its modules under `js/`, and a bundler that honors the exports refuses the other.
 
 ## Bare HTML

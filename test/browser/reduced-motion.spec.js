@@ -46,7 +46,8 @@ test.describe('reduced motion', () => {
 			expect(await read(page, 'inline', name), `${name} in a style attribute`).toBe(value);
 			expect(await page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name), `${name} on the root`).toBe(value);
 		}
-		expect(await page.evaluate(() => getComputedStyle(document.getElementById('button')).transitionDuration.split(',')[0])).toBe('1e-05s');
+		// A number, because engines print one this small differently.
+		expect(await page.evaluate(() => parseFloat(getComputedStyle(document.getElementById('button')).transitionDuration))).toBeLessThan(0.001);
 	});
 
 	test('without the setting the same tokens take effect', async ({ page }) => {

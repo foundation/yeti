@@ -115,6 +115,16 @@ The first line repeats Yeti's layer order, the one statement a theme may make be
 
 A component's skin stays token-only: a class name belongs to Yeti, and a theme that restyled one would break when its internals change and could flatten its states. The layer sits above the base, so a theme's `h1` rule beats Yeti's, and below every layout, component and utility, so a theme's `a { color }` never repaints a link that is a button and its `p` margins never reach inside a `stack`; to change what a layout or component defines, set its tokens.
 
+A site's own stylesheet isn't bound by that. Tokens are still the first choice, because they survive an upgrade, but a rule on a component can go unlayered, where it beats everything in Yeti, including `data-*` attributes like `data-paint`. To keep those attributes winning, put the rule in Yeti's own components layer, in a stylesheet loaded after `yeti.css`. There's no need to repeat the layer list:
+
+```css
+@layer yeti.components {
+	.card { background-color: var(--brand-paper); }
+}
+```
+
+Inside that layer the rule competes on specificity like any other, and it wins a tie because it comes later.
+
 Beyond the hues, chroma, and scale already covered above, each component publishes a few tokens of its own as its skin surface: `--yeti-button-radius`, `--yeti-card-padding`, `--yeti-badge-radius`, and the rest are listed on the [Tokens](../tokens.md) page. Setting those, rather than editing a component's CSS, is what makes a theme portable: it is data, not code, so it survives an upgrade to a newer Yeti untouched.
 
 A small theme can change a lot. This one shifts the accent hue, opens up the corners, and turns buttons into pills:

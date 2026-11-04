@@ -46,7 +46,7 @@ function preamble(pkg) {
 		'Most of what a page needs is an attribute or a token. Look here before writing a rule.',
 		'',
 		'- Tokens: set only the public `--yeti-*` tokens. Never set or read `--_yeti-*`: they are private and change without notice.',
-		'- Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only; a rule on a component stays unlayered.',
+		'- Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only. A rule on a component is unlayered, or goes in `@layer yeti.components`, loaded after Yeti, when `data-*` attributes such as `data-paint` must still win. Unlayered CSS beats those too.',
 		'- Modules: every component works with no script, and a module adds to it. Load one with `<script type="module" src=".../js/enter.js"></script>`, or all of them with `yeti.js`. Each block below names its module.',
 		'- Light and dark: nothing to switch on. The root declares `color-scheme: light dark`, so a page follows the reader with no meta tag, class or attribute. Pin it with `html { color-scheme: dark; }`.',
 		'- A region that is always dark: `<section class="box band" data-surface="base">` with `.band { color-scheme: dark; }`. A surface sets its fill and its text. Any other element needs all three: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`, because the scheme alone flips links and buttons, but the text color is inherited already resolved. Use `light` the same way.',
