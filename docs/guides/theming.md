@@ -124,7 +124,9 @@ A site's own stylesheet isn't bound by that. Tokens are still the first choice, 
 }
 ```
 
-Inside that layer the rule competes on specificity like any other, and it wins a tie because it comes later.
+Inside that layer the rule competes on specificity like any other, and it wins a tie because it comes later. Matching a component can mean copying its selector, and a nav link's hover is `.nav > ul[popover] :is(a, .dropdown > button):hover`. A copied selector stops working without warning if a later Yeti changes it, so prefer a token where one exists, and check hover, focus and open states as well as the resting one.
+
+A site's own layers work too, but they can't sit between Yeti's. A top-level `@layer site` sorts against the whole of `yeti`: after it, the rules beat everything in Yeti, `data-*` attributes included, just as unlayered CSS does; before it, they lose to everything in Yeti. Only a rule inside `yeti.components` lands below the utilities.
 
 Beyond the hues, chroma, and scale already covered above, each component publishes a few tokens of its own as its skin surface: `--yeti-button-radius`, `--yeti-card-padding`, `--yeti-badge-radius`, and the rest are listed on the [Tokens](../tokens.md) page. Setting those, rather than editing a component's CSS, is what makes a theme portable: it is data, not code, so it survives an upgrade to a newer Yeti untouched.
 
