@@ -54,7 +54,7 @@ The rows can be any elements, so a contents page is a list. `role="list"` takes 
 </ol>
 ```
 
-A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
+A row with no value draws no line. A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
 
 Anything after the value sits below the row at the full width, which is where a dish's description goes:
 

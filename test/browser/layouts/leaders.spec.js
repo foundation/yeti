@@ -37,8 +37,8 @@ test.describe('leaders', () => {
 		await open(page, 'leaders', 600);
 		const [one, two] = await Promise.all([rect(page, '#chapter-one'), rect(page, '#chapter-two')]);
 		expect(two.top - one.bottom).toBeCloseTo(await token(page, '--yeti-space-lg'), 1);
-		const [short, long] = await Promise.all([rect(page, '#short'), rect(page, '#long')]);
-		expect(long.top - short.bottom).toBeCloseTo(await token(page, '--yeti-space-sm'), 1);
+		const [short, noValue] = await Promise.all([rect(page, '#short'), rect(page, '#no-value')]);
+		expect(noValue.top - short.bottom).toBeCloseTo(await token(page, '--yeti-space-sm'), 1);
 		expect(await px(page, '#short-price', 'margin-left')).toBe(0);
 	});
 
@@ -49,6 +49,14 @@ test.describe('leaders', () => {
 		expect(text.top).toBeGreaterThanOrEqual(Math.max(name.bottom, price.bottom));
 		expect(notes.top).toBeGreaterThanOrEqual(text.bottom);
 		expect(text.width).toBeCloseTo(row.width, 1);
+	});
+
+	test('a row with no value draws no line', async ({ page }) => {
+		await open(page, 'leaders', 600);
+		expect((await leader(page, '#no-value')).content).toBe('none');
+		expect((await leader(page, '#plain-row')).content).toBe('none');
+		// Falsification: a row with a value still has one.
+		expect((await leader(page, '#short')).content).not.toBe('none');
 	});
 
 	test('--yeti-leaders-line sets the line', async ({ page }) => {

@@ -31,4 +31,6 @@
 		grid-area: 1 / 2;
 		border-block-end: var(--yeti-leaders-line);
 	}
+	/* A row with no value has nothing for the line to lead to. */
+	.leaders > :not(:has(> :nth-child(2)))::after { content: none; }
 }
