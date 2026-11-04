@@ -17,6 +17,15 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
+	test('a sticky bar sits flush with the top edge, whatever the token says for everything else', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => document.querySelector('#nav').setAttribute('data-sticky', ''));
+		expect(await style(page, '#nav', 'top')).toBe('0px');
+		// A bar told otherwise still takes the value, for a site that floats it.
+		await page.addStyleTag({ content: '#nav { inset-block-start: 16px; }' });
+		expect(await style(page, '#nav', 'top')).toBe('16px');
+	});
+
 	test('a forced scheme carries the bar and the open panel with it', async ({ page }) => {
 		await open(page, 300);
 		await page.addStyleTag({ content: '#nav { color-scheme: dark; --yeti-nav-surface: rgb(60, 30, 20); }' });

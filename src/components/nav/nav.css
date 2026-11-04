@@ -15,6 +15,9 @@
 		container-type: inline-size;
 	}
 	.nav:not([data-gap]) { --_yeti-gap: var(--yeti-space-sm); }
+	/* A bar that sticks sits at the edge. The offset is for what sticks below
+	   it, which leaves a sliver of page above a bar that reads it. */
+	.nav[data-sticky] { --_yeti-sticky-offset: 0px; }
 	.nav:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
 	.nav > * { margin: 0; }
 	.nav > [data-brand] {

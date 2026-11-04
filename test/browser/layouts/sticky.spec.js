@@ -62,13 +62,13 @@ test.describe('data-sticky', () => {
 		expect(after.top).toBeCloseTo(await token(page, '--yeti-sticky-offset'), 0);
 	});
 
-	test('a sticky nav stops at the offset while the page scrolls past it', async ({ page }) => {
+	test('a sticky nav stops at the top edge while the page scrolls past it', async ({ page }) => {
 		await open(page);
 		expect(await style(page, '#pinned-nav', 'position')).toBe('sticky');
 		const before = await rect(page, '#pinned-nav');
 		await scrollTo(page, before.top + 600);
 		const after = await rect(page, '#pinned-nav');
-		expect(after.top).toBeCloseTo(await token(page, '--yeti-sticky-offset'), 0);
+		expect(after.top).toBeCloseTo(0, 0);
 	});
 
 	test('a pinned element paints above a later element that forms a stacking context', async ({ page }) => {

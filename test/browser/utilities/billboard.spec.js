@@ -14,6 +14,12 @@ test.describe('billboard', () => {
 		expect(wide).toBeGreaterThan(narrow + 5);
 	});
 
+	test('it fills its board, with no reading measure on a heading or a paragraph', async ({ page }) => {
+		await open(page);
+		expect(await style(page, '#wide-title', 'max-inline-size')).toBe('none');
+		expect(await style(page, 'p.billboard', 'max-inline-size')).toBe('none');
+	});
+
 	test('it is clamped at both ends of its pair', async ({ page }) => {
 		await open(page);
 		const [tiny, huge, min, max] = await Promise.all([

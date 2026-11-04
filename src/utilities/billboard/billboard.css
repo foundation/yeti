@@ -29,6 +29,8 @@
 	.billboard {
 		font-size: clamp(var(--_yeti-fit-min), calc(100cqi * tan(atan2(var(--_yeti-fit-max), var(--yeti-fit-width)))), var(--_yeti-fit-max));
 		letter-spacing: var(--yeti-tracking-heading);
+		/* Display type fills its board; the prose measure is for reading. */
+		max-inline-size: none;
 	}
 	/* The default pair, set only when the attribute is absent, so a billboard
 	   inside another never inherits its parent's ends. */

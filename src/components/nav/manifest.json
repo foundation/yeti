@@ -37,7 +37,7 @@
     {
       "name": "data-sticky",
       "type": "boolean",
-      "description": "Keep the bar at the top of the scrollport as the page scrolls, at --yeti-sticky-offset from the edge."
+      "description": "Keep the bar at the top of the scrollport as the page scrolls, flush with the edge."
     }
   ],
   "classes": [],
@@ -272,6 +272,10 @@
     },
     {
       "name": "--_yeti-on-variant",
+      "public": false
+    },
+    {
+      "name": "--_yeti-sticky-offset",
       "public": false
     },
     {

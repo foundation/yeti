@@ -71,7 +71,7 @@ A nav item may hold a `dropdown` for a section with children of its own: the ite
 
 The panel changes shape with the nav. In the bar it is the dropdown's usual card, anchored under its trigger. Once the links are behind the toggle it becomes a full-width block instead, docked to the foot of its trigger and squared off against the panel's own edges, so a sheet, a drawer and a screen each keep their submenu inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
 
-`data-sticky` keeps the bar at the top of the scrollport as the page scrolls, `--yeti-sticky-offset` from the edge. Everything else on the page that sticks stops at that same offset and would slide under the bar, so set the token to the bar's own height plus the gap you want on whatever holds them — the shell's body row, say — and leave the nav itself reading the default.
+`data-sticky` keeps the bar at the top of the scrollport as the page scrolls, flush with the edge. Everything else on the page that sticks stops at `--yeti-sticky-offset` and would slide under the bar, so set the token to the bar's own height plus the gap you want on whatever holds them — the shell's body row, say. The bar doesn't read the token; a bar that floats below the edge sets `inset-block-start` itself.
 
 Links that point down the same page (`href="#pricing"`) turn on smooth scrolling for the page, through `--yeti-toc-scroll`, the same switch a `toc` uses; a bare `href="#"` placeholder does not count, and under reduced motion the page goes back to the browser's jump.
 
@@ -115,7 +115,7 @@ Give the `nav` an `aria-label`, since a page often has more than one. The toggle
 | `data-threshold` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The nav's own width at or above which the links sit in the bar; below it they are behind the toggle. |
 | `data-panel` | enum | `sheet`, `drawer`, `screen` | `sheet` | The shape of the open list below the threshold: a sheet under the bar, a drawer from the start edge, or the whole screen. |
 | `data-gap` | enum | `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `xs-sm`, `xs-md`, `xs-lg`, `xs-xl`, `xs-2xl`, `xs-3xl`, `xs-4xl`, `sm-md`, `sm-lg`, `sm-xl`, `sm-2xl`, `sm-3xl`, `sm-4xl`, `md-lg`, `md-xl`, `md-2xl`, `md-3xl`, `md-4xl`, `lg-xl`, `lg-2xl`, `lg-3xl`, `lg-4xl`, `xl-2xl`, `xl-3xl`, `xl-4xl`, `2xl-3xl`, `2xl-4xl`, `3xl-4xl` | `sm` | Space between the bar's parts and between the links. |
-| `data-sticky` | boolean |  |  | Keep the bar at the top of the scrollport as the page scrolls, at --yeti-sticky-offset from the edge. |
+| `data-sticky` | boolean |  |  | Keep the bar at the top of the scrollport as the page scrolls, flush with the edge. |
 
 </div>
 
@@ -189,6 +189,7 @@ Attributes that descendants carry, not the root.
 - `--_yeti-variant-soft`
 - `--_yeti-variant-strong`
 - `--_yeti-on-variant`
+- `--_yeti-sticky-offset`
 - `--_yeti-nav-link`
 
 </details>

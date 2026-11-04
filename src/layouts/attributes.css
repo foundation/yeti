@@ -368,7 +368,7 @@
 @layer yeti.utilities {
 	[data-sticky] {
 		position: sticky;
-		inset-block-start: var(--yeti-sticky-offset);
+		inset-block-start: var(--_yeti-sticky-offset, var(--yeti-sticky-offset));
 		/* Above what scrolls under it, by definition, and above the level a
 		   card's controls, the affix and a tooltip take, so a card scrolled under
 		   a pinned bar cannot take the click. The skip link, first in the
