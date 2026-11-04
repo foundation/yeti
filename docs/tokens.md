@@ -314,6 +314,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 | Token | Default | Description |
 | --- | --- | --- |
+| `--yeti-leaders-line` | `2px dotted var(--yeti-color-border)` | The line between a name and a value in a leaders layout, written as a border. |
 | `--yeti-cover-height` | `100dvh` | Minimum block size of a cover layout or a filled stack. Set to auto for one that is only as tall as its content. |
 | `--yeti-sticky-offset` | `var(--yeti-space-md)` | How far from the leading edge of the scrollport a child carrying data-sticky stops. Set it to a sticky bar's height on whatever holds the things that stick below it. |
 | `--yeti-scroll-padding` | `var(--yeti-sticky-offset)` | Where a scroll-into-view stops below the top edge: a fragment jump, scrollIntoView, a focused control. The sticky offset by default; set it alone for more room above a jumped-to heading than the things that stick need. Root-level: it is read by the root's scroll padding. |

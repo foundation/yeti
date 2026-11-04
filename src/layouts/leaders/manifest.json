@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../schema/manifest.schema.json",
+  "name": "leaders",
+  "kind": "layout",
+  "group": "Grids and Rows",
+  "description": "Rows of a name and a value joined by a dotted line, for menus, price lists, hours and contents pages.",
+  "class": "leaders",
+  "attributes": [
+    { "name": "data-gap", "type": "enum", "vocabulary": "gap", "default": "sm", "description": "Space between rows." }
+  ],
+  "classes": [],
+  "children": [
+    { "selector": "> *", "min": 1, "max": null, "description": "A row. Its first child is the name and its second the value; anything after them sits below at the full width." }
+  ],
+  "tokens": [
+    { "name": "--yeti-leaders-line", "public": true, "description": "The line between the name and the value, written as a border." },
+    { "name": "--yeti-space-sm", "public": true, "description": "The default gap between rows." },
+    { "name": "--yeti-space-xs", "public": true, "description": "The space either side of the line." },
+    { "name": "--_yeti-gap", "public": false }
+  ],
+  "a11y": { "requiredAttributes": [], "keyboard": [], "notes": "The line is decoration and is not read out. Use a dl when the rows are terms and values, and a list when they are links." },
+  "js": null,
+  "support": { "unguarded": ["CSS grid", "last baseline alignment", "fit-content()"], "guarded": [] },
+  "since": "7.0.0",
+  "example": "example.html",
+  "demo": { "height": "md" }
+}

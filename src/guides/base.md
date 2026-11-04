@@ -134,6 +134,8 @@ A term takes the strong weight and its definition is indented by `--yeti-space-m
 
 HTML allows a second shape for the same list, with each pair wrapped in a `div` — that is what the second list above is — and there the term is no longer a child of the `dl`, so the rule above cannot see it. `dl > div + div` carries the same `--yeti-space-sm` for that form. Both are shown because both are legal and a page will meet both.
 
+The `div` shape is also what a [`leaders`](../leaders.md) list uses for a name, a dotted line and a price.
+
 **Tokens:** `--yeti-weight-strong`, `--yeti-space-sm`, `--yeti-space-md`.
 
 ## Quotes and captions

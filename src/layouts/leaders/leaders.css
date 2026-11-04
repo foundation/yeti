@@ -1,0 +1,34 @@
+/* Leaders: rows of a name, a line and a value, the line filling what the two
+   leave. The line is each row's own ::after, so no element sits between a dt
+   and its dd. A grid rather than a flex row, because the track lets a long
+   name wrap instead of pushing the value off the row, and gives anything after
+   the value a row of its own. last baseline puts the line and the value on the
+   name's last line; an empty box takes its baseline from its bottom edge, so
+   the dots stand on the baseline, as printed ones do. */
+@layer yeti.layouts {
+	.leaders {
+		display: flex;
+		flex-direction: column;
+		gap: var(--_yeti-gap);
+	}
+	.leaders:not([data-gap]) { --_yeti-gap: var(--yeti-space-sm); }
+	.leaders > * {
+		display: grid;
+		grid-template-columns: fit-content(100%) minmax(1.5rem, 1fr) auto;
+		align-items: last baseline;
+		gap: var(--yeti-space-xs);
+		margin: 0;
+	}
+	.leaders > * > * {
+		grid-column: 1 / -1;
+		margin: 0;
+		max-inline-size: none;
+	}
+	.leaders > * > :first-child { grid-area: 1 / 1; }
+	.leaders > * > :nth-child(2) { grid-area: 1 / 3; }
+	.leaders > *::after {
+		content: "";
+		grid-area: 1 / 2;
+		border-block-end: var(--yeti-leaders-line);
+	}
+}

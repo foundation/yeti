@@ -575,6 +575,68 @@ Tokens:
 Accessibility contract:
 Everything stays in reading order. Text laid over a picture needs a contrast treatment (a scrim or a solid panel); the layer does not add one.
 
+## leaders (layout, class="leaders")
+
+Rows of a name and a value joined by a dotted line, for menus, price lists, hours and contents pages.
+
+Attributes:
+- data-gap: none | xs | sm (default) | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between rows.
+
+### When to use it
+
+A name and a value a reader's eye has to travel between: a menu, a price list, opening hours, the page numbers on a contents page. The dotted line carries the eye across. If the rows have more than two things to compare, use a table.
+
+### How it works
+
+Each child of `leaders` is a row. Its first child is the name and its second is the value, and the line fills the space between them. The line is the row's own `::after`, so there is no element to add and the markup stays valid: a `dl` can hold nothing between a `dt` and its `dd`.
+
+```html
+<dl class="leaders">
+	<div><dt>Soup of the day</dt><dd>$9</dd></div>
+	<div><dt>Roast chicken with lemon and thyme</dt><dd>$24</dd></div>
+</dl>
+```
+
+The rows can be any elements, so a contents page is a list. `role="list"` takes the list's markers off:
+
+```html
+<ol class="leaders" role="list">
+	<li><a href="#starters">Starters</a><span>12</span></li>
+	<li><a href="#mains">Mains</a><span>18</span></li>
+</ol>
+```
+
+A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
+
+Anything after the value sits below the row at the full width, which is where a dish's description goes:
+
+```html
+<div class="leaders" data-gap="md">
+	<article>
+		<h3>Trout</h3>
+		<strong>$21</strong>
+		<p>With brown butter and almonds.</p>
+	</article>
+</div>
+```
+
+`data-gap` is the space between rows. `--yeti-leaders-line` is the line itself, written as a border: `2px dotted` in the border color by default. The dots stand on the baseline, as printed dots do. To raise them, move the line in your theme with `.leaders > *::after { translate: 0 -0.3em; }`.
+
+### Why this name
+
+Leaders are what typesetters call the line of dots that leads the eye across a page. Foundation 6 had nothing for it.
+
+Children:
+- > *: at least 1. A row. Its first child is the name and its second the value; anything after them sits below at the full width.
+
+Tokens:
+- --yeti-leaders-line — The line between the name and the value, written as a border.
+- --yeti-space-sm — The default gap between rows.
+- --yeti-space-xs — The space either side of the line.
+
+Accessibility contract:
+The line is decoration and is not read out. Use a dl when the rows are terms and values, and a list when they are links.
+
 ## masonry (layout, class="masonry")
 
 Packs items of uneven height into columns with no gaps under the short ones.
@@ -2989,6 +3051,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-color-focus (color): var(--yeti-color-primary) — Focus ring color.
 - --yeti-link-color (color): var(--yeti-color-primary) — Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. A theme whose primary is too light to read as text points this at the hue's text step, --yeti-color-primary-text.
 - --yeti-link-color-hover (color): var(--yeti-color-primary-strong) — Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links.
+- --yeti-leaders-line (layout): 2px dotted var(--yeti-color-border) — The line between a name and a value in a leaders layout, written as a border.
 - --yeti-cover-height (layout): 100dvh — Minimum block size of a cover layout or a filled stack. Set to auto for one that is only as tall as its content.
 - --yeti-sticky-offset (layout): var(--yeti-space-md) — How far from the leading edge of the scrollport a child carrying data-sticky stops. Set it to a sticky bar's height on whatever holds the things that stick below it.
 - --yeti-scroll-padding (layout): var(--yeti-sticky-offset) — Where a scroll-into-view stops below the top edge: a fragment jump, scrollIntoView, a focused control. The sticky offset by default; set it alone for more room above a jumped-to heading than the things that stick need. Root-level: it is read by the root's scroll padding.
