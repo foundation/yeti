@@ -50,6 +50,22 @@ Between the ends the size is a proportion of the container, and the proportion i
 
 The container is the nearest ancestor with `container-type: inline-size`. That is what the [container](container.md) layout is for; `grid`, `timeline`, `nav`, `pagination` and `demo` are already size containers, as is a `card` with a leading figure and a `breakout` with a note; anything else needs a `container` above it, or the line measures the viewport. It has to be an ancestor: an element cannot query itself, so putting `billboard` and `container` on the same element measures the box outside it. With no container anywhere above, `cqi` falls back to the small viewport, so a billboard on a bare page grows with the window instead — a lesser effect, not a broken one.
 
+## A line of unknown length
+
+The default assumes a line of a certain length, and a headline from a CMS is not. CSS cannot measure text, but a template can count its letters. Pass the count in as a custom property and make the ceiling arrive at the width that many letters need:
+
+```html
+<h1 class="billboard" data-fit="md-display" style="--name-length: 14">The Copper Pan</h1>
+```
+
+```css
+.billboard {
+	--yeti-fit-width: calc(var(--yeti-text-display) * max(var(--name-length), 6) * 0.6);
+}
+```
+
+The `0.6` is an estimate of one letter's width as a fraction of its size. It fits most typefaces with a little room over; a condensed face can come down toward `0.45`, and a wide one needs more, so try the longest and shortest names you expect at a phone's width. The `max(…, 6)` is a floor for short names: without it a three-letter name reaches its ceiling in a very small box and stays that large as the box narrows, and it runs off a phone.
+
 ## Accessibility
 
 The clamp is the accessibility story. A size that is only `cqi` has no floor and no ceiling: it shrinks past legibility in a narrow column and runs off the top of a wide screen, and a reader who zooms in gets neither end back. The floor and the ceiling here are steps of the type scale, set in `rem`, so a larger default font size raises the floor and a billboard can never fall below a legible step; the middle of the ramp, between the two ends, follows the container instead.
