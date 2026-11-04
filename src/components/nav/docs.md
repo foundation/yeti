@@ -38,7 +38,17 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
+
+A bar that stays dark in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
+
+```css
+.nav { color-scheme: dark; --yeti-nav-surface: oklch(30% 0.05 40); }
+```
+
+Setting `--yeti-color-text` on the nav instead reaches the bar but also the open panel, which keeps its own light surface, so the panel's words disappear.
+
+A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
 The actions slot takes anything, not only buttons: a running head, a version, a phone number. It inherits the bar's type, so quiet text is the page's two declarations:
 

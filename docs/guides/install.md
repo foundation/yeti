@@ -227,7 +227,7 @@ Both resolve with no configuration beyond the default in a modern project. They 
 
 ## Check your pages
 
-The same manifest validates rendered HTML. `bin/validate-html.js` in the Yeti repository reads a folder of built pages and checks every element carrying a Yeti class the way the examples and guides are checked: an attribute a component does not take, a value outside its list, a bare attribute that needs one, a set with one member (an `accordion` with one panel, a `timeline` with one entry), a required accessibility attribute missing. Point it at the manifest the package ships:
+The same manifest validates rendered HTML. `bin/validate-html.js` in the Yeti repository reads a folder of built pages and checks every element carrying a Yeti class the way the examples and guides are checked: an attribute a component does not take, a value outside its list, a bare attribute that needs one, a set with one member (an `accordion` with one panel, a `timeline` with one entry), a required accessibility attribute missing. It checks Yeti's vocabulary, not HTML itself: a `span` between a `dt` and its `dd` passes, so run an HTML validator as well. Point it at the manifest the package ships:
 
 ```sh
 node path/to/yeti/bin/validate-html.js ./build --manifest node_modules/@foundation/yeti/dist/yeti.manifest.json

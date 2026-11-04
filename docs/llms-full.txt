@@ -15,7 +15,8 @@ Most of what a page needs is an attribute or a token. Look here before writing a
 - A region that is always dark: `<section class="box band" data-surface="base">` with `.band { color-scheme: dark; }`. A surface sets its fill and its text. Any other element needs all three: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`, because the scheme alone flips links and buttons, but the text color is inherited already resolved. Use `light` the same way.
 - The site's colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.
 - One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.
-- Links: `--yeti-link-color` and `--yeti-link-color-hover`, on any element, for everything below it. Set them on the region that should change, not on `:root`, and do not remap primary for them. Links in a nav bar read `--yeti-nav-link`.
+- Links: `--yeti-link-color` and `--yeti-link-color-hover`, on `:root` for the site or on any element for everything below it. Do not remap primary for them. On `:root` use a token such as `var(--yeti-color-primary-text)`, because a plain color does not change in dark mode or a dark region. A token set on `:root` resolves there, so a region that re-points that token must set the link color too.
+- A nav bar: links read `--yeti-nav-link`. A bar that stays dark in both modes is `.nav { color-scheme: dark; --yeti-nav-surface: <color>; }`, which also covers hover, the current link, the toggle and the open panel. Do not set `--yeti-color-text` on the nav: the open panel reads it too.
 - Entrances: `class="enter" data-enter="rise"` with `data-stagger` on the row. To animate in as it scrolls into view, use `data-once`, which plays one time as it comes near and needs enter.js. `data-view` is the other choice, a scroll-linked effect that plays backwards on the way up.
 - Case and tracking on a button: no token; write `.button { text-transform: uppercase; letter-spacing: .08em; }`, unlayered.
 
@@ -590,6 +591,13 @@ A wall of photos, cards of unpredictable length, quotes of different sizes: anyt
 ### How it works
 
 Everywhere, the masonry is a multi-column layout: `data-min` is the column width, `data-columns` caps the count, and each item is told not to break across columns. In that form items flow down the first column, then the next, so the reading order runs in columns. Where the browser supports native masonry, the same element becomes a grid with masonry rows, items read across as in a grid, and the gap is a real gap. Both forms use the same attributes and the same tokens, so nothing in your markup changes when a browser gains support. In the multi-column fallback the last item of each column keeps its bottom gap, so the fallback is one gap taller than the native form.
+
+Since the reading order depends on the browser, masonry suits items that can be read in any order. Where the order matters, as on a menu or a list of steps, use CSS columns directly, which read down each column everywhere:
+
+```css
+.menu { columns: 2; }
+.menu > * { break-inside: avoid; }
+```
 
 ### Why this name
 
@@ -1995,7 +2003,17 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
+
+A bar that stays dark in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
+
+```css
+.nav { color-scheme: dark; --yeti-nav-surface: oklch(30% 0.05 40); }
+```
+
+Setting `--yeti-color-text` on the nav instead reaches the bar but also the open panel, which keeps its own light surface, so the panel's words disappear.
+
+A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
 The actions slot takes anything, not only buttons: a running head, a version, a phone number. It inherits the bar's type, so quiet text is the page's two declarations:
 
@@ -3447,6 +3465,8 @@ One check every theme should make: a link is text. The default link color is the
 	--yeti-link-color-hover: var(--yeti-color-primary-strong);
 }
 ```
+
+Use a token here rather than a plain color, which stays the same in dark mode and in a dark region. A token set on `:root` resolves there, so a region that re-points `--yeti-color-primary-text` for itself sets `--yeti-link-color` too. Both tokens work on any element, for everything below it.
 
 Yeti ships two such files in `dist/themes/` as worked examples: `soft`, round and warm with pill buttons and roomy cards, and `sharp`, square and mono with thick borders. Neither needs any markup beyond ordinary Yeti classes — a theme changes what a component looks like, never what element or attribute you reach for to use it.
 

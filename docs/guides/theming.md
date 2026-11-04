@@ -138,4 +138,6 @@ One check every theme should make: a link is text. The default link color is the
 }
 ```
 
+Use a token here rather than a plain color, which stays the same in dark mode and in a dark region. A token set on `:root` resolves there, so a region that re-points `--yeti-color-primary-text` for itself sets `--yeti-link-color` too. Both tokens work on any element, for everything below it.
+
 Yeti ships two such files in `dist/themes/` as worked examples: `soft`, round and warm with pill buttons and roomy cards, and `sharp`, square and mono with thick borders. Neither needs any markup beyond ordinary Yeti classes — a theme changes what a component looks like, never what element or attribute you reach for to use it.

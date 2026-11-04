@@ -17,6 +17,31 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
+	test('a forced scheme carries the bar and the open panel with it', async ({ page }) => {
+		await open(page, 300);
+		await page.addStyleTag({ content: '#nav { color-scheme: dark; --yeti-nav-surface: rgb(60, 30, 20); }' });
+		const dark = (token, property) => page.evaluate(([t, p]) => {
+			const probe = document.createElement('div');
+			probe.style.colorScheme = 'dark';
+			probe.style[p] = `var(${t})`;
+			document.body.append(probe);
+			const got = getComputedStyle(probe)[p];
+			probe.remove();
+			return got;
+		}, [token, property]);
+		const text = await dark('--yeti-color-text', 'color');
+		expect(await style(page, '#nav', 'background-color')).toBe('rgb(60, 30, 20)');
+		expect(await style(page, '#nav', 'color')).toBe(text);
+		expect(await style(page, '#toggle', 'color')).toBe(text);
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#menu', 'background-color')).toBe(await dark('--yeti-color-surface-raised', 'backgroundColor'));
+		expect(await style(page, '#plain', 'color')).toBe(text);
+		expect(await style(page, '#current', 'color')).toBe(await dark('--yeti-color-primary-text', 'color'));
+		await page.hover('#plain');
+		await expect.poll(() => style(page, '#plain', 'background-color')).toBe(await dark('--yeti-color-primary-subtle', 'backgroundColor'));
+	});
+
 	test('a long brand wraps in a narrow bar instead of overflowing it', async ({ page }) => {
 		await open(page, 320);
 		await page.evaluate(() => { document.querySelector('#brand').textContent = 'Maas Glass Hall of Northern Crafts'; });
