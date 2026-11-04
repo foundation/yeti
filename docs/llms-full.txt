@@ -3545,6 +3545,8 @@ That is a deliberate choice over `animation: none`. An effect switched off mid-w
 
 It is also why the reset's universal rule is not the mechanism. A declaration in the components layer outranks a universal one in the reset, so that rule only reaches animation the browser or a third party brought. Yeti's own motion is stilled by its tokens.
 
+The reader's setting outranks yours. Under reduced motion those tokens are set on every element with `!important`, so a theme can change how long something takes, and it can't make it take that long for someone who asked for less. You don't need to wrap a token in `@media (prefers-reduced-motion: no-preference)`.
+
 Utilities that are entirely about movement carry their own pair, so tuning one gesture never moves another: `enter` has `--yeti-enter-duration`, `lift` has its own distance and shadow, and page transitions have `--yeti-page-duration`.
 
 ### Page transitions

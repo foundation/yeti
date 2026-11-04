@@ -415,7 +415,11 @@ export function validateImportOrder(srcDir) {
 	return errors;
 }
 
-/** !important is banned everywhere except the [hidden] rule in base/reset.css. */
+/**
+ * !important is banned everywhere except the [hidden] rule in base/reset.css and
+ * a token in src/tokens/ collapsed under reduced motion, where the reader's
+ * setting has to outrank a theme.
+ */
 export function validateImportant(srcDir) {
 	const errors = [];
 	for (const file of walkFiles(srcDir).filter((f) => f.endsWith('.css'))) {
@@ -424,8 +428,13 @@ export function validateImportant(srcDir) {
 		for (const m of text.matchAll(/!important/g)) {
 			const before = text.slice(0, m.index);
 			const selector = before.slice(before.lastIndexOf('{', before.lastIndexOf('{') - 1) + 1, before.lastIndexOf('{')).trim();
-			const allowed = path.relative(srcDir, file) === path.join('base', 'reset.css') && /\[hidden\]/.test(selector);
-			if (!allowed) errors.push({ file, line: before.split('\n').length, message: '!important is not allowed (only the [hidden] rule in base/reset.css may use it)' });
+			const open = before.lastIndexOf('{');
+			const declaration = before.slice(Math.max(before.lastIndexOf(';'), open) + 1).trim();
+			const reducedMotion = path.relative(srcDir, file).startsWith(`tokens${path.sep}`)
+				&& before.slice(0, before.lastIndexOf('{', open - 1)).trimEnd().endsWith('@media (prefers-reduced-motion: reduce)')
+				&& declaration.startsWith('--yeti-');
+			const allowed = reducedMotion || (path.relative(srcDir, file) === path.join('base', 'reset.css') && /\[hidden\]/.test(selector));
+			if (!allowed) errors.push({ file, line: before.split('\n').length, message: '!important is not allowed (only the [hidden] rule in base/reset.css and the reduced-motion tokens may use it)' });
 		}
 	}
 	return errors;

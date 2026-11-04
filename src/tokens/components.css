@@ -178,26 +178,29 @@
 	   animation beats the reset's reduced-motion rule, but not the value it
 	   resolves. The same idiom as motion.css. */
 	@media (prefers-reduced-motion: reduce) {
-		:root {
-			--yeti-spinner-duration: 0.01ms;
-			--yeti-carousel-scroll: auto;
-			--yeti-toc-scroll: auto;
-			--yeti-enter-duration: 0.01ms;
+		/* On every element and !important, as in motion.css: a theme's value
+		   for one of these must not undo the reader's setting. */
+		*, ::before, ::after {
+			--yeti-spinner-duration: 0.01ms !important;
+			--yeti-carousel-scroll: auto !important;
+			--yeti-toc-scroll: auto !important;
+			--yeti-enter-duration: 0.01ms !important;
 			/* The step goes with the duration. A collapsed duration alone would
 			   still hand the third card a 400ms wait and then pop it into place,
 			   which is a staggered arrival with the smooth part taken out. */
-			--yeti-enter-stagger: 0s;
+			--yeti-enter-stagger: 0s !important;
 			/* A delayed element that is invisible for three seconds is the opposite of less motion. */
-			--yeti-enter-delay: 0s;
-			--yeti-attention-duration: 0.01ms;
+			--yeti-enter-delay: 0s !important;
+			--yeti-attention-duration: 0.01ms !important;
+			--yeti-lift-duration: 0.01ms !important;
 			/* A hover lift is the one piece of motion here that is not a one-shot,
 			   and collapsing its duration is the wrong answer: the element would
 			   still move a quarter of a rem, just instantly, so every pass of the
 			   pointer becomes a flinch under the cursor. Reduced motion takes the
 			   movement away instead and leaves the deepened shadow to carry the
 			   whole hover, which is a change of appearance and not of position. */
-			--yeti-lift-distance: 0rem;
-			--yeti-lift-scale: 1;
+			--yeti-lift-distance: 0rem !important;
+			--yeti-lift-scale: 1 !important;
 		}
 	}
 }

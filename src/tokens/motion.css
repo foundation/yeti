@@ -23,17 +23,20 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		:root {
-			--yeti-duration-fast: 0.01ms;
-			--yeti-duration-base: 0.01ms;
-			--yeti-motion-iterations: 1;
+		/* On every element and !important, because the reader's setting has to
+		   outrank a theme: on :root alone, any unlayered value wins, and any value
+		   set lower down never reads the root at all. */
+		*, ::before, ::after {
+			--yeti-duration-fast: 0.01ms !important;
+			--yeti-duration-base: 0.01ms !important;
+			--yeti-motion-iterations: 1 !important;
 			/* base/transitions.css re-times the browser's own crossfade with
 			   this, so collapsing it here is what stops a page transition for
 			   a reader who asked for less motion. Nothing else can: the
 			   universal selector in the reset does not match a
 			   ::view-transition pseudo-element, and @view-transition is an
 			   at-rule with no element to select at all. */
-			--yeti-page-duration: 0.01ms;
+			--yeti-page-duration: 0.01ms !important;
 		}
 	}
 }

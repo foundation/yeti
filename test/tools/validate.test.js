@@ -182,13 +182,18 @@ test('validateImportOrder is silent when src/tokens does not exist', () => {
 	assert.deepEqual(run(validTree()).lines, []);
 });
 
-test('validateImportant allows only the [hidden] rule in the reset', () => {
+test('validateImportant allows only the [hidden] rule in the reset and reduced-motion tokens', () => {
 	const hidden = run(validTree({ 'src/base/reset.css': '@layer yeti.reset {\n\t[hidden] { display: none !important; }\n}\n' }));
 	assert.deepEqual(hidden.lines, []);
 	const elsewhere = run(validTree({ 'src/layouts/rail/rail.css': '.rail { display: flex !important; }\n' }));
-	assert.deepEqual(elsewhere.lines, ['src/layouts/rail/rail.css:1: !important is not allowed (only the [hidden] rule in base/reset.css may use it)']);
+	assert.deepEqual(elsewhere.lines, ['src/layouts/rail/rail.css:1: !important is not allowed (only the [hidden] rule in base/reset.css and the reduced-motion tokens may use it)']);
 	const wrongRule = run(validTree({ 'src/base/reset.css': 'img { display: block !important; }\n' }));
-	assert.deepEqual(wrongRule.lines, ['src/base/reset.css:1: !important is not allowed (only the [hidden] rule in base/reset.css may use it)']);
+	assert.deepEqual(wrongRule.lines, ['src/base/reset.css:1: !important is not allowed (only the [hidden] rule in base/reset.css and the reduced-motion tokens may use it)']);
+	const motion = '@media (prefers-reduced-motion: reduce) {\n\t* { --yeti-duration-fast: 0.01ms !important; }\n}\n';
+	assert.deepEqual(run(validTree({ 'src/tokens/rail.css': motion })).lines.filter((l) => l.includes('!important')), []);
+	assert.equal(run(validTree({ 'src/layouts/rail/rail.css': motion })).lines.filter((l) => l.includes('!important')).length, 1);
+	assert.equal(run(validTree({ 'src/tokens/rail.css': '@media print {\n\t* { --yeti-duration-fast: 0.01ms !important; }\n}\n' })).lines.filter((l) => l.includes('!important')).length, 1);
+	assert.equal(run(validTree({ 'src/tokens/rail.css': '@media (prefers-reduced-motion: reduce) {\n\t* { color: red !important; }\n}\n' })).lines.filter((l) => l.includes('!important')).length, 1);
 	const inString = run(validTree({ 'src/layouts/rail/rail.css': '.rail::after { content: "!important"; }\n' }));
 	assert.deepEqual(inString.lines, []);
 });
