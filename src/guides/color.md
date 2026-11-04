@@ -137,7 +137,17 @@ Yeti declares `color-scheme: light dark` on the root, so the page follows the re
 }
 ```
 
-A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way; forcing a scheme on any other element still flips everything below it.
+A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way.
+
+Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A band that is always dark says all three:
+
+```css
+.band {
+	color-scheme: dark;
+	background-color: var(--yeti-color-surface);
+	color: var(--yeti-color-text);
+}
+```
 
 Two things to know. The inputs, the hues and the chroma, only take effect on the root, because the ladder is computed there; so are the greys and the tones. A derived color, `--yeti-color-primary` or `--yeti-color-surface`, can be set on any element, and every role that reads it there follows; the greys do not, because they were mixed at the root from the poles the root had. If a section needs its own greys, force its scheme rather than its surface.
 

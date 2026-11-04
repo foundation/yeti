@@ -1,8 +1,31 @@
 # Yeti 7.0.0-alpha.0
 
-Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/
+Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/. Each component's guidance, every token's default and the color, theming and animation guides are in https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-alpha.0/dist/llms-full.txt; it is large, so search it rather than reading it whole.
 
 To begin a page, start from dist/starter/index.html, a complete and valid page (skip link, sticky nav, hero, card grid, prose, footer), and dist/starter/theme.css, the essential theme settings with their defaults, commented out. Copy both and delete what the page does not need.
+
+## Before you write CSS
+
+Most of what a page needs is an attribute or a token. Look here before writing a rule.
+
+- Tokens: set only the public `--yeti-*` tokens. Never set or read `--_yeti-*`: they are private and change without notice.
+- Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only; a rule on a component stays unlayered.
+- Modules: every component works with no script, and a module adds to it. Load one with `<script type="module" src=".../js/enter.js"></script>`, or all of them with `yeti.js`. Each block below names its module.
+- Light and dark: nothing to switch on. The root declares `color-scheme: light dark`, so a page follows the reader with no meta tag, class or attribute. Pin it with `html { color-scheme: dark; }`.
+- A region that is always dark: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`. All three are needed: the scheme alone flips links and buttons, but the text color is inherited already resolved. Use the same three with `light`.
+- The site's colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.
+- One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.
+- Links: `--yeti-link-color` and `--yeti-link-color-hover`, on any element, for everything below it. Set them on the region that should change, not on `:root`, and do not remap primary for them. Links in a nav bar read `--yeti-nav-link`.
+- Entrances: `class="enter" data-enter="rise"` with `data-stagger` on the row. To animate in as it scrolls into view, use `data-once`, which plays one time as it comes near and needs enter.js. `data-view` is the other choice, a scroll-linked effect that plays backwards on the way up.
+- Case and tracking on a button: no token; write `.button { text-transform: uppercase; letter-spacing: .08em; }`, unlayered.
+
+## Guides
+
+The reasoning behind the rules above. llms-full.txt carries these in full.
+
+- Color: https://foundationcss.com/yeti/guides/color/
+- Theming: https://foundationcss.com/yeti/guides/theming/
+- Animations: https://foundationcss.com/yeti/guides/animations/
 
 ## box (layout, class="box")
 
@@ -31,6 +54,11 @@ On children:
 - data-bleed on > * (boolean) — Breaks the child out of the column to span the full width.
 - data-note on > * (boolean) — A margin note: in the end gutter beside the child it follows when the breakout is wide, in the column when it is not.
 
+Children:
+- > *: at least 1. The content, in the column. Any child may carry data-bleed to span the full width.
+- > [data-bleed]: at least 0. Children that break out of the column.
+- > [data-note]: at least 0. A margin note: in the end gutter beside the child it follows when the breakout is wide, in the column when it is not.
+
 ## center (layout, class="center")
 
 Centers a column of content horizontally, up to a maximum width, with gutters on narrow screens.
@@ -50,6 +78,9 @@ Attributes:
 - data-justify: start (default) | center | end | between | around | evenly — How items are distributed along the row.
 - data-threshold: 3xs | 2xs | xs | sm | md | lg | xl | 2xl — The cluster's own width below which it is a column of full-width items; at or above it, the wrapping row. Makes the cluster a size container, so it takes the width of its block instead of its content.
 
+Children:
+- > *: at least 1. Anything sized by its content: tags, buttons, links, a logo and a nav.
+
 ## columns (layout, class="columns")
 
 Lays its children out as equal columns when the container is wider than a threshold, and as rows when it is not.
@@ -65,6 +96,11 @@ On children:
 - data-span on > *: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 — How many shares of the row the child takes: 2 is twice a plain sibling. Below the threshold it stacks like the rest.
 - data-shrink on > * (boolean) — The child is only as wide as its content and its siblings share the rest: an icon or a button beside text. Below the threshold it stacks like the rest.
 
+Children:
+- > *: at least 2. The columns. Each gets an equal share of the row.
+- > [data-span]: at least 0. A child that takes several shares of the row: data-span="2" is twice a plain sibling. Below the threshold it stacks like the rest.
+- > [data-shrink]: at least 0. A child that is only as wide as its content, an icon or a button beside text; its siblings share the rest. Below the threshold it stacks like the rest.
+
 ## container (layout, class="container")
 
 Makes its box the thing a container query measures, so what is inside can respond to its width instead of the viewport's.
@@ -72,6 +108,9 @@ Makes its box the thing a container query measures, so what is inside can respon
 On children:
 - data-show on *: 3xs | 2xs | xs | sm | md | lg | xl | 2xl — Show this element only while the nearest size container is this wide or wider. Below that width it is not rendered at all, and it is not in the accessibility tree either.
 - data-hide on *: 3xs | 2xs | xs | sm | md | lg | xl | 2xl — Hide this element once the nearest size container is this wide or wider. Below that width it is rendered as usual.
+
+Children:
+- > *: at least 1. Anything. The container itself arranges nothing.
 
 ## cover (layout, class="cover")
 
@@ -84,12 +123,19 @@ Attributes:
 On children:
 - data-center on > * (boolean) — Centers the child in the space the others leave; exactly one child carries it.
 
+Children:
+- > *: at least 1. A header, the centered child, a footer: any of them optional except the centered one.
+- > [data-center]: at least 1, at most 1. Exactly one child carries data-center and is centered in the remaining space.
+
 ## frame (layout, class="frame")
 
 Holds one child in a fixed aspect ratio, cropping an image, video or embedded document to fill it and centering anything else.
 
 Attributes:
 - data-ratio: 1/1 | 4/3 | 3/2 | 16/9 (default) | 21/9 — Width to height.
+
+Children:
+- > *: at least 1, at most 1. One child: an image, video, picture, iframe, embed or object is stretched to fill and cropped; anything else is centered.
 
 ## grid (layout, class="grid")
 
@@ -109,6 +155,9 @@ On children:
 - data-start on > *: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 — In a tracks grid, the column line the child begins on. Without it the child flows into the next free track.
 - data-span on > *: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 — In a tracks grid, how many tracks the child covers. Without it the child covers one.
 
+Children:
+- > *: at least 1. The cells. All are the same width, except in a tracks grid, where each covers the tracks it is placed on.
+
 ## icon (layout, class="icon")
 
 Sizes an inline SVG to the surrounding text and aligns it with the text beside it.
@@ -116,6 +165,9 @@ Sizes an inline SVG to the surrounding text and aligns it with the text beside i
 Attributes:
 - data-gap: none | xs (default) | sm | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between the icon and its text.
 - data-align: start | center (default) | end | stretch | baseline — How the icon lines up with the text: centered on the line, or on the baseline.
+
+Children:
+- > svg: at least 1, at most 1. The icon, an inline SVG, sized to one em.
 
 ## layer (layout, class="layer")
 
@@ -128,6 +180,11 @@ On children:
 - data-align-self on > *: start | center | end | stretch | baseline — Where the child sits vertically: start, center, end, stretch, or baseline.
 - data-justify-self on > *: start | center | end | stretch — Where the child sits horizontally: start, center, end, or stretch.
 
+Children:
+- > *: at least 2. The layers, bottom first.
+- > [data-align-self]: at least 0. A child that places itself vertically: start, center, end, stretch, or baseline.
+- > [data-justify-self]: at least 0. A child that places itself horizontally: start, center, end, or stretch.
+
 ## masonry (layout, class="masonry")
 
 Packs items of uneven height into columns with no gaps under the short ones.
@@ -136,6 +193,9 @@ Attributes:
 - data-min: none | 3xs | 2xs | xs (default) | sm | md | lg | xl | 2xl — The narrowest a column may be. none is meant to be paired with data-columns, which then gives an exact count; alone it gives a single full-width column.
 - data-columns: 1 | 2 | 3 | 4 | 5 | 6 — The most columns allowed. Fewer appear when the container cannot fit that many at data-min.
 - data-gap: none | xs | sm | md (default) | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between columns and between items.
+
+Children:
+- > *: at least 2. The items. Each keeps its own height.
 
 ## overlay (layout, class="overlay")
 
@@ -149,6 +209,10 @@ On children:
 - data-over on > * (boolean) — Lifts the child out of the flow and centers it over the box; exactly one child carries it.
 - data-fill on > [data-over] (boolean) — On the same child: cover the box rather than sit centred in it, which is what a veil, a dimmer or a loading state wants. Positioning only, so a veil that wants its own content centred puts a layout inside itself.
 
+Children:
+- > *: at least 2. The content underneath, in normal flow, and one held child.
+- > [data-over]: at least 1, at most 1. Exactly one child carries data-over; it leaves the flow and is centered over the box.
+
 ## scroller (layout, class="scroller")
 
 Lays its children out in a single row that scrolls horizontally.
@@ -158,6 +222,9 @@ Attributes:
 - data-width: 3xs | 2xs | xs | sm | md | lg | xl | 2xl — Give every item this width instead of its natural one.
 - data-snap (boolean) — Snap each item's start edge into place as the track scrolls.
 - data-justify: start | center | end — Where each item settles along the track when data-snap is set: its start edge, its center, or its end. Nothing without data-snap.
+
+Children:
+- > *: at least 1. The items. None shrinks; the track scrolls instead. A single wide item (a table, an image) is legal: the scroller then just gives that one item horizontal overflow.
 
 ## sidebar (layout, class="sidebar")
 
@@ -171,6 +238,9 @@ Attributes:
 
 On children:
 - data-sticky on > * (boolean) — Pins this child at --yeti-sticky-offset from the top of the scrollport while the other one scrolls past it. It takes its own height rather than the row's, since a stretched item has nowhere to move.
+
+Children:
+- > *: at least 2, at most 2. Exactly two: the sidebar and the content, in either order according to data-side.
 
 ## stack (layout, class="stack")
 
@@ -187,6 +257,10 @@ On children:
 - data-space on > *: none | xs | sm | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — The gap before this one child, larger or smaller than the stack's own: more room above a heading, less between a label and its field. Does nothing on the first child; data-split wins on a child carrying both.
 - data-sticky on > * (boolean) — Pins this child at --yeti-sticky-offset from the top of the scrollport while the rest of the stack scrolls past it. It keeps the full width of the column, a stack stretching its children on the inline axis.
 
+Children:
+- > *: at least 1. Anything. Each child's margins are reset; the stack owns the space between them.
+- > [data-split]: at least 0, at most 1. At most one child may carry data-split; it and everything after it are pushed to the end of the stack when the stack is taller than its content.
+
 ## timeline (layout, class="timeline")
 
 Lays its entries along a rail with a marker each, on one side, or on alternate sides of a centred rail when it is wide.
@@ -194,6 +268,9 @@ Lays its entries along a rail with a marker each, on one side, or on alternate s
 Attributes:
 - data-gap: none | xs | sm | md | lg (default) | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between entries.
 - data-alternate (boolean) — Put entries on alternate sides of a centred rail once the list is wide enough.
+
+Children:
+- > li: at least 2. The entries, in order. Put a time, a heading, and text inside each.
 
 ## hero (recipe, class="hero")
 
@@ -211,6 +288,10 @@ On children:
 - data-min on > *: none | 3xs | 2xs | xs | sm | md | lg | xl | 2xl — The narrowest this child may get while the two share a row; the other gives way. Stacked, it has no effect.
 - data-span on > *: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 — How many shares of the row this child takes; the other child's default is 1.
 
+Children:
+- > *: at least 2, at most 2. Exactly two: the copy and the figure (an img, video, picture, canvas or svg, or an element wrapping one); the copy (the body) must not have any of those as a direct child (it would be taken for a second figure). A figure with a figcaption keeps its caption below the picture.
+- > [data-span]: at least 0, at most 2. A child that takes several shares of the row: data-span="3" beside a "2" is three fifths. Below the threshold both stack full width.
+
 ## media (recipe, class="media")
 
 Puts a figure beside a block of text and stacks them when the text would drop below half the width; the one-class form of a sidebar holding a frame and a stack.
@@ -223,6 +304,9 @@ Attributes:
 - data-max: 3xs | 2xs | xs | sm | md | lg | xl | 2xl — The widest the text may run side by side; the figure takes the rest of a wide row. data-width still sets where the two stack.
 - data-side: start | end — Put the figure at the start or the end while side by side, regardless of source order. Stacked, the source order holds.
 
+Children:
+- > *: at least 2, at most 2. Exactly two: the figure (an img, video, picture, canvas or svg, or an element wrapping one) and the body; the body must not have any of those as a direct child (it would be taken for a second figure), so an inline svg icon inside the body goes in a wrapper or beside its heading in a paragraph. A figure with a figcaption keeps its caption below the picture.
+
 ## shell (recipe, class="shell")
 
 The page skeleton: header on top, footer at the bottom of the viewport when the page is short, and a body row where nav and aside sit beside main while there is room.
@@ -234,13 +318,31 @@ Attributes:
 On children:
 - data-sticky on > div > :is(nav, aside) (boolean) — Pins the nav or the aside at --yeti-sticky-offset from the top of the scrollport while main scrolls past it.
 
+Children:
+- > *: at least 1. In order: an optional header, the body (a div holding nav, main, and aside, in that source order, or a bare main when there are no side regions), and an optional footer.
+- > header: at least 0, at most 1. undefined
+- > footer: at least 0, at most 1. undefined
+- > main: at least 0, at most 1. undefined
+- > div: at least 0, at most 1. The body row. Its nav and aside take data-width; its main takes the rest and never drops below half.
+
 ## accordion (component, class="accordion")
 
 A column of disclosures built on details and summary, each opening to show its panel, with the browser doing the opening, the keyboard, and the announcing.
 
+Children:
+- > details: at least 2. One disclosure each. Give them all the same name attribute to have the browser close the others when one opens.
+- summary: at least 2. The row that opens its panel; one per details, first inside it.
+
 ## affix (component, class="affix")
 
 Joins a control with what belongs beside it, a unit, a symbol, a button, or another control, into one thing with a shared border and height.
+
+Children:
+- > *: at least 2. The controls and their attachments, in visual order.
+- > input: at least 0. A control; every control grows to share the row.
+- > select: at least 0. A control; every control grows to share the row.
+- > span: at least 0, at most 2. A text prefix or suffix.
+- > .button: at least 0, at most 2. A button prefix or suffix.
 
 ## alert (component, class="alert")
 
@@ -256,6 +358,11 @@ On children:
 module: alert.js (optional)
 - event yeti:close — Dispatched on the .alert after the fade and before it is removed, while it is still in the page.
 
+Children:
+- > svg: at least 0, at most 1. An icon, first, sized to the text.
+- > [data-close]: at least 0, at most 1. A button, last, that removes the alert when alert.js is loaded.
+- > *: at least 1. The message, in any element.
+
 ## badge (component, class="badge")
 
 A small inline label for a status or a count, tinted by a hue.
@@ -265,12 +372,19 @@ Attributes:
 - data-emphasis: high | medium (default) | low — medium is a subtle tint with dark text, high a solid fill, low text alone.
 - data-size: sm | md (default) | lg — The text size the badge sits beside; the badge renders one step smaller.
 
+Children:
+- > svg: at least 0, at most 1. An optional icon, sized to the text.
+
 ## breadcrumbs (component, class="breadcrumbs")
 
 The trail from the home page to the current one, each step a link, with a separator between them that is seen and not read.
 
 Attributes:
 - data-size: sm | md (default) | lg — The text step.
+
+Children:
+- > ol: at least 1, at most 1. The trail, in order, with role="list".
+- li: at least 2. A step: a link, or plain text with aria-current="page" for the last.
 
 ## button (component, class="button")
 
@@ -281,6 +395,10 @@ Attributes:
 - data-emphasis: high (default) | medium | low — How loud: high is a solid fill, medium an outline, low text alone.
 - data-size: sm | md (default) | lg — Scales the text and the padding together.
 
+Children:
+- > svg: at least 0, at most 1. An optional icon, sized to the text.
+- > input: at least 0, at most 1. On a label.button, the radio or checkbox that makes it a toggle: hidden from sight, still focusable, pressed while checked.
+
 ## buttons (component, class="buttons")
 
 A group of buttons: a wrapping row, or one joined control with data-affix.
@@ -288,6 +406,9 @@ A group of buttons: a wrapping row, or one joined control with data-affix.
 Attributes:
 - data-gap: none | xs | sm (default) | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between buttons when not affixed.
 - data-affix (boolean) — Join the buttons into one segmented control that shares borders.
+
+Children:
+- > .button: at least 2. The buttons.
 
 ## card (component, class="card")
 
@@ -301,6 +422,12 @@ Attributes:
 
 On children:
 - data-stretch on a (boolean) — Stretches the link over the whole card, so the card is clickable while the link keeps its own name.
+
+Children:
+- > *: at least 1. A figure first if there is one, then the body, then an optional footer.
+- > figure: at least 0, at most 1. A figure element holding media and a caption; only the media is cropped.
+- > footer: at least 0, at most 1. Actions, pushed to the bottom of the card; in a grid with data-rows it takes the last row.
+- [data-stretch]: at least 0, at most 1. One link that is stretched over the whole card, so the card is clickable while the link keeps its own name.
 
 ## carousel (component, class="carousel")
 
@@ -318,6 +445,11 @@ On children:
 module: carousel.js (optional)
 - event yeti:slide with detail { index, slide } — Dispatched on the .carousel when a dot scrolls the track, with the slide's zero-based index.
 
+Children:
+- > [data-track]: at least 1, at most 1. The scrolling track holding the slides. A scrolling region is an interactive one, so give it role="group", a name, and tabindex="0".
+- [data-slide]: at least 2. One slide each, with an id a dot can link to.
+- > [data-dots]: at least 0, at most 1. A list of links, one per slide, each named by a span carrying visually-hidden or by an aria-label. With carousel.js loaded the module scrolls the track itself, so following one adds no history entry.
+
 ## demo (component, class="demo")
 
 A live example in a box the reader can drag narrower and wider, with a bar naming the example and the width stop the box is at, and the code beneath it.
@@ -333,6 +465,12 @@ On children:
 
 module: demo.js (optional)
 
+Children:
+- > figcaption: at least 0, at most 1. A title for the demo, above the box.
+- > [data-preview]: at least 1, at most 1. The resizable box: a bar naming the example across the top, then the example. Holds an iframe with the example in srcdoc, or the example's markup directly on a page that already loads Yeti. A box holding direct markup carries tabindex="0" because it scrolls; a framed box does not need one, because the iframe fills it exactly.
+- > [data-preview] > iframe: at least 0, at most 1. The framed example, loading yeti.css and yeti.js alone so the host page's styles never reach it and every module is present. Needs a title. With the module, an iframe without srcdoc, or an empty box, is filled from the code under the box.
+- > details: at least 0, at most 1. The code, collapsed: a summary reading View Code, plain text that underlines under the pointer, and a pre.
+
 ## dialog (component, class="dialog")
 
 The native dialog element as a modal, opened by a button whose commandfor names it, with the page behind it inert and focus held inside.
@@ -344,6 +482,10 @@ module: dialog.js (optional)
 - event yeti:open — Dispatched on the dialog once the browser has opened it from a commandfor button.
 - event yeti:close — Dispatched on the dialog when it closes, however it was closed.
 
+Children:
+- > *: at least 1. The contents: a heading that names the dialog, then whatever it is for.
+- > footer: at least 0, at most 1. The buttons, at the end edge. A button inside a form with method="dialog" closes it with no script.
+
 ## dropdown (component, class="dropdown")
 
 A button and a panel of links and buttons that opens under it, closing on Escape or a click outside, with no script unless it is asked to open on hover.
@@ -353,6 +495,10 @@ Attributes:
 - data-trigger: click (default) | hover — What opens the panel. Click always works; hover adds opening under the pointer, and needs the optional module and a pointer that hovers.
 
 module: hover.js (optional)
+
+Children:
+- > button[popovertarget]: at least 1, at most 1. The trigger; its popovertarget names the panel's id.
+- > [popover]: at least 1, at most 1. The panel, holding ordinary links and buttons.
 
 ## field (component, class="field")
 
@@ -372,6 +518,17 @@ module: range.js (optional)
 module: validate.js (optional)
 - event yeti:invalid with detail { controls } — Dispatched on the form when a submit is refused, carrying the invalid controls in document order.
 
+Children:
+- > label: at least 0, at most 1. The label, with for pointing at the control's id. Required unless the field is a fieldset with a legend.
+- > legend: at least 0, at most 1. The legend, when the field is a fieldset grouping several controls.
+- > input: at least 0, at most 1. The control.
+- > select: at least 0, at most 1. The control.
+- > textarea: at least 0, at most 1. The control.
+- > .affix: at least 0, at most 1. The control slot as an affix: a control with attachments, or two controls joined.
+- > output: at least 0, at most 1. A range's value, written by range.js and drawn over the thumb. Put it before the input. Leave it out on a page that does not load the module, which would leave it empty.
+- > [data-hint]: at least 0, at most 1. Help text, referenced by the control's aria-describedby.
+- > [data-error]: at least 0, at most 1. The error message, hidden until the control is invalid.
+
 ## nav (component, class="nav")
 
 A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen.
@@ -386,7 +543,16 @@ Attributes:
 On children:
 - data-brand on > * (boolean) — The site's name or mark, usually a link home.
 - data-close on li (boolean) — The item holding the button that closes the panel; hidden in the bar.
-- data-actions on > * (boolean) — Buttons at the end of the bar.
+- data-actions on > * (boolean) — A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
+
+Children:
+- > [data-brand]: at least 0, at most 1. The site's name or mark, usually a link home.
+- > button[popovertarget]: at least 1, at most 1. The toggle; its popovertarget names the list's id. Hidden while the links are in the bar.
+- > ul[popover]: at least 1, at most 1. The links, one per li, with role="list" and the id the toggle names.
+- li: at least 1. An entry in the list; each holds one link.
+- [data-close]: at least 0, at most 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
+- .dropdown: at least 0. A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges.
+- > [data-actions]: at least 0, at most 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ## pagination (component, class="pagination")
 
@@ -397,6 +563,10 @@ Attributes:
 - data-size: sm | md (default) | lg — The text step.
 - data-threshold: 3xs | 2xs | xs | sm (default) | md | lg | xl | 2xl — The pagination's own width below which only Previous, the current page, and Next remain.
 - data-justify: start (default) | center | end | between | around | evenly — Where the links sit in the row.
+
+Children:
+- > ol: at least 1, at most 1. The links, in page order, with role="list".
+- li: at least 2. A page link, or a span holding an ellipsis for skipped pages.
 
 ## progress (component, class="progress")
 
@@ -442,6 +612,12 @@ On children:
 - data-nowrap on th, td (boolean) — This cell keeps its line.
 - data-align on th, td, tr: start | center | end — Aligns the text of this cell, or of every cell in this row. A cell's own data-align or data-numeric outranks its row's.
 
+Children:
+- > caption: at least 0, at most 1. The table's title.
+- > thead: at least 0, at most 1. The header row. With data-sticky it pins at --yeti-sticky-offset as the rows scroll under it, painted with the surface and carrying its rule.
+- > tbody: at least 1. The rows.
+- [data-numeric]: at least 0. A cell (or header cell) of numbers: end-aligned with tabular figures.
+
 ## tabs (component, class="tabs")
 
 A row of tabs over their panels, showing one at a time when its module is loaded and all of them when it is not.
@@ -455,6 +631,11 @@ Attributes:
 module: tabs.js (optional)
 - event yeti:select with detail { tab, panel } — Dispatched on the .tabs when a click, an arrow key, or a hash reveal selects a tab; never for the pass at load that finds no hash to reveal.
 
+Children:
+- > [role="tablist"]: at least 1, at most 1. The tabs, in order, with a name of its own.
+- [role="tab"]: at least 2. A button whose aria-controls names its panel.
+- > [role="tabpanel"]: at least 2. A panel whose aria-labelledby names its tab.
+
 ## toc (component, class="toc")
 
 A column of links to the headings on the page, with the one being read marked as the reader scrolls.
@@ -467,12 +648,20 @@ Attributes:
 module: toc.js (optional)
 - event yeti:current with detail { link, heading } — Dispatched on the .toc when the mark moves to another link.
 
+Children:
+- > ul: at least 1, at most 1. The links, one per li, with role="list".
+- li: at least 1. One entry, holding a link whose href is the id of a heading on this page.
+
 ## tooltip (component, class="tooltip")
 
 A short hint that appears beside a control on hover and on focus, described to assistive tech and needing no script.
 
 Attributes:
 - data-placement: top (default) | bottom | start | end — Which side of the trigger the bubble sits on.
+
+Children:
+- > *: at least 2, at most 2. The trigger first, then the bubble.
+- > [role="tooltip"]: at least 1, at most 1. The bubble; the trigger names it with aria-describedby.
 
 ## attention (utility, class="attention")
 
@@ -522,3 +711,9 @@ Attributes:
 ## visually-hidden (utility, class="visually-hidden")
 
 Takes words out of sight and leaves them in the accessibility tree, for the name a control needs when its face is a picture.
+
+## Tokens
+
+Every public custom property. llms-full.txt gives each one's default and meaning.
+
+--yeti-base --yeti-ratio --yeti-base-min --yeti-base-max --yeti-ratio-min --yeti-ratio-max --yeti-viewport-min --yeti-viewport-max --yeti-space-none --yeti-space-xs --yeti-space-sm --yeti-space-md --yeti-space-lg --yeti-space-ratio --yeti-space-xl --yeti-space-2xl --yeti-space-3xl --yeti-space-4xl --yeti-space-xs-static --yeti-space-sm-static --yeti-space-md-static --yeti-space-lg-static --yeti-space-xl-static --yeti-space-2xl-static --yeti-space-3xl-static --yeti-space-4xl-static --yeti-radius-sm --yeti-radius-md --yeti-radius-lg --yeti-radius-full --yeti-width-3xs --yeti-width-2xs --yeti-width-xs --yeti-width-sm --yeti-width-md --yeti-width-lg --yeti-width-xl --yeti-width-2xl --yeti-height-sm --yeti-height-md --yeti-height-lg --yeti-height-xl --yeti-height-half --yeti-text-xs --yeti-text-sm --yeti-text-md --yeti-text-lg --yeti-text-xl --yeti-text-2xl --yeti-text-3xl --yeti-text-display --yeti-leading-md --yeti-leading-sm --yeti-leading-tight --yeti-measure --yeti-list-gap --yeti-heading-space-before --yeti-heading-space-after --yeti-lede-size --yeti-lede-measure --yeti-font-sans --yeti-font-mono --yeti-font-heading --yeti-stretch-text --yeti-stretch-heading --yeti-stretch-small --yeti-tracking-heading --yeti-duration-fast --yeti-duration-base --yeti-ease --yeti-motion-iterations --yeti-page-duration --yeti-page-ease --yeti-hue-primary --yeti-hue-secondary --yeti-hue-success --yeti-hue-warning --yeti-hue-alert --yeti-hue-neutral --yeti-chroma --yeti-color-primary --yeti-color-primary-subtle --yeti-color-primary-soft --yeti-color-primary-strong --yeti-color-primary-text --yeti-on-primary --yeti-color-secondary --yeti-color-secondary-subtle --yeti-color-secondary-soft --yeti-color-secondary-strong --yeti-color-secondary-text --yeti-on-secondary --yeti-color-success --yeti-color-success-subtle --yeti-color-success-soft --yeti-color-success-strong --yeti-color-success-text --yeti-on-success --yeti-color-warning --yeti-color-warning-subtle --yeti-color-warning-soft --yeti-color-warning-strong --yeti-color-warning-text --yeti-on-warning --yeti-color-alert --yeti-color-alert-subtle --yeti-color-alert-soft --yeti-color-alert-strong --yeti-color-alert-text --yeti-on-alert --yeti-color-neutral-subtle --yeti-color-neutral-soft --yeti-color-neutral --yeti-color-neutral-strong --yeti-color-neutral-text --yeti-on-neutral --yeti-color-surface --yeti-color-surface-raised --yeti-color-surface-sunken --yeti-color-text --yeti-color-text-muted --yeti-color-border --yeti-color-border-strong --yeti-color-scrim --yeti-color-focus --yeti-link-color --yeti-link-color-hover --yeti-cover-height --yeti-sticky-offset --yeti-scroll-padding --yeti-border-width --yeti-weight-normal --yeti-weight-bold --yeti-weight-heading --yeti-weight-strong --yeti-shadow-color --yeti-shadow-sm --yeti-shadow-md --yeti-control-size --yeti-control-radius --yeti-control-border --yeti-control-surface --yeti-control-chevron --yeti-opacity-muted --yeti-button-radius --yeti-button-weight --yeti-button-padding --yeti-button-padding-block --yeti-badge-radius --yeti-badge-weight --yeti-card-radius --yeti-card-padding --yeti-card-gap --yeti-card-border --yeti-card-surface --yeti-field-gap --yeti-switch-track --yeti-switch-thumb --yeti-table-stripe --yeti-table-border --yeti-seam-size --yeti-nav-padding --yeti-nav-radius --yeti-nav-border --yeti-nav-surface --yeti-nav-panel --yeti-nav-brand-weight --yeti-nav-brand-size --yeti-nav-logo-size --yeti-nav-link --yeti-breadcrumbs-separator --yeti-pagination-radius --yeti-alert-radius --yeti-alert-padding --yeti-alert-edge --yeti-progress-radius --yeti-progress-size --yeti-spinner-duration --yeti-spinner-width --yeti-accordion-border --yeti-accordion-padding --yeti-accordion-surface --yeti-accordion-summary --yeti-accordion-summary-hover --yeti-tabs-border --yeti-tabs-padding --yeti-dropdown-surface --yeti-dropdown-radius --yeti-dropdown-padding --yeti-dropdown-min --yeti-dropdown-open-delay --yeti-dropdown-close-delay --yeti-dialog-surface --yeti-dialog-radius --yeti-dialog-padding --yeti-dialog-backdrop --yeti-tooltip-surface --yeti-tooltip-text --yeti-tooltip-radius --yeti-carousel-dot --yeti-carousel-dot-size --yeti-carousel-scroll --yeti-toc-scroll --yeti-toc-padding --yeti-toc-hover --yeti-range-value --yeti-demo-border --yeti-demo-radius --yeti-demo-label --yeti-enter-duration --yeti-enter-distance --yeti-enter-scale --yeti-enter-stagger --yeti-enter-delay --yeti-enter-ease --yeti-lift-distance --yeti-lift-scale --yeti-lift-shadow --yeti-lift-duration --yeti-lift-ease --yeti-attention-duration --yeti-attention-distance --yeti-attention-scale --yeti-fit-width --yeti-white --yeti-black --yeti-grey --yeti-grey-0 --yeti-grey-10 --yeti-grey-20 --yeti-grey-30 --yeti-grey-40 --yeti-grey-50 --yeti-grey-60 --yeti-grey-70 --yeti-grey-80 --yeti-grey-90 --yeti-grey-100 --yeti-color-primary-0 --yeti-color-primary-10 --yeti-color-primary-20 --yeti-color-primary-30 --yeti-color-primary-40 --yeti-color-primary-50 --yeti-color-primary-60 --yeti-color-primary-70 --yeti-color-primary-80 --yeti-color-primary-90 --yeti-color-primary-100 --yeti-color-secondary-0 --yeti-color-secondary-10 --yeti-color-secondary-20 --yeti-color-secondary-30 --yeti-color-secondary-40 --yeti-color-secondary-50 --yeti-color-secondary-60 --yeti-color-secondary-70 --yeti-color-secondary-80 --yeti-color-secondary-90 --yeti-color-secondary-100 --yeti-color-success-0 --yeti-color-success-10 --yeti-color-success-20 --yeti-color-success-30 --yeti-color-success-40 --yeti-color-success-50 --yeti-color-success-60 --yeti-color-success-70 --yeti-color-success-80 --yeti-color-success-90 --yeti-color-success-100 --yeti-color-warning-0 --yeti-color-warning-10 --yeti-color-warning-20 --yeti-color-warning-30 --yeti-color-warning-40 --yeti-color-warning-50 --yeti-color-warning-60 --yeti-color-warning-70 --yeti-color-warning-80 --yeti-color-warning-90 --yeti-color-warning-100 --yeti-color-alert-0 --yeti-color-alert-10 --yeti-color-alert-20 --yeti-color-alert-30 --yeti-color-alert-40 --yeti-color-alert-50 --yeti-color-alert-60 --yeti-color-alert-70 --yeti-color-alert-80 --yeti-color-alert-90 --yeti-color-alert-100 --yeti-color-neutral-0 --yeti-color-neutral-10 --yeti-color-neutral-20 --yeti-color-neutral-30 --yeti-color-neutral-40 --yeti-color-neutral-50 --yeti-color-neutral-60 --yeti-color-neutral-70 --yeti-color-neutral-80 --yeti-color-neutral-90 --yeti-color-neutral-100

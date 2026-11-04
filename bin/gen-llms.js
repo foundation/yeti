@@ -2,13 +2,19 @@
 // The API as plain text for a language model. Two files: llms.txt lists
 // every component with its attributes, values and defaults; llms-full.txt
 // adds each docs fragment, accessibility notes, children and the token
-// catalogue. Every string comes from the manifest or a docs fragment, so
-// the file cannot say something the validator does not enforce.
+// catalogue and the guides an agent needs. Component strings come from the
+// manifest or a docs fragment, so they cannot say something the validator
+// does not enforce. The rules in the preamble are written by hand, because
+// they are the mistakes agents make, and each was checked in a browser.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadSchema, loadAndMerge, loadVocabulary } from './lib/manifest.js';
-import { readPackage } from './build.js';
+import { readPackage, cdnUrl } from './build.js';
+
+// The guides an agent needs and the component pages do not say: how color and
+// theming work across components, and what an entrance is for.
+const GUIDES = [['color', 'Color'], ['theming', 'Theming'], ['animations', 'Animations']];
 
 const KIND_ORDER = { layout: 0, recipe: 1, component: 2, utility: 3 };
 const ordered = (merged) => Object.values(merged).sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || a.name.localeCompare(b.name));
@@ -31,11 +37,31 @@ function preamble(pkg) {
 	return [
 		`# Yeti ${pkg.version}`,
 		'',
-		`Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (\`class="card"\`), configuration is a \`data-*\` attribute with a fixed value list (\`data-gap="md"\`), and state is native or ARIA (\`open\`, \`aria-current\`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: ${pkg.homepage}`,
+		`Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (\`class="card"\`), configuration is a \`data-*\` attribute with a fixed value list (\`data-gap="md"\`), and state is native or ARIA (\`open\`, \`aria-current\`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: ${pkg.homepage}. Each component's guidance, every token's default and the color, theming and animation guides are in ${cdnUrl(pkg, 'llms-full.txt')}; it is large, so search it rather than reading it whole.`,
 		'',
 		'To begin a page, start from dist/starter/index.html, a complete and valid page (skip link, sticky nav, hero, card grid, prose, footer), and dist/starter/theme.css, the essential theme settings with their defaults, commented out. Copy both and delete what the page does not need.',
 		'',
+		'## Before you write CSS',
+		'',
+		'Most of what a page needs is an attribute or a token. Look here before writing a rule.',
+		'',
+		'- Tokens: set only the public `--yeti-*` tokens. Never set or read `--_yeti-*`: they are private and change without notice.',
+		'- Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only; a rule on a component stays unlayered.',
+		'- Modules: every component works with no script, and a module adds to it. Load one with `<script type="module" src=".../js/enter.js"></script>`, or all of them with `yeti.js`. Each block below names its module.',
+		'- Light and dark: nothing to switch on. The root declares `color-scheme: light dark`, so a page follows the reader with no meta tag, class or attribute. Pin it with `html { color-scheme: dark; }`.',
+		'- A region that is always dark: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`. All three are needed: the scheme alone flips links and buttons, but the text color is inherited already resolved. Use the same three with `light`.',
+		'- The site\'s colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.',
+		'- One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.',
+		'- Links: `--yeti-link-color` and `--yeti-link-color-hover`, on any element, for everything below it. Set them on the region that should change, not on `:root`, and do not remap primary for them. Links in a nav bar read `--yeti-nav-link`.',
+		'- Entrances: `class="enter" data-enter="rise"` with `data-stagger` on the row. To animate in as it scrolls into view, use `data-once`, which plays one time as it comes near and needs enter.js. `data-view` is the other choice, a scroll-linked effect that plays backwards on the way up.',
+		'- Case and tracking on a button: no token; write `.button { text-transform: uppercase; letter-spacing: .08em; }`, unlayered.',
+		'',
 	];
+}
+
+function childLines(c) {
+	if (!c.children.length) return [];
+	return ['', 'Children:', ...c.children.map((ch) => `- ${ch.selector}: at least ${ch.min}${ch.max === null ? '' : `, at most ${ch.max}`}. ${ch.description}`)];
 }
 
 function block(c) {
@@ -49,19 +75,27 @@ function block(c) {
 	return lines;
 }
 
-export function renderCompact(merged, pkg) {
+const stripFrontMatter = (text) => text.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
+
+export function renderCompact(merged, pkg, tokens = [], guides = []) {
 	const lines = preamble(pkg);
-	for (const c of ordered(merged)) lines.push(...block(c), '');
+	if (guides.length) {
+		lines.push('## Guides', '', 'The reasoning behind the rules above. llms-full.txt carries these in full.', '');
+		for (const g of guides) lines.push(`- ${g.title}: ${new URL(`guides/${g.name}/`, pkg.homepage)}`);
+		lines.push('');
+	}
+	for (const c of ordered(merged)) lines.push(...block(c), ...childLines(c), '');
+	if (tokens.length) lines.push('## Tokens', '', 'Every public custom property. llms-full.txt gives each one\'s default and meaning.', '', tokens.map((t) => t.name).join(' '));
 	return `${lines.join('\n').trimEnd()}\n`;
 }
 
-export function renderFull(merged, tokens, docsByName, pkg) {
+export function renderFull(merged, tokens, docsByName, pkg, guides = []) {
 	const lines = preamble(pkg);
 	for (const c of ordered(merged)) {
 		lines.push(...block(c));
 		const docs = (docsByName[c.name] ?? '').trim();
 		if (docs) lines.push('', docs.replace(/^## /gm, '### '));
-		if (c.children.length) { lines.push('', 'Children:'); for (const ch of c.children) lines.push(`- ${ch.selector}: at least ${ch.min}${ch.max === null ? '' : `, at most ${ch.max}`}. ${ch.description}`); }
+		lines.push(...childLines(c));
 		if (c.tokens.some((t) => t.public)) { lines.push('', 'Tokens:'); for (const t of c.tokens.filter((t) => t.public)) lines.push(`- ${t.name} — ${t.description}`); }
 		const a = c.a11y;
 		if (a.requiredAttributes.length || a.keyboard.length || a.notes) {
@@ -76,6 +110,7 @@ export function renderFull(merged, tokens, docsByName, pkg) {
 	}
 	lines.push('## Tokens', '', 'Every public custom property, with its group and default. A theme is a file that sets some of these after yeti.css.', '');
 	for (const t of tokens) lines.push(`- ${t.name} (${t.group}): ${t.default} — ${t.description}`);
+	for (const g of guides) lines.push('', `## Guide: ${g.title}`, '', stripFrontMatter(g.body).replace(/^# .*\n+/, '').replace(/^(#+) /gm, '#$1 '));
 	return `${lines.join('\n').trimEnd()}\n`;
 }
 
@@ -91,7 +126,9 @@ export function writeLlms({ root, merged, entries, pkg }) {
 	}
 	const catalogueFile = path.join(root, 'src', 'tokens', 'tokens.json');
 	const tokens = fs.existsSync(catalogueFile) ? JSON.parse(fs.readFileSync(catalogueFile, 'utf8')) : [];
-	const files = { 'llms.txt': renderCompact(merged, pkg), 'llms-full.txt': renderFull(merged, tokens, docsByName, pkg) };
+	const guideFile = (name) => path.join(root, 'src', 'guides', `${name}.md`);
+	const guides = GUIDES.filter(([name]) => fs.existsSync(guideFile(name))).map(([name, title]) => ({ name, title, body: fs.readFileSync(guideFile(name), 'utf8') }));
+	const files = { 'llms.txt': renderCompact(merged, pkg, tokens, guides), 'llms-full.txt': renderFull(merged, tokens, docsByName, pkg, guides) };
 	for (const [name, content] of Object.entries(files)) {
 		fs.writeFileSync(path.join(distDir, name), content);
 		fs.writeFileSync(path.join(docsDir, name), content);

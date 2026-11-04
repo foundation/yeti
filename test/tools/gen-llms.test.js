@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { renderCompact, renderFull } from '../../bin/gen-llms.js';
 
-const pkg = { name: 'yeti-css', version: '7.0.0-beta.0', homepage: 'https://foundationcss.com/yeti/' };
+const pkg = { name: '@foundation/yeti', version: '7.0.0-beta.0', homepage: 'https://foundationcss.com/yeti/' };
 const merged = {
 	rail: {
 		name: 'rail', kind: 'layout', class: 'rail', description: 'A horizontal rail of items with a shared gap.',
@@ -70,4 +70,33 @@ test('every enumerated value appears and the default is marked exactly once per 
 	const line = out.split('\n').find((l) => l.startsWith('- data-gap:'));
 	for (const v of ['s', 'm', 'l']) assert.ok(line.includes(v));
 	assert.equal((line.match(/\(default\)/g) || []).length, 1);
+});
+
+test('the preamble says what an agent gets wrong without it', () => {
+	for (const out of [renderCompact(merged, pkg), renderFull(merged, tokens, docs, pkg)]) {
+		assert.ok(out.includes('Never set or read `--_yeti-*`'), 'private tokens');
+		assert.ok(out.includes('color-scheme: dark'), 'a dark region');
+		assert.ok(out.includes('--yeti-link-color'), 'link color');
+		assert.ok(out.includes('`@layer yeti.theme`'), 'where a rule goes');
+	}
+});
+
+test('the compact file lists the children a component needs and every public token by name', () => {
+	const out = renderCompact(merged, pkg, tokens);
+	assert.ok(out.includes('- > *: at least 1. The items.'));
+	assert.ok(out.includes('--yeti-space-md'));
+});
+
+test('the compact file links the guides and the full file carries them', () => {
+	const guides = [{ name: 'color', title: 'Color', body: '---\ntitle: "Color"\n---\n\n# Color\n\nForce a scheme.\n' }];
+	const compact = renderCompact(merged, pkg, tokens, guides);
+	assert.ok(compact.includes('- Color: https://foundationcss.com/yeti/guides/color/'));
+	const full = renderFull(merged, tokens, docs, pkg, guides);
+	assert.ok(full.includes('## Guide: Color'));
+	assert.ok(full.includes('Force a scheme.'));
+	assert.ok(!full.includes('title: "Color"'), 'front matter is dropped');
+});
+
+test('the compact file gives the address of the full file at its own version', () => {
+	assert.ok(renderCompact(merged, pkg).includes('https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-beta.0/dist/llms-full.txt'));
 });

@@ -1,8 +1,23 @@
 # Yeti 7.0.0-alpha.0
 
-Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/
+Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/. Each component's guidance, every token's default and the color, theming and animation guides are in https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-alpha.0/dist/llms-full.txt; it is large, so search it rather than reading it whole.
 
 To begin a page, start from dist/starter/index.html, a complete and valid page (skip link, sticky nav, hero, card grid, prose, footer), and dist/starter/theme.css, the essential theme settings with their defaults, commented out. Copy both and delete what the page does not need.
+
+## Before you write CSS
+
+Most of what a page needs is an attribute or a token. Look here before writing a rule.
+
+- Tokens: set only the public `--yeti-*` tokens. Never set or read `--_yeti-*`: they are private and change without notice.
+- Where a rule goes: unlayered CSS beats everything in Yeti, so a stylesheet of your own needs no specificity tricks. `@layer yeti.theme` sits below the components, so use it for bare elements only; a rule on a component stays unlayered.
+- Modules: every component works with no script, and a module adds to it. Load one with `<script type="module" src=".../js/enter.js"></script>`, or all of them with `yeti.js`. Each block below names its module.
+- Light and dark: nothing to switch on. The root declares `color-scheme: light dark`, so a page follows the reader with no meta tag, class or attribute. Pin it with `html { color-scheme: dark; }`.
+- A region that is always dark: `.band { color-scheme: dark; background-color: var(--yeti-color-surface); color: var(--yeti-color-text); }`. All three are needed: the scheme alone flips links and buttons, but the text color is inherited already resolved. Use the same three with `light`.
+- The site's colors: set the hues on `:root`, such as `--yeti-hue-primary: 55`. Hues only take effect there. A variant is one hue site-wide, so do not repurpose `secondary` for one element.
+- One element in another color: set the derived tokens on it, each a `light-dark()` pair: `.hero .button { --yeti-color-primary: light-dark(oklch(50% .13 55), oklch(75% .13 55)); --yeti-color-primary-strong: light-dark(oklch(42% .13 55), oklch(82% .13 55)); --yeti-on-primary: light-dark(#fff, #000); }`. Set these on any element and everything below it follows.
+- Links: `--yeti-link-color` and `--yeti-link-color-hover`, on any element, for everything below it. Set them on the region that should change, not on `:root`, and do not remap primary for them. Links in a nav bar read `--yeti-nav-link`.
+- Entrances: `class="enter" data-enter="rise"` with `data-stagger` on the row. To animate in as it scrolls into view, use `data-once`, which plays one time as it comes near and needs enter.js. `data-view` is the other choice, a scroll-linked effect that plays backwards on the way up.
+- Case and tracking on a button: no token; write `.button { text-transform: uppercase; letter-spacing: .08em; }`, unlayered.
 
 ## box (layout, class="box")
 
@@ -1937,7 +1952,7 @@ Attributes:
 On children:
 - data-brand on > * (boolean) — The site's name or mark, usually a link home.
 - data-close on li (boolean) — The item holding the button that closes the panel; hidden in the bar.
-- data-actions on > * (boolean) — Buttons at the end of the bar.
+- data-actions on > * (boolean) — A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ### When to use it
 
@@ -1971,7 +1986,15 @@ The panel changes shape with the nav. In the bar it is the dropdown's usual card
 
 Links that point down the same page (`href="#pricing"`) turn on smooth scrolling for the page, through `--yeti-toc-scroll`, the same switch a `toc` uses; a bare `href="#"` placeholder does not count, and under reduced motion the page goes back to the browser's jump.
 
-The brand is a wordmark, so it has tokens of its own: `--yeti-nav-brand-weight` and `--yeti-nav-brand-size`. Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
+The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-nav-brand-weight`, `--yeti-nav-brand-size` and `--yeti-nav-logo-size`. An `svg` or `img` straight inside the brand sits beside the name, centered on it, at the height of the bar's controls, with its width following the drawing:
+
+```html
+<a href="/" data-brand><svg aria-hidden="true" viewBox="0 0 24 24">…</svg>The Copper Pan</a>
+```
+
+The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
+
+Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
 The actions slot takes anything, not only buttons: a running head, a version, a phone number. It inherits the bar's type, so quiet text is the page's two declarations:
 
@@ -1990,7 +2013,7 @@ Children:
 - li: at least 1. An entry in the list; each holds one link.
 - [data-close]: at least 0, at most 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
 - .dropdown: at least 0. A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges.
-- > [data-actions]: at least 0, at most 1. Buttons at the end of the bar.
+- > [data-actions]: at least 0, at most 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 Tokens:
 - --yeti-nav-padding — Padding of the bar and of the open panel.
@@ -2000,6 +2023,7 @@ Tokens:
 - --yeti-nav-panel — Background of the open panel.
 - --yeti-nav-brand-weight — Weight of the brand.
 - --yeti-nav-brand-size — Size of the brand; 1em keeps the bar's.
+- --yeti-nav-logo-size — Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller.
 - --yeti-nav-link — Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color.
 - --yeti-stretch-small — font-stretch of a link.
 - --yeti-control-size — Minimum height of the bar, the toggle, and each link.
@@ -2565,6 +2589,22 @@ Between the ends the size is a proportion of the container, and the proportion i
 
 The container is the nearest ancestor with `container-type: inline-size`. That is what the [container](container.md) layout is for; `grid`, `timeline`, `nav`, `pagination` and `demo` are already size containers, as is a `card` with a leading figure and a `breakout` with a note; anything else needs a `container` above it, or the line measures the viewport. It has to be an ancestor: an element cannot query itself, so putting `billboard` and `container` on the same element measures the box outside it. With no container anywhere above, `cqi` falls back to the small viewport, so a billboard on a bare page grows with the window instead — a lesser effect, not a broken one.
 
+### A line of unknown length
+
+The default assumes a line of a certain length, and a headline from a CMS is not. CSS cannot measure text, but a template can count its letters. Pass the count in as a custom property and make the ceiling arrive at the width that many letters need:
+
+```html
+<h1 class="billboard" data-fit="md-display" style="--name-length: 14">The Copper Pan</h1>
+```
+
+```css
+.billboard {
+	--yeti-fit-width: calc(var(--yeti-text-display) * max(var(--name-length), 6) * 0.6);
+}
+```
+
+The `0.6` is an estimate of one letter's width as a fraction of its size. It fits most typefaces with a little room over; a condensed face can come down toward `0.45`, and a wide one needs more, so try the longest and shortest names you expect at a phone's width. The `max(…, 6)` is a floor for short names: without it a three-letter name reaches its ceiling in a very small box and stays that large as the box narrows, and it runs off a phone.
+
 ### Accessibility
 
 The clamp is the accessibility story. A size that is only `cqi` has no floor and no ceiling: it shrinks past legibility in a narrow column and runs off the top of a wide screen, and a reader who zooms in gets neither end back. The floor and the ceiling here are steps of the type scale, set in `rem`, so a larger default font size raises the floor and a billboard can never fall below a legible step; the middle of the ramp, between the two ends, follows the container instead.
@@ -2971,6 +3011,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-nav-panel (nav): var(--yeti-color-surface-raised) — Background of the open panel.
 - --yeti-nav-brand-weight (nav): var(--yeti-weight-strong) — Weight of the nav's brand.
 - --yeti-nav-brand-size (nav): 1em — Size of the nav's brand; 1em is the bar's own size.
+- --yeti-nav-logo-size (nav): var(--yeti-control-size) — Height of a logo in the nav's brand; its width follows the image.
 - --yeti-nav-link (nav): currentColor — Color of a plain link in the bar; the bar's own color unless set. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
 - --yeti-breadcrumbs-separator (breadcrumbs): "/" — The string between crumbs; a theme may prefer "›".
 - --yeti-pagination-radius (pagination): var(--yeti-radius-md) — Corner of each page target.
@@ -3106,3 +3147,370 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-color-neutral-80 (color): grey-80 at the neutral hue — The neutral hue at the lightness of --yeti-grey-80; flips with the scheme as the grey does.
 - --yeti-color-neutral-90 (color): grey-90 at the neutral hue — The neutral hue at the lightness of --yeti-grey-90; flips with the scheme as the grey does.
 - --yeti-color-neutral-100 (color): grey-100 at the neutral hue — The neutral hue at the lightness of --yeti-grey-100; flips with the scheme as the grey does.
+
+## Guide: Color
+
+<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page is how to use it. The <a href="theming.md">theming guide</a> is how to change it.</p>
+
+### Six hues, one chroma
+
+Everything starts from six hue angles, `primary`, `secondary`, `success`, `warning`, `alert` and `neutral`, and one chroma for how saturated the accents are. From those, Yeti derives every color at runtime, in both schemes at once, through one fixed ladder of lightness. Change a hue and the whole family moves with it; nothing is hand-picked.
+
+Each hue gets five steps and a partner for text placed on it:
+
+<div class="scroller" role="region" aria-label="The color ladder" tabindex="0" markdown="1">
+
+| Token | Light | Dark | For |
+| --- | --- | --- | --- |
+| `--yeti-color-primary-subtle` | L 0.95 | L 0.25 | a tint behind body text: a callout's background, a striped row |
+| `--yeti-color-primary-soft` | L 0.85 | L 0.35 | a soft fill or a border with some weight |
+| `--yeti-color-primary` | L 0.52 | L 0.70 | the color itself: a button, a badge, a bar, a link |
+| `--yeti-color-primary-strong` | L 0.42 | L 0.80 | the same thing under the pointer |
+| `--yeti-color-primary-text` | L 0.35 | L 0.85 | words in the hue on the page, at reading contrast |
+| `--yeti-on-primary` | near white | near black | words placed on the base color |
+
+</div>
+
+The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand: `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+
+### Text on color
+
+Two of the six steps exist only so that words read. `--yeti-on-primary` is what goes *on* the base color: it is near white in light mode, where the base is dark enough to carry it, and near black in dark mode, where the base is lifted to carry that instead. `--yeti-color-primary-text` is the hue *as* text on the page, pushed far enough from the surface to be read at body size. Reach for `on-` when you paint something the hue and put words on it; reach for `-text` when the words themselves are the hue.
+
+These are promises, not intentions. The browser tests check them at every hue angle in steps of thirty degrees, in both schemes:
+
+| Pair | Holds at least |
+| --- | --- |
+| page text on the page surface | 7:1 |
+| muted text on the page surface | 4.5:1 |
+| `on-` text on every base hue | 4.5:1 |
+| `-text` of every hue on the page surface | 4.5:1 |
+| page text on every `-subtle` tint | 7:1 |
+
+A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved. A theme that sets a derived color directly, `--yeti-color-primary: #0a7`, takes the promise into its own hands for that role.
+
+### Color that means something
+
+On a component, a hue is a status, not a decoration. `data-variant` takes the six names, and the component decides what to do with the color: a button fills with it, a badge tints itself with the subtle step and writes in the hue, a card tints its border, an alert washes its background with the subtle step behind a border in the hue, and a progress bar and a toc use it for the moving part. The word stays the same across all of them, so a reader learns `success` once.
+
+`danger` is a seventh word on that list that is not a seventh hue. It is `alert` under its Foundation 6 name, kept so a callout that said danger still says something. New pages should say `alert`.
+
+The words are the same as `data-paint` uses below, and that is the point: this is what `success` looks like as a status, and beside it as a fill.
+
+```html demo md
+<div class="stack" data-gap="md">
+	<div class="cluster" data-gap="sm" data-align="center">
+		<span class="badge" data-variant="success">Live</span>
+		<button class="button" type="button" data-variant="success">Publish</button>
+		<div class="alert" role="status" data-variant="success">
+			<svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			<div><strong>Saved.</strong> Your changes are live.</div>
+		</div>
+	</div>
+	<div class="box" data-paint="success">A section painted the same word: the base color, with the text made for it.</div>
+</div>
+```
+
+`data-variant` also takes `black` and `white`. They are the constants, not hues: a black button is black in dark mode too. Reach for them on a painted band, where a control in the band's own hue would disappear. That is what they are for: on the plain page one of them disappears in one scheme, white on a light page and black on a dark one, so they are not a substitute for `neutral`.
+
+### A color by name
+
+Anything can be painted. `data-paint` sets the background of any element, and the words on it, from one list: the six hues at their base step, three constants, and the eleven steps of the greyscale. `data-text` sets the words alone, from the same list, and on an element that is also painted it wins over the automatic color. Neither needs a class, and both outrank whatever background or color the element's own component gave it, so a `card` or a `button` can be painted too.
+
+- **A hue** paints the base color and puts its `on-` text on it, the same pair a button uses.
+- **`white`, `black` and `grey`** are the only three colors in Yeti that never move: white and black are what they say, and `grey` is 18% reflectance, the photographic middle. White takes black text, black takes white, and grey takes black. Reach for them when a thing must be that color on every page, a caption band over a photograph, and for the greyscale otherwise.
+- **`grey-0` to `grey-100`**, in tens, is the greyscale. `grey-0` is the page surface and `grey-100` is the page text, and each step is ten percent of the way from the one toward the other. A painted grey takes the page text up to `grey-40` and the page surface from `grey-50`, because half-way toward the text is where the text stops reading. The middle steps, `grey-40` to `grey-60`, suit a fill more than a block of text: no text color reaches full contrast on them.
+
+A grey names a distance, not a color. In light mode the scale runs from white toward black; in dark mode from black toward white; and `grey-20` is a quiet panel near the page in both. That is the whole reason the steps are numbers and not names. The frame below shows the scale the way the page's own scheme reads it, so on a page that follows your setting it reverses when you change it; the second row is the primary hue at the same eleven steps, which is a token rather than a paint value.
+
+```html demo sm
+<div class="stack" data-gap="sm">
+	<div class="cluster" data-gap="xs">
+		<span class="box" data-gap="xs" data-paint="grey-0">0</span>
+		<span class="box" data-gap="xs" data-paint="grey-10">10</span>
+		<span class="box" data-gap="xs" data-paint="grey-20">20</span>
+		<span class="box" data-gap="xs" data-paint="grey-30">30</span>
+		<span class="box" data-gap="xs" data-paint="grey-40">40</span>
+		<span class="box" data-gap="xs" data-paint="grey-50">50</span>
+		<span class="box" data-gap="xs" data-paint="grey-60">60</span>
+		<span class="box" data-gap="xs" data-paint="grey-70">70</span>
+		<span class="box" data-gap="xs" data-paint="grey-80">80</span>
+		<span class="box" data-gap="xs" data-paint="grey-90">90</span>
+		<span class="box" data-gap="xs" data-paint="grey-100">100</span>
+	</div>
+	<div class="cluster" data-gap="xs" aria-hidden="true">
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-0)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-10)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-20)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-30)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-40)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-50)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-60)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-70)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-80)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-90)"></span>
+		<span class="box" data-gap="sm" style="background-color: var(--yeti-color-primary-100)"></span>
+	</div>
+</div>
+```
+
+A button inside a painted band keeps its own colors, and on a band in the brand hue a brand-colored button disappears; paint the button too, `data-paint="white"` on a primary band, and it reads. Inside a painted element, a plain link and a caption take the element's color too. Without that, a link inside a primary band would be primary on primary. A link that is a button keeps its own colors, because it is a button, and a caption that names its own `data-text` keeps that. A painted element also keeps its background on paper: browsers drop backgrounds when printing unless told otherwise, and a band's words were chosen for that background, so Yeti asks for them to stay; the reader's own print setting can still take them away.
+
+```html demo md
+<div class="stack" data-gap="md">
+	<section class="box" data-paint="primary" data-gap="lg">
+		<h2>A painted band</h2>
+		<p>Its words are the color made for it, and so is <a href="#">a link inside it</a>. A heading, a paragraph and a link, all readable, nothing set by hand.</p>
+	</section>
+	<section class="box" data-paint="grey-80" data-gap="lg">
+		<p>Past the middle of the scale the words flip to the page surface. This is grey-80, a dark panel on a light page and a pale one on a dark page.</p>
+	</section>
+	<p data-text="grey-60">Muted words, with no background painted at all.</p>
+</div>
+```
+
+### Light and dark
+
+Yeti declares `color-scheme: light dark` on the root, so the page follows the reader's setting and every color above resolves for the scheme in use. To force one, set `color-scheme: light` or `dark` on any element and everything below it flips: the hues, the page roles, the greys and the tones. Force it on the root to opt a whole site out of dark mode; force it on a section to keep a photograph's caption band dark on a light page.
+
+```css
+@layer yeti.theme {
+	html { color-scheme: light; }
+}
+```
+
+A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way.
+
+Forcing a scheme on any other element flips the links, buttons and components below it, but the text color arrives inherited and already resolved, and nothing paints the element itself. A band that is always dark says all three:
+
+```css
+.band {
+	color-scheme: dark;
+	background-color: var(--yeti-color-surface);
+	color: var(--yeti-color-text);
+}
+```
+
+Two things to know. The inputs, the hues and the chroma, only take effect on the root, because the ladder is computed there; so are the greys and the tones. A derived color, `--yeti-color-primary` or `--yeti-color-surface`, can be set on any element, and every role that reads it there follows; the greys do not, because they were mixed at the root from the poles the root had. If a section needs its own greys, force its scheme rather than its surface.
+
+### In your own CSS
+
+Every color on this page is a public token, and a class of your own can read any of them: the ladder steps, the page roles, `--yeti-white`, `--yeti-black` and `--yeti-grey`, the greyscale `--yeti-grey-0` to `--yeti-grey-100`, and the same eleven steps at every hue, `--yeti-color-primary-0` to `--yeti-color-primary-100` and so on for the other five. A tone sits at exactly the lightness of the grey with its number, so a hued panel and its text can be picked from opposite ends of one scale:
+
+```css
+.promo {
+	background-color: var(--yeti-color-primary-20);
+	color: var(--yeti-color-primary-90);
+}
+```
+
+That pair flips with the scheme, follows the brand hue, and keeps its contrast, because the two numbers are seventy steps apart on the same ladder. The [tokens page](../tokens.md) lists every name with its default; the [theming guide](theming.md) says how to move the inputs they all derive from.
+
+## Guide: Theming
+
+<p class="lede">Yeti is themed by setting tokens, not by editing CSS. Every public token is a custom property named `--yeti-<group>-<name>`; the full list is on the [Tokens](../tokens.md) page. Set them on `:root` in your own stylesheet, after Yeti's, and everything that reads them follows.</p>
+
+```html
+<link rel="stylesheet" href="/css/yeti.css">
+<style>
+	:root {
+		--yeti-hue-primary: 160;
+		--yeti-ratio: 1.25;
+		--yeti-font-sans: "Inter", system-ui, sans-serif;
+	}
+</style>
+```
+
+### Hues in, colors out
+
+Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus one `--yeti-chroma` for how saturated accents are. From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
+
+How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue is something you set. A color is something Yeti works out, in both light and dark, from the hue.
+
+You can still override any derived color directly. `--yeti-color-primary: #0a7;` wins over the derivation for that one role, and every role that reads it, like `--yeti-color-focus`, follows.
+
+Two more families derive from those. The greyscale `--yeti-grey-0` to `--yeti-grey-100`, in tens, mixes the page surface toward the page text, so it follows a theme that sets either pole and flips with the scheme as they do, resolved at `:root` like the hues, so set the poles there. The hued tones `--yeti-color-primary-0` to `-100`, and the same for every hue, take each grey's lightness and put the hue's angle and chroma under it, so moving `--yeti-hue-primary` moves all eleven. Three constants stand outside the derivation and never move: `--yeti-white`, `--yeti-black`, and `--yeti-grey` at 18% reflectance. A class of your own can read any of them:
+
+```css
+.promo { background-color: var(--yeti-color-primary-20); color: var(--yeti-color-primary-90); }
+```
+
+Two things to know about where you set tokens. Hues, chroma, and the scale inputs only take effect on `:root`, because Yeti computes every derived token there. Forcing a color scheme, and overriding a derived token such as `--yeti-color-primary`, work on any element, so to give one section a different accent, set its derived colors on that section rather than its hue.
+
+### Reading an oklch value
+
+Yeti writes colors as `oklch(lightness chroma hue)`.
+
+- **Lightness** runs from 0 (black) to 1 (white) and, unlike hex or HSL, looks evenly spaced to the eye. Two colors with the same lightness feel equally bright whatever their hue.
+- **Chroma** is saturation: 0 is gray, and around 0.15 is a clear but not shouting accent. Above 0.2 some hues cannot be displayed on ordinary screens and the browser pulls them back into range.
+- **Hue** is an angle: 25 red, 80 amber, 145 green, 250 blue, 300 violet.
+
+The comment beside each color token in `yeti.css` gives its hex equivalent in light mode, so you can match it against a value you already know.
+
+### Light and dark
+
+`:root` declares `color-scheme: light dark`, so Yeti follows the visitor's preference and every color token is written once with `light-dark()`. To force one scheme for a whole page or a single panel, set `color-scheme: light` or `color-scheme: dark` on that element; everything inside it flips.
+
+```css
+@layer yeti.theme {
+	html { color-scheme: light; }
+}
+```
+
+A page pinned to one scheme sets `color-scheme` on the root, and every color in Yeti follows because each is a `light-dark()` pair; `dark` pins it the other way; forcing a scheme on any other element still flips everything below it. A theme that pins the scheme still has its own `@media (prefers-color-scheme: dark)` blocks applied for a visitor who prefers dark, because the query reads the visitor and not the page, so a pinned theme should not carry any.
+
+### The scale
+
+Type and space share one geometric scale up to `lg`, and space carries on above it on a ratio of its own. Three knobs cover most needs:
+
+```css
+:root {
+	--yeti-base: 1.0625rem;  /* body size, every viewport */
+	--yeti-ratio: 1.25;      /* each step is 1.25 times the last */
+	--yeti-space-ratio: 2;   /* each space stop above lg is twice the last */
+}
+```
+
+Left alone, both are fluid: the base grows from `--yeti-base-min` at `--yeti-viewport-min` to `--yeti-base-max` at `--yeti-viewport-max`, and the ratio from `--yeti-ratio-min` to `--yeti-ratio-max`, so headings open up more than body text on wide screens. Set the six `-min`, `-max`, and `-viewport-` tokens to shape that, or the two knobs above to switch it off.
+
+Sizes are named `xs sm md lg xl 2xl 3xl`, with `md` as the base step, and up to `lg` the same names mean the same step for space (`--yeti-space-lg`), text (`--yeti-text-lg`), and radius (`--yeti-radius-lg`). Above `lg` space leaves the type ratio behind: a ratio tuned for headings reaches a big heading in four steps and no further, and the room between sections wants to be many times the body size. So each space stop from `xl` up is `--yeti-space-ratio` times the one before, twice by default, which makes `xl` two bodies, `2xl` four, `3xl` eight and `4xl` sixteen, about 36, 72, 144 and 288 pixels on a wide screen. Set the ratio to tighten or loosen every section of a site at once, keeping it above `--yeti-ratio-max` so `xl` stays larger than `lg`; set one stop outright, `--yeti-space-3xl: 10rem`, to move one word alone. Each space token also has a `-static` twin for the rare gap that must not scale.
+
+### Fonts
+
+Yeti ships no web fonts. `--yeti-font-sans` and `--yeti-font-mono` default to the system stacks; set them to yours and load the font files however you prefer. A site with a second family for its headings sets `--yeti-font-heading`, which every heading level reads and which is the text face until then; `--yeti-weight-heading` is the headings' weight on their own, `--yeti-weight-bold` until a display face asks for 500 or 800.
+
+A variable font with a width axis has three more knobs: `--yeti-stretch-text`, `--yeti-stretch-heading`, and `--yeti-stretch-small` (captions, small print, a nav's links, a badge), `normal` by default, each a keyword or a percentage. Narrow text and a wide title in one family is one line each.
+
+`--yeti-tracking-heading` sets the letter-spacing of every heading level and the billboard together, `normal` by default and set in em so a large heading tightens more than a small one.
+
+### Make a theme
+
+Everything above sets tokens inline, in your own `<style>` block. A theme is the same idea moved into its own file: a stylesheet of token values on `:root`, and optionally a few rules for bare HTML elements, loaded after `yeti.css` so its values win.
+
+```html
+<link rel="stylesheet" href="/css/yeti.css">
+<link rel="stylesheet" href="/css/themes/soft.css">
+```
+
+A theme file has two parts. The first is tokens: `:root` blocks (optionally split by `@media (prefers-color-scheme: …)` for a value that should only change in one scheme) setting `--yeti-*` public tokens, outside any layer. The second is element rules, inside `@layer yeti.theme { … }`: rules that style bare HTML elements, `h1`, `p`, `a`, `figcaption`, `blockquote` and the rest, with descendant and child combinators, the `:hover`, `:focus-visible`, `:active` and `:visited` states, and the `::selection`, `::marker`, `::placeholder`, `::first-line` and `::first-letter` pseudo-elements, nesting `@media` and `@supports` as needed. The validator refuses a class, id or attribute selector, `*`, the sibling combinators `+` and `~`, `:is()`, `:where()`, `:has()` or `:not()`, any pseudo-class other than `:hover`, `:focus-visible`, `:active` and `:visited`, a custom property inside the layer, a rule outside it, and a token it doesn't recognize.
+
+This theme uses both. The tokens set the accent and space out the headings' letters, as capitals want; the element rules set headings in engraved capitals, italicize captions, and draw the quotation's bar at the border width instead of its heavier default:
+
+```css
+@layer yeti.reset, yeti.base, yeti.theme, yeti.layouts, yeti.components, yeti.utilities;
+
+:root {
+	--yeti-hue-primary: 200;
+	--yeti-tracking-heading: 0.04em;
+}
+
+@layer yeti.theme {
+	h1, h2, h3 { text-transform: uppercase; }
+	figcaption { font-style: italic; }
+	blockquote { border-inline-start-width: var(--yeti-border-width); }
+}
+```
+
+The first line repeats Yeti's layer order, the one statement a theme may make besides its blocks: a browser fixes the order of layers when it first meets them, so a theme that loads before `yeti.css` without it would put its element rules below the base instead of above it.
+
+A component's skin stays token-only: a class name belongs to Yeti, and a theme that restyled one would break when its internals change and could flatten its states. The layer sits above the base, so a theme's `h1` rule beats Yeti's, and below every layout, component and utility, so a theme's `a { color }` never repaints a link that is a button and its `p` margins never reach inside a `stack`; to change what a layout or component defines, set its tokens.
+
+Beyond the hues, chroma, and scale already covered above, each component publishes a few tokens of its own as its skin surface: `--yeti-button-radius`, `--yeti-card-padding`, `--yeti-badge-radius`, and the rest are listed on the [Tokens](../tokens.md) page. Setting those, rather than editing a component's CSS, is what makes a theme portable: it is data, not code, so it survives an upgrade to a newer Yeti untouched.
+
+A small theme can change a lot. This one shifts the accent hue, opens up the corners, and turns buttons into pills:
+
+```css
+:root {
+	--yeti-hue-primary: 30;
+	--yeti-radius-md: 1rem;
+	--yeti-radius-lg: 1.5rem;
+	--yeti-button-radius: var(--yeti-radius-full);
+}
+```
+
+One check every theme should make: a link is text. The default link color is the primary at its base step, which reads on the page for the hues Yeti ships but not for a light brand color. If your primary is light, point the links at the hue's text step:
+
+```css
+:root {
+	--yeti-link-color: var(--yeti-color-primary-text);
+	--yeti-link-color-hover: var(--yeti-color-primary-strong);
+}
+```
+
+Yeti ships two such files in `dist/themes/` as worked examples: `soft`, round and warm with pill buttons and roomy cards, and `sharp`, square and mono with thick borders. Neither needs any markup beyond ordinary Yeti classes — a theme changes what a component looks like, never what element or attribute you reach for to use it.
+
+## Guide: Animations
+
+<p class="lede">Everything that moves in Yeti reads a duration token, and that is what makes reduced motion work.</p>
+
+### Durations collapse, end states stay
+
+Yeti never removes an effect for a reader who has asked for less motion. It shortens it. Every animation and transition in the framework reads `--yeti-duration-fast` or `--yeti-duration-base`, and under `prefers-reduced-motion: reduce` both collapse to `0.01ms`. A dialog still opens, a card still lifts, a `lift` still changes color. They simply arrive rather than travel.
+
+That is a deliberate choice over `animation: none`. An effect switched off mid-way can strand an element somewhere its layout did not put it, and the reader is left looking at a half-open panel or nothing at all. A collapsed duration always ends where the CSS says it ends.
+
+It is also why the reset's universal rule is not the mechanism. A declaration in the components layer outranks a universal one in the reset, so that rule only reaches animation the browser or a third party brought. Yeti's own motion is stilled by its tokens.
+
+Utilities that are entirely about movement carry their own pair, so tuning one gesture never moves another: `enter` has `--yeti-enter-duration`, `lift` has its own distance and shadow, and page transitions have `--yeti-page-duration`.
+
+### Page transitions
+
+A browser can crossfade between two documents instead of snapping, with no script. Yeti does not turn this on. Turn it on in your own stylesheet, with one rule:
+
+```css
+@view-transition { navigation: auto; }
+```
+
+Both pages need it and they must be same-origin, so for a site built on one stylesheet it is on everywhere or nowhere.
+
+Yeti leaves that rule to you for two reasons. Cross-document view transitions are below Baseline, and Yeti's rule is that a feature below Baseline is guarded rather than assumed. There is also nothing to guard it with: `@view-transition` is an at-rule with no element to select, so unlike every other opt-in in Yeti it cannot hang off a class. Where the feature is missing, Firefox as this is written, the navigation just snaps and nothing is broken.
+
+What Yeti does supply is the timing:
+
+| Token | Default | |
+| --- | --- | --- |
+| `--yeti-page-duration` | `200ms` | How long the crossfade takes |
+| `--yeti-page-ease` | `ease` | The curve it runs on |
+
+The animation itself stays the browser's. Its crossfade already blends the two snapshots correctly, which a hand-written pair of opacity keyframes does not: those dip through the page background halfway unless they also carry `mix-blend-mode`. Yeti changes when it runs, not what it does.
+
+Re-timing it is also the only way to honour reduced motion here. No selector reaches an at-rule, and the reset's universal rule does not match a `::view-transition` pseudo-element, so the collapsed `--yeti-page-duration` is what stills the crossfade. Write your own view-transition animations and you take that back on yourself, so read the same two tokens if you do.
+
+A page transition is a whole-page crossfade and nothing more. Carrying one element across two pages needs `view-transition-name` on both, which Yeti has no vocabulary for yet.
+
+### Scroll-driven
+
+Two things in Yeti are paced by the scroll rather than the clock: an `enter` with `data-view` plays its arrival as the element comes into view, and a `progress` with `data-scroll` fills as the page is read. Both use `animation-timeline`, which is below Baseline, so both are guarded by `@supports`, and each fallback is honest: the arrival plays on load, and the reading bar is not shown. They answer reduced motion differently, on purpose. The arrival is switched off, because a scroll-paced animation ignores the collapsed duration and would move content a reader asked not to see move. The reading bar stays, because nothing in it moves on its own; it only mirrors the reader's hand.
+
+#### A marker along a path
+
+A dot that walks a curve as the page scrolls: an SVG draws the path, and the marker's `offset-path` repeats the same `d`, so a circle riding it can be paced by `animation-timeline: scroll(root)` instead of the clock.
+
+```css
+.marker {
+	offset-path: path("M0,20 Q100,0 200,20 T400,20");
+	offset-distance: 100%;
+}
+
+@supports (animation-timeline: scroll()) {
+	.marker {
+		animation: walk linear both;
+		animation-timeline: scroll(root);
+	}
+}
+
+@keyframes walk {
+	from { offset-distance: 0%; }
+	to { offset-distance: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.marker {
+		animation: none;
+	}
+}
+```
+
+The base rule puts the marker at the end of the walk, and only the animation inside `@supports` starts it at 0%. Where scroll timelines are missing, or motion is reduced, the dot rests at the end: a marker parked at the start would claim the reader had not moved, the same reason the reading bar is not shown at all without a timeline. Reduced motion does not collapse the duration here, because a scroll-driven animation never reads one; instead the rule turns the animation off outright, and the dot falls back to that resting place, reading as arrived rather than stranded at the start.
+
+The path is repeated from the SVG, not read from it: CSS has no way to reference an element's `d`, so the same coordinates live in both places and a change to one is a change to the other. The `path()` coordinates are CSS pixels of the marker's containing block, so an SVG that scales through its `viewBox` needs the path scaled with it, or the marker drifts off the drawn line.
