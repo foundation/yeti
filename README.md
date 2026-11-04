@@ -1,12 +1,12 @@
 # Yeti
 
-**A CSS-first, native, zero-build layout and styling framework for web designers. By [Foundation](https://foundationcss.com).**
+**A native-first, zero-build layout and styling framework for web designers. By [Foundation](https://foundationcss.com).**
 
 > **Foundation for Sites 6 users:** this repository is now Yeti, the successor to Foundation for Sites. Version 6 continues on the [`v6` branch](https://github.com/foundation/yeti/tree/v6) with bug fixes, and `foundation-sites` on npm keeps publishing 6.x from it. Read the [announcement](https://github.com/foundation/yeti/issues/15554) for the full story.
 
 ## Status
 
-Yeti is at `7.0.0-beta`. The class names, attributes and values, markers, public token names and module names are frozen; the [stability page](docs/guides/stability.md) has the exact list and what may still move before `7.0.0`.
+Yeti is in alpha. Class names, attributes and tokens can still change. They freeze at the first beta; the [stability page](docs/guides/stability.md) has the exact list and what may still move before `7.0.0`.
 
 ## What Yeti is
 
@@ -16,12 +16,12 @@ Yeti gives a designer the structure and the visual system to build a coherent si
 <link rel="stylesheet" href="/css/yeti.css">
 ```
 
-- **CSS-first and native.** Container queries, cascade layers, native nesting, `light-dark()`, `dialog`, `popover`, and scroll-snap do the work that used to need JavaScript or a preprocessor.
+- **Native first.** HTML, then CSS, then JavaScript. `dialog` and `popover` are real HTML, container queries, cascade layers, native nesting, `light-dark()` and scroll-snap do the work that used to need a preprocessor, and JavaScript only adds to what already works.
 - **Zero build, ever.** No Sass, no Node, no bundler required to use it. It composes into your build if you have one, but never demands it. The repository's own `npm run build` concatenates the source and writes a minified copy beside it; nobody using Yeti has to run it.
 - **Named layouts, not utility soup.** Intent-based layout primitives and composed recipes, configured with a few data attributes.
 - **One token scale.** Type and space derive from one base and one ratio at runtime. Change the ratio and the whole system recomputes.
 - **Accessible by default.** Correct focus handling and ARIA on every component, checked in CI.
-- **Legible to agents.** A machine-readable manifest describes every component, and the docs, type hints, and an MCP server are generated from it.
+- **Legible to agents.** A machine-readable manifest describes every component, and the docs, type hints and `llms.txt` are generated from it.
 
 ## What Yeti is not
 
