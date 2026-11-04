@@ -26,6 +26,53 @@ test.describe('nav', () => {
 		expect(lines).toBeGreaterThan(1);
 	});
 
+	test('a logo sits beside the name at the bar\'s control height, and the bar stays that tall', async ({ page }) => {
+		await open(page, 1000);
+		const before = await rect(page, '#nav');
+		await page.evaluate(() => {
+			document.querySelector('#brand').innerHTML = '<svg id="logo" aria-hidden="true" viewBox="0 0 20 10"><rect width="20" height="10"/></svg>Yeti';
+		});
+		const control = await page.evaluate(() => {
+			const probe = document.createElement('div');
+			probe.style.blockSize = 'var(--yeti-control-size)';
+			document.body.append(probe);
+			const h = probe.getBoundingClientRect().height;
+			probe.remove();
+			return h;
+		});
+		const logo = await rect(page, '#logo');
+		const after = await rect(page, '#nav');
+		expect(logo.height).toBeCloseTo(control, 1);
+		expect(logo.width).toBeCloseTo(control * 2, 1); // its own aspect ratio
+		expect(after.height).toBeCloseTo(before.height, 1);
+		const words = await page.evaluate(() => { const r = document.createRange(); r.selectNodeContents(document.querySelector('#brand').lastChild); const b = r.getBoundingClientRect(); return { left: b.left, top: b.top, bottom: b.bottom }; });
+		expect(words.left).toBeGreaterThan(logo.right); // a gap, not touching
+		expect((words.top + words.bottom) / 2).toBeCloseTo((logo.top + logo.bottom) / 2, 0);
+	});
+
+	test('a logo keeps its size and a long name wraps beside it in a narrow bar', async ({ page }) => {
+		await open(page, 320);
+		await page.evaluate(() => {
+			document.querySelector('#brand').innerHTML = '<svg id="logo" aria-hidden="true" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>Maas Glass Hall of Northern Crafts';
+		});
+		const logo = await rect(page, '#logo');
+		expect(logo.width).toBeCloseTo(logo.height, 1);
+		const overflow = await page.evaluate(() => { const n = document.querySelector('#nav'); return n.scrollWidth - n.clientWidth; });
+		expect(overflow).toBeLessThanOrEqual(0);
+	});
+
+	test('an img logo follows the same size, and the token moves it', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => {
+			const nav = document.querySelector('#nav');
+			nav.style.setProperty('--yeti-nav-logo-size', '20px');
+			document.querySelector('#brand').innerHTML = '<img id="logo" alt="" width="40" height="40" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">';
+		});
+		const logo = await rect(page, '#logo');
+		expect(logo.height).toBeCloseTo(20, 1);
+		expect(logo.width).toBeCloseTo(20, 1);
+	});
+
 	test('at or above the threshold the links sit in the bar and the toggle is gone', async ({ page }) => {
 		await open(page, 1000);
 		expect(await style(page, '#toggle', 'display')).toBe('none');

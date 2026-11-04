@@ -18,6 +18,9 @@
 	.nav:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
 	.nav > * { margin: 0; }
 	.nav > [data-brand] {
+		display: flex;
+		align-items: center;
+		gap: var(--yeti-space-xs);
 		font-weight: var(--yeti-nav-brand-weight);
 		font-size: var(--yeti-nav-brand-size);
 		color: inherit;
@@ -25,6 +28,14 @@
 		/* A long wordmark breaks into two even lines rather than pushing the
 		   bar past its edge; a one-word brand never wraps. */
 		text-wrap: balance;
+	}
+	/* A logo is as tall as the bar's controls, so it never makes the bar
+	   taller, and keeps its own proportions; flex: none leaves the shrinking
+	   to the words. */
+	.nav > [data-brand] > :is(svg, img) {
+		flex: none;
+		block-size: var(--yeti-nav-logo-size);
+		inline-size: auto;
 	}
 	.nav > [data-actions] {
 		display: flex;

@@ -82,7 +82,7 @@
       "selector": "> [data-actions]",
       "min": 0,
       "max": 1,
-      "description": "Buttons at the end of the bar."
+      "description": "A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button."
     }
   ],
   "markers": [
@@ -102,7 +102,7 @@
       "name": "data-actions",
       "type": "boolean",
       "on": "> *",
-      "description": "Buttons at the end of the bar."
+      "description": "A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button."
     }
   ],
   "tokens": [
@@ -140,6 +140,11 @@
       "name": "--yeti-nav-brand-size",
       "public": true,
       "description": "Size of the brand; 1em keeps the bar's."
+    },
+    {
+      "name": "--yeti-nav-logo-size",
+      "public": true,
+      "description": "Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller."
     },
     {
       "name": "--yeti-nav-link",

@@ -75,7 +75,15 @@ The panel changes shape with the nav. In the bar it is the dropdown's usual card
 
 Links that point down the same page (`href="#pricing"`) turn on smooth scrolling for the page, through `--yeti-toc-scroll`, the same switch a `toc` uses; a bare `href="#"` placeholder does not count, and under reduced motion the page goes back to the browser's jump.
 
-The brand is a wordmark, so it has tokens of its own: `--yeti-nav-brand-weight` and `--yeti-nav-brand-size`. Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
+The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-nav-brand-weight`, `--yeti-nav-brand-size` and `--yeti-nav-logo-size`. An `svg` or `img` straight inside the brand sits beside the name, centered on it, at the height of the bar's controls, with its width following the drawing:
+
+```html
+<a href="/" data-brand><svg aria-hidden="true" viewBox="0 0 24 24">…</svg>The Copper Pan</a>
+```
+
+The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
+
+Plain links take `--yeti-nav-link`, the bar's own color by default; on a painted bar set it to the color that reads there. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
 The actions slot takes anything, not only buttons: a running head, a version, a phone number. It inherits the bar's type, so quiet text is the page's two declarations:
 
@@ -111,7 +119,7 @@ Attributes that descendants carry, not the root.
 | --- | --- | --- | --- | --- |
 | `data-brand` | boolean |  | `> *` | The site's name or mark, usually a link home. |
 | `data-close` | boolean |  | `li` | The item holding the button that closes the panel; hidden in the bar. |
-| `data-actions` | boolean |  | `> *` | Buttons at the end of the bar. |
+| `data-actions` | boolean |  | `> *` | A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button. |
 
 </div>
 
@@ -123,7 +131,7 @@ Attributes that descendants carry, not the root.
 - `li`: at least 1. An entry in the list; each holds one link.
 - `[data-close]`: 0 to 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
 - `.dropdown`: any number. A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges.
-- `> [data-actions]`: 0 to 1. Buttons at the end of the bar.
+- `> [data-actions]`: 0 to 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ## Tokens
 
@@ -138,6 +146,7 @@ Attributes that descendants carry, not the root.
 | `--yeti-nav-panel` | Background of the open panel. |
 | `--yeti-nav-brand-weight` | Weight of the brand. |
 | `--yeti-nav-brand-size` | Size of the brand; 1em keeps the bar's. |
+| `--yeti-nav-logo-size` | Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller. |
 | `--yeti-nav-link` | Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color. |
 | `--yeti-stretch-small` | font-stretch of a link. |
 | `--yeti-control-size` | Minimum height of the bar, the toggle, and each link. |

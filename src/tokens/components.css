@@ -36,6 +36,7 @@
 		/* The brand is a wordmark; a theme sets it apart from the links here. */
 		--yeti-nav-brand-weight: var(--yeti-weight-strong);
 		--yeti-nav-brand-size: 1em;
+		--yeti-nav-logo-size: var(--yeti-control-size);
 		/* Plain links in the bar: the bar's own color unless a theme says
 		   otherwise. The current and hovered links keep the variant's tints. */
 		--yeti-nav-link: currentColor;
