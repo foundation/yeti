@@ -72,6 +72,8 @@ test.describe('leaders', () => {
 		const [row, name, text] = await Promise.all(['#unpriced-row', '#unpriced-name', '#unpriced-text'].map((s) => rect(page, s)));
 		expect(name.width).toBeCloseTo(row.width, 0);
 		expect(text.top).toBeGreaterThanOrEqual(name.bottom);
+		// The same gap a filled row has, and once: the empty element takes none.
+		expect(text.top - name.bottom).toBeCloseTo(await token(page, '--yeti-space-xs'), 1);
 	});
 
 	test('data-row makes one element a row, with no wrapper', async ({ page }) => {

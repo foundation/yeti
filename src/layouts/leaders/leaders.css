@@ -35,9 +35,16 @@
 		border-block-end: var(--yeti-leaders-line);
 	}
 	/* A row with no value, or an empty one, has nothing for the line to lead
-	   to, and a block gives its name the room the line and the value would
-	   have taken. The second child is the value by position, so an empty one
-	   is how a row with a description below says it has none. */
-	:is(.leaders:not([data-row]) > *, .leaders[data-row]):not(:has(> :nth-child(2):not(:empty))) { display: block; }
+	   to, and a column gives its name the room the line and the value would
+	   have taken, and keeps the row's gap above a description. The second
+	   child is the value by position, so an empty one is how a row with a
+	   description below says it has none; it leaves the column, or the gap
+	   would count twice. */
+	:is(.leaders:not([data-row]) > *, .leaders[data-row]):not(:has(> :nth-child(2):not(:empty))) {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+	:is(.leaders:not([data-row]) > *, .leaders[data-row]):not(:has(> :nth-child(2):not(:empty))) > :empty { display: none; }
 	:is(.leaders:not([data-row]) > *, .leaders[data-row]):not(:has(> :nth-child(2):not(:empty)))::after { content: none; }
 }
