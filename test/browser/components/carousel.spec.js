@@ -9,6 +9,13 @@ const open = async (page, width = 1000) => {
 const scrollLeft = (page, id) => page.evaluate((i) => document.getElementById(i).scrollLeft, id);
 
 test.describe('carousel', () => {
+	test('data-gap="none" leaves a slide filling the track', async ({ page }) => {
+		await open(page);
+		await page.evaluate(() => document.getElementById('one').setAttribute('data-gap', 'none'));
+		const [track, slide] = await Promise.all([rect(page, '#track'), rect(page, '#s1')]);
+		expect(slide.width).toBeCloseTo(track.width, 0);
+	});
+
 	test('one slide fills the track and the track snaps', async ({ page }) => {
 		await open(page);
 		const [track, slide] = await Promise.all([rect(page, '#track'), rect(page, '#s1')]);

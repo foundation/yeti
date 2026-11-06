@@ -78,6 +78,40 @@ test.describe('grid', () => {
 		expect(perRow(await rects(page, '#fold > *'))).toBe(1);
 	});
 
+	test('data-gap="none" keeps the column count', async ({ page }) => {
+		await open(page, 'grid', 1200);
+		await page.evaluate(() => {
+			const g = document.getElementById('fold');
+			g.removeAttribute('data-fold');
+			g.setAttribute('data-gap', 'none');
+		});
+		expect(perRow(await rects(page, '#fold > *'))).toBe(4);
+	});
+
+	for (const [min, four, two, one] of [['3xs', 600, 400, 200], ['2xs', 800, 500, 300]]) {
+		test(`data-fold follows data-min="${min}"`, async ({ page }) => {
+			await open(page, 'grid', four);
+			await page.evaluate((m) => document.getElementById('fold').setAttribute('data-min', m), min);
+			expect(perRow(await rects(page, '#fold > *'))).toBe(4);
+			await stage(page, two);
+			expect(perRow(await rects(page, '#fold > *'))).toBe(2);
+			await stage(page, one);
+			expect(perRow(await rects(page, '#fold > *'))).toBe(1);
+		});
+	}
+
+	for (const [min, six, three, one] of [['3xs', 800, 500, 300], ['2xs', 1200, 700, 400]]) {
+		test(`data-fold with data-min="${min}" and six columns steps 6, 3, 1`, async ({ page }) => {
+			await open(page, 'grid', six);
+			await page.evaluate((m) => document.getElementById('fold6').setAttribute('data-min', m), min);
+			expect(perRow(await rects(page, '#fold6 > *'))).toBe(6);
+			await stage(page, three);
+			expect(perRow(await rects(page, '#fold6 > *'))).toBe(3);
+			await stage(page, one);
+			expect(perRow(await rects(page, '#fold6 > *'))).toBe(1);
+		});
+	}
+
 	test('data-fold with data-min="sm" and six columns steps 6, 3, 1', async ({ page }) => {
 		await open(page, 'grid', 2400);
 		expect(perRow(await rects(page, '#fold6 > *'))).toBe(6);

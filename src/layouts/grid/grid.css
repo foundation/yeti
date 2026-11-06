@@ -34,6 +34,34 @@
 	}
 	.grid[data-fold]:not([data-tracks]) > * { grid-column: span 12; }
 
+	/* 3xs (8rem per column) */
+	@container (inline-size >= 16rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="3xs"]:is([data-columns="2"], [data-columns="4"]) > * { grid-column: span 6; }
+	}
+	@container (inline-size >= 24rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="3xs"][data-columns="6"] > * { grid-column: span 4; }
+	}
+	@container (inline-size >= 32rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="3xs"][data-columns="4"] > * { grid-column: span 3; }
+	}
+	@container (inline-size >= 48rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="3xs"][data-columns="6"] > * { grid-column: span 2; }
+	}
+
+	/* 2xs (12rem per column) */
+	@container (inline-size >= 24rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="2xs"]:is([data-columns="2"], [data-columns="4"]) > * { grid-column: span 6; }
+	}
+	@container (inline-size >= 36rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="2xs"][data-columns="6"] > * { grid-column: span 4; }
+	}
+	@container (inline-size >= 48rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="2xs"][data-columns="4"] > * { grid-column: span 3; }
+	}
+	@container (inline-size >= 72rem) {
+		.grid[data-fold]:not([data-tracks])[data-min="2xs"][data-columns="6"] > * { grid-column: span 2; }
+	}
+
 	/* xs (16rem per column) */
 	@container (inline-size >= 32rem) {
 		.grid[data-fold]:not([data-tracks]):is(:not([data-min]), [data-min="xs"]):is([data-columns="2"], [data-columns="4"]) > * { grid-column: span 6; }

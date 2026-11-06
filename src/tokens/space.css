@@ -12,7 +12,7 @@
 		   Keep it above --yeti-ratio-max so xl stays larger than lg. */
 		--yeti-space-ratio: 2;
 
-		--yeti-space-none: 0;
+		--yeti-space-none: 0px; /* A length: a bare 0 is invalid when calc() adds it to a percentage. */
 		--yeti-space-xs: var(--_yeti-step--2);
 		--yeti-space-sm: var(--_yeti-step--1);
 		--yeti-space-md: var(--_yeti-step-0);

@@ -2990,7 +2990,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-ratio-max (scale): 1.333 — Scale ratio at the wide viewport (perfect fourth).
 - --yeti-viewport-min (scale): 320px — Viewport width at which the narrow values apply.
 - --yeti-viewport-max (scale): 1280px — Viewport width at which the wide values apply.
-- --yeti-space-none (space): 0 — No space; the value behind data-gap="none".
+- --yeti-space-none (space): 0px — No space; the value behind data-gap="none".
 - --yeti-space-xs (space): step -2 — Hairline gap.
 - --yeti-space-sm (space): step -1 — Tight gap.
 - --yeti-space-md (space): step 0 — Default gap; equals the body text size.

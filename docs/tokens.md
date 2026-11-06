@@ -34,7 +34,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 | Token | Default | Description |
 | --- | --- | --- |
-| `--yeti-space-none` | `0` | No space; the value behind data-gap="none". |
+| `--yeti-space-none` | `0px` | No space; the value behind data-gap="none". |
 | `--yeti-space-xs` | `step -2` | Hairline gap. |
 | `--yeti-space-sm` | `step -1` | Tight gap. |
 | `--yeti-space-md` | `step 0` | Default gap; equals the body text size. |
