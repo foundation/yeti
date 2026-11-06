@@ -19,6 +19,8 @@
 		grid-template-columns: fit-content(100%) minmax(1.5rem, 1fr) auto;
 		align-items: last baseline;
 		gap: var(--yeti-space-xs);
+		/* A p or li row would otherwise stop at the reading width. */
+		max-inline-size: none;
 	}
 	:is(.leaders:not([data-row]) > *, .leaders[data-row]) > * {
 		grid-column: 1 / -1;
@@ -28,7 +30,7 @@
 	   short; what sits below keeps the reading width it had. */
 	:is(.leaders:not([data-row]) > *, .leaders[data-row]) > :is(:first-child, :nth-child(2)) { max-inline-size: none; }
 	:is(.leaders:not([data-row]) > *, .leaders[data-row]) > :first-child { grid-area: 1 / 1; }
-	:is(.leaders:not([data-row]) > *, .leaders[data-row]) > :nth-child(2) { grid-area: 1 / 3; }
+	:is(.leaders:not([data-row]) > *, .leaders[data-row]) > :nth-child(2) { grid-area: 1 / 3; text-align: end; }
 	:is(.leaders:not([data-row]) > *, .leaders[data-row])::after {
 		content: "";
 		grid-area: 1 / 2;

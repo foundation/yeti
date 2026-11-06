@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { open, rect, px, token, axe } from '../lib/layout.js';
+import { style, open, rect, px, token, axe } from '../lib/layout.js';
 
 const leader = (page, selector) => page.evaluate((s) => {
 	const after = getComputedStyle(document.querySelector(s), '::after');
@@ -74,6 +74,33 @@ test.describe('leaders', () => {
 		expect(text.top).toBeGreaterThanOrEqual(name.bottom);
 		// The same gap a filled row has, and once: the empty element takes none.
 		expect(text.top - name.bottom).toBeCloseTo(await token(page, '--yeti-space-xs'), 1);
+	});
+
+	test('a value that wraps ends every line at the row end', async ({ page }) => {
+		await open(page, 'leaders', 600);
+		expect(await style(page, '#solo-price', 'text-align')).toBe('end');
+		await page.evaluate(() => {
+			const row = document.createElement('div');
+			row.innerHTML = '<span>Trout</span><span id="wrapped">$21<br>$38 for two</span>';
+			document.getElementById('menu').append(row);
+		});
+		const right = await page.evaluate(() => {
+			const range = document.createRange();
+			range.selectNodeContents(document.getElementById('wrapped'));
+			return [...range.getClientRects()].map((r) => r.right);
+		});
+		expect(Math.min(...right)).toBeCloseTo(Math.max(...right), 0);
+	});
+
+	test('a row of any element reaches the end of the layout', async ({ page }) => {
+		await open(page, 'leaders', 1400);
+		await page.evaluate(() => {
+			const row = document.createElement('p');
+			row.id = 'p-row';
+			row.innerHTML = '<span>Trout</span><span>$21</span>';
+			document.getElementById('menu').append(row);
+		});
+		expect((await rect(page, '#p-row')).right).toBeCloseTo((await rect(page, '#menu')).right, 1);
 	});
 
 	test('data-row makes one element a row, with no wrapper', async ({ page }) => {
