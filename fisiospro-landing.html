@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FisiosPro IA Evolution — 247 Prompts para Carreira Estruturada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #000000;
+            --text: #F3F3F3;
+            --muted: #E6E6E6;
+            --accent: #FFD700;
+            --accent-2: #FFA500;
+            --panel: #141414;
+            --panel-2: #1a1a1a;
+            --divider-opacity: 0.18;
+            --focus: rgba(255, 215, 0, 0.18);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--muted);
+        }
+        .subheadline {
+            font-size: 1.4rem;
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+        .highlight {
+            color: #FFD700;
+            font-weight: 700;
+        }
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+        ul li {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+            color: var(--muted);
+        }
+        ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .cta-button {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+        .price-box {
+            background-color: var(--panel-2);
+            border: 2px solid var(--accent);
+            padding: 30px;
+            text-align: center;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+        .price-old {
+            font-size: 1.5rem;
+            text-decoration: line-through;
+            color: #BDBDBD;
+            margin-bottom: 10px;
+        }
+        .price-new {
+            font-size: 3rem;
+            color: #FFD700;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .price-info {
+            font-size: 1rem;
+            color: #E0E0E0;
+        }
+        .testimonial {
+            background-color: var(--panel-2);
+            border-left: 4px solid var(--accent);
+            padding: 25px;
+            margin: 40px 0;
+            font-style: italic;
+            color: var(--muted);
+        }
+        .testimonial-author {
+            text-align: right;
+            color: #FFD700;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        .guarantee {
+            background-color: var(--panel-2);
+            border: 2px solid var(--accent);
+            padding: 30px;
+            text-align: center;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+        .modules-list {
+            background-color: var(--panel-2);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        .module-item {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #E0E0E0;
+        }
+        .upsell-box {
+            background: linear-gradient(135deg, var(--panel-2), #2a2a2a);
+            border: 3px solid var(--accent);
+            padding: 40px;
+            margin: 60px 0;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            margin: 60px 0;
+            opacity: 0.95;
+        }
+
+        /* Hero e benefícios */
+        .hero {
+            background: linear-gradient(180deg, rgba(255,215,0,0.04), transparent 60%);
+            padding: 36px 0 10px 0;
+        }
+        .hero-inner {
+            text-align: center;
+            padding: 8px 12px 24px;
+        }
+        .hero .kicker {
+            color: var(--accent-2);
+            font-weight: 700;
+            letter-spacing: .6px;
+            margin-bottom: 10px;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            line-height: 1.12;
+        }
+        .hero-sub {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+            max-width: 820px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-ctas {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid rgba(255,215,0,0.12);
+            box-shadow: none;
+            padding: 12px 22px;
+        }
+        .hero-trust {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+
+        .benefits {
+            padding: 18px 0 6px;
+        }
+        .benefit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .benefit-card {
+            background: var(--panel);
+            border: 1px solid rgba(255,215,0,0.06);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .benefit-card h3 {
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+        .benefit-card p {
+            color: var(--muted);
+            font-size: 0.98rem;
+            margin-bottom: 0;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .final-cta {
+            background: linear-gradient(135deg, rgba(255,215,0,0.04), rgba(255,165,0,0.02));
+            border: 2px solid rgba(255,215,0,0.08);
+            padding: 28px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0 40px;
+        }
+        .final-cta .final-cta-note {
+            color: var(--muted);
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        /* Acessibilidade: foco visível e contraste para CTAs */
+        .cta-button:focus {
+            outline: 3px solid var(--focus);
+            outline-offset: 3px;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.45);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 16px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .subheadline {
+                font-size: 1.1rem;
+            }
+            .cta-button {
+                font-size: 1.2rem;
+                padding: 15px 24px;
+                max-width: 100%;
+                border-radius: 8px;
+            }
+            .price-new {
+                font-size: 2.5rem;
+            }
+            ul li {
+                padding-left: 26px;
+            }
+            .modules-list {
+                padding: 24px;
+            }
+            .section-divider {
+                margin: 40px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+            h1 {
+                font-size: 1.5rem;
+                line-height: 1.3;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.1rem;
+            }
+            p, ul li, .module-item {
+                font-size: 1rem;
+            }
+            .cta-button {
+                padding: 12px 18px;
+                font-size: 1rem;
+                border-radius: 6px;
+            }
+            .price-new {
+                font-size: 2rem;
+            }
+            .modules-list {
+                padding: 18px;
+            }
+            .testimonial, .guarantee, .price-box {
+                padding: 18px;
+            }
+            ul li:before {
+                left: -6px;
+                font-size: 1.1rem;
+            }
+            .upsell-box {
+                padding: 20px;
+            }
+            .section-divider {
+                margin: 30px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="kicker">Kit prático para fisioterapeutas</div>
+            <h1>Transforme sua agenda em uma carreira lucrativa e organizada — em 7 dias</h1>
+            <p class="hero-sub">247 prompts prontos para usar que posicionam seu atendimento, atraem pacientes e aumentam seu faturamento — mesmo com rotina corrida.</p>
+            <div class="hero-ctas">
+                <a href="#oferta" class="cta-button primary">QUERO TRANSFORMAR MINHA CARREIRA AGORA</a>
+                <a href="#o-que-voce-recebe" class="cta-button secondary">VER O QUE EU RECEBO</a>
+            </div>
+            <div class="hero-trust">Mais de <strong>200+ fisioterapeutas</strong> usando o método — garantia de 7 dias</div>
+        </div>
+    </section>
+
+    <!-- BENEFÍCIOS RÁPIDOS -->
+    <section class="benefits">
+        <h2 style="text-align:center; margin-top: 8px;">Benefícios que você verá em dias</h2>
+        <div class="benefit-grid">
+            <div class="benefit-card">
+                <h3>Agenda previsível</h3>
+                <p>Scripts e fluxo para transformar interessados em pacientes recorrentes.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>Conteúdo sem bloqueio</h3>
+                <p>Calendário de 30 dias e prompts para criar posts que convertem.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>Preço e valor</h3>
+                <p>Modelos de precificação e pacotes que aumentam sua percepção de valor.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+    <!-- O QUE É -->
+    <h2>O que é o FisiosPro IA Evolution?</h2>
+    <p>O <span class="highlight">FisiosPro IA Evolution</span> é um kit premium com <span class="highlight">247 prompts profissionais</span>, criado especificamente para fisioterapeutas que querem:</p>
+    <ul>
+        <li>Ter uma carreira organizada</li>
+        <li>Posicionar-se de forma profissional</li>
+        <li>Atrair mais pacientes</li>
+        <li>Estruturar Instagram, Google e WhatsApp</li>
+        <li>Criar conteúdo sem travar</li>
+        <li>Definir preços com clareza</li>
+        <li>Padronizar atendimento</li>
+        <li>Automatizar tarefas</li>
+        <li>Ter previsibilidade e rotina</li>
+    </ul>
+    <p>Tudo isso com <span class="highlight">prompts estratégicos</span>, construídos módulo por módulo.</p>
+    <p>São <span class="highlight">12 módulos completos</span>, baseados nas maiores dores dos fisioterapeutas.</p>
+    <p>É como se você tivesse um <span class="highlight">assistente profissional 24h</span> estruturando cada área da sua carreira para você.</p>
+    <div class="section-divider"></div>
+    <!-- PARA QUEM É -->
+    <h2>Para quem é este kit?</h2>
+    <h3>✓ Perfeito para fisioterapeutas que:</h3>
+    <ul>
+        <li>Estão cansados de trabalhar muito e receber pouco</li>
+        <li>Não têm tempo para estudar marketing ou organização</li>
+        <li>Ficam travados para criar conteúdo</li>
+        <li>Não sabem como estruturar preços, pacotes e vendas</li>
+        <li>Querem agenda cheia <em>e</em> carreira organizada</li>
+        <li>Desejam uma presença digital profissional</li>
+        <li>Têm dificuldade em se posicionar</li>
+        <li>Querem aumentar faturamento, autoridade e previsibilidade</li>
+    </ul>
+    <h3>✗ Não é para quem:</h3>
+    <ul style="opacity: 0.7;">
+        <li>Procura atalhos milagrosos</li>
+        <li>Não quer aplicar os prompts</li>
+        <li>Não aceita orientação</li>
+        <li>Busca uma solução "automática" sem trabalho</li>
+    </ul>
+    <p style="margin-top: 30px;">Se você quer <span class="highlight">crescer como profissional sem sacrificar sua vida</span>, este kit é para você.</p>
+    <div class="section-divider"></div>
+    <!-- O QUE VOCÊ VAI RECEBER -->
+    <h2>O que você vai receber</h2>
+    <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px;">
+        Um único <span class="highlight">PDF premium</span> com:
+    </p>
+    <div class="modules-list">
+        <div class="module-item"><span class="highlight">1.</span> Identidade profissional completa (22 prompts)</div>
+        <div class="module-item"><span class="highlight">2.</span> Marketing local e digital (20 prompts)</div>
+        <div class="module-item"><span class="highlight">3.</span> Organização da carreira e agenda (25 prompts)</div>
+        <div class="module-item"><span class="highlight">4.</span> Conteúdo profissional completo (28 prompts)</div>
+        <div class="module-item"><span class="highlight">5.</span> Vendas éticas e comunicação (24 prompts)</div>
+        <div class="module-item"><span class="highlight">6.</span> Profissionalização do atendimento (22 prompts)</div>
+        <div class="module-item"><span class="highlight">7.</span> Automação de mensagens (16 prompts)</div>
+        <div class="module-item"><span class="highlight">8.</span> KPIs, análises e relatórios (18 prompts)</div>
+        <div class="module-item"><span class="highlight">9.</span> Escala & contratação (20 prompts)</div>
+        <div class="module-item"><span class="highlight">10.</span> Precificação e pacotes (26 prompts)</div>
+        <div class="module-item"><span class="highlight">11.</span> Organização avançada & documentos (20 prompts)</div>
+        <div class="module-item"><span class="highlight">12.</span> Bônus especial: 7-Day Launch + aceleração (24 prompts)</div>
+    </div>
+    <p style="text-align: center; font-size: 1.3rem; margin-top: 30px;">
+        São <span class="highlight">247 prompts estratégicos</span> que cobrem absolutamente TUDO que um fisioterapeuta precisa para estruturar, organizar e expandir a carreira.
+    </p>
+    <div class="section-divider"></div>
+    <!-- O PROBLEMA -->
+    <h2>O problema que o kit resolve</h2>
+    <p>A verdade é simples:</p>
+    <h3 style="text-align: center; font-size: 1.8rem; margin: 30px 0;">Agenda cheia ≠ carreira estruturada</h3>
+    <p>A maioria dos fisioterapeutas fica presa em:</p>
+    <ul>
+        <li>Falha de organização</li>
+        <li>Rotina bagunçada</li>
+        <li>Falta de posicionamento</li>
+        <li>Comunicação ruim</li>
+        <li>Precificação confusa</li>
+        <li>Marketing inconsistente</li>
+        <li>Dificuldade em padronizar atendimento</li>
+        <li>Agenda instável</li>
+    </ul>
+    <p>Com isso, vivem apagando incêndios, exaustos, trabalhando muito e ganhando pouco.</p>
+    <p style="margin-top: 30px;">O FisiosPro IA Evolution foi criado <span class="highlight">exatamente</span> para mudar isso.</p>
+    <div class="section-divider"></div>
+    <!-- COMO TRANSFORMA -->
+    <h2>Como o kit transforma sua carreira</h2>
+    <p>Você vai conseguir:</p>
+    <ul>
+        <li>Construir sua identidade visual em minutos</li>
+        <li>Criar conteúdos diários sem travar</li>
+        <li>Estruturar um Instagram profissional de verdade</li>
+        <li>Ser encontrado no Google e avaliado</li>
+        <li>Organizar sua agenda e rotina</li>
+        <li>Criar pacotes e preços com clareza</li>
+        <li>Melhorar atendimento, fluxo, documentação</li>
+        <li>Profissionalizar sua comunicação</li>
+        <li>Automatizar mensagens que economizam tempo</li>
+        <li>Aumentar autoridade e percepção de valor</li>
+    </ul>
+    <p style="margin-top: 30px;"><span class="highlight">Tudo de forma guiada, prática e simples.</span></p>
+    <div class="section-divider"></div>
+    <!-- POR QUE FUNCIONA -->
+    <h2>Por que funciona tão bem?</h2>
+    <p>Porque não é teoria.<br>
+    Não é vídeo.<br>
+    Não é promessa vazia.</p>
+    <p style="margin-top: 30px;">São <span class="highlight">prompts ultra específicos</span>, construídos para gerar <span class="highlight">resultados imediatos</span>.</p>
+    <p style="text-align: center; font-size: 1.3rem; margin-top: 30px; color: #FFD700;">
+        Você copia → cola → preenche → usa.
+    </p>
+    <p style="text-align: center; font-size: 1.2rem;">Simples e eficiente.</p>
+    <div class="section-divider"></div>
+    <!-- PROVA SOCIAL -->
+    <h2>O que fisioterapeutas estão dizendo</h2>
+    <div class="testimonial-grid">
+        <div class="testimonial">
+            "Eu sempre tive dificuldade em organizar minha rotina e criar conteúdo. Em uma semana, consegui montar minha identidade visual, ajustar meu Instagram e criar 30 dias de conteúdo. Usei também os prompts de preço e finalmente consegui corrigir o valor das minhas sessões. Resultado: <span class="highlight">3 novas avaliações na mesma semana</span>."
+            <div class="testimonial-author">— Marcos A., Fisioterapeuta Esportivo</div>
+        </div>
+        <div class="testimonial">
+            "O FisiosPro IA Evolution deu a estrutura que eu precisava: pacotes, preços e templates de mensagem. Em 10 dias já senti diferença no fluxo de novos pacientes." 
+            <div class="testimonial-author">— Ana P., Fisioterapeuta Dermato-funcional</div>
+        </div>
+    </div>
+    <div class="section-divider"></div>
+    <!-- O QUE VOCÊ VAI TER EM 7 DIAS -->
+    <h2>O que você vai ter em 7 dias</h2>
+    <ul>
+        <li>Perfil profissional pronto</li>
+        <li>Bio, foto, identidade visual</li>
+        <li>30 dias de conteúdo organizado</li>
+        <li>Scripts de vendas e WhatsApp</li>
+        <li>Checklists de atendimento</li>
+        <li>Processo de agendamento completo</li>
+        <li>Precificação estruturada</li>
+        <li>Pacotes profissionais</li>
+        <li>Jornada do paciente organizada</li>
+        <li>Documentos, termos, relatórios</li>
+        <li>KPIs e dashboards</li>
+        <li>Agenda funcional</li>
+    </ul>
+    <div class="section-divider"></div>
+    <!-- OFERTA -->
+    <h2 id="oferta">Oferta especial de lançamento</h2>
+    <div class="price-box">
+        <div class="price-old">De R$ 297,00</div>
+        <div class="price-new">Por apenas R$ 197,00</div>
+        <div class="price-info">Oferta válida por apenas 48 horas</div>
+        <div class="price-info" style="margin-top: 15px; color: #FFD700; font-weight: 600;">Depois volta automaticamente para R$ 297</div>
+    </div>
+    <a href="https://pay.hotmart.com/J103435402O?bid=1765918846417_AQUI" class="cta-button">GARANTIR MEU ACESSO POR R$ 197 AGORA</a>
+    <div class="section-divider"></div>
+    <!-- GARANTIA -->
+    <h2>Garantia incondicional</h2>
+    <div class="guarantee">
+        <h3 style="margin-top: 0;">7 dias de garantia total</h3>
+        <p>Se não fizer sentido para você por qualquer motivo, basta pedir reembolso.</p>
+        <p style="margin-bottom: 0;"><span class="highlight">Simples e sem burocracia.</span></p>
+    </div>
+    <div class="section-divider"></div>
+    <!-- UPSELL -->
+    <div class="upsell-box">
+        <h2 style="margin-top: 0; text-align: center;">Oferta Exclusiva Pós-Compra</h2>
+        <h3 style="text-align: center; color: #FFD700; font-size: 2rem;">Sessão Estratégica Individual</h3>
+        <p style="text-align: center; font-size: 1.2rem; margin: 20px 0;">
+            Uma sessão estratégica personalizada comigo para:
+        </p>
+        <ul style="text-align: left; max-width: 600px; margin: 30px auto;">
+            <li>Ajustar identidade e posicionamento</li>
+            <li>Analisar Instagram e Google</li>
+            <li>Revisar preços e pacotes</li>
+            <li>Organizar sua agenda</li>
+            <li>Montar campanhas de captação</li>
+            <li>Criar ação de 7 dias personalizada</li>
+            <li>Tirar dúvidas específicas</li>
+        </ul>
+        <div style="text-align: center; margin: 30px 0;">
+            <div class="price-old">Valor normal: R$ 347,00</div>
+            <div class="price-new" style="margin-top: 10px;">Oferta exclusiva: R$ 197,00</div>
+        </div>
+        <p style="text-align: center; font-style: italic; color: #E0E0E0;">
+            Disponível apenas imediatamente após a compra do kit
+        </p>
+        <a href="SEU_LINK_UPSELL_AQUI" class="cta-button" style="margin-top: 30px;">SIM, QUERO A SESSÃO ESTRATÉGICA</a>
+    </div>
+    <div class="section-divider"></div>
+    <!-- OBJEÇÕES -->
+    <h2>Perguntas frequentes</h2>
+    <h3>"Não tenho tempo…"</h3>
+    <p>Foi feito exatamente para quem não tem tempo. Você só copia → cola → preenche → usa.</p>
+    <h3>"Não sei usar IA…"</h3>
+    <p>Cada prompt vem estruturado. Você preenche e recebe tudo pronto.</p>
+    <h3>"Eu já tentei me organizar antes…"</h3>
+    <p>Aqui você não tenta: você executa com orientação clara, objetiva e rápida.</p>
+    <h3>"É muito caro…"</h3>
+    <p>O valor normal é R$297. Com a oferta por 48 horas, você paga R$197 por <span class="highlight">247 prompts</span>. Isso dá <span class="highlight">R$0,79 por prompt</span>.</p>
+    <div class="section-divider"></div>
+    <!-- FECHAMENTO -->
+    <section class="final-cta">
+        <h2 style="margin-top: 0;">Pronto para mudar sua carreira em uma semana?</h2>
+        <p style="font-size: 1.15rem; color: var(--muted); max-width: 820px; margin: 10px auto 18px;">Receba o passo a passo com 247 prompts, fluxos e scripts prontos para aplicar hoje mesmo. Sem teoria — só execução.</p>
+        <a href="https://pay.hotmart.com/J103435402O?bid=1765918846417_AQUI" class="cta-button" style="max-width: 420px;">SIM, QUERO O KIT E A TRANSFORMAÇÃO</a>
+        <div class="final-cta-note">Oferta especial: R$197 por 48 horas. Garantia incondicional de 7 dias.</div>
+    </section>
+    <p style="text-align: center; margin-top: 8px; font-size: 0.9rem; color: #BDBDBD;">
+        © 2025 FisiosPro. Todos os direitos reservados.
+    </p>
+</div>
+</body>
+</html>
