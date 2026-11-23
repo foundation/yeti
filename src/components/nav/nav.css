@@ -228,9 +228,10 @@
 	   and covers the items below rather than pushing them down; Escape and a
 	   click outside unwind it before the panel. Without anchor positioning it
 	   docks to the foot of the viewport instead: still full width, still
-	   dismissible, still in reach of a thumb. */
+	   dismissible, still in reach of a thumb. This is for a label-only dropdown
+	   with no module; a split parent's pages are shown in place, below. */
 	.nav > ul[popover]:popover-open .dropdown { display: block; }
-	.nav > ul[popover]:popover-open .dropdown > [popover]:popover-open {
+	.nav > ul[popover]:popover-open .dropdown:not(:has(> a)):not(:has(> button[aria-expanded])) > [popover]:popover-open {
 		position: fixed;
 		inset-block: auto 0;
 		inset-inline: 0;
@@ -252,7 +253,7 @@
 		   reading the panel's own box keeps every shape right without restating
 		   a single one of their widths. */
 		.nav > ul[popover] { anchor-name: --yeti-nav-panel; }
-		.nav > ul[popover]:popover-open .dropdown > [popover]:popover-open {
+		.nav > ul[popover]:popover-open .dropdown:not(:has(> a)):not(:has(> button[aria-expanded])) > [popover]:popover-open {
 			position-area: block-end span-all;
 			align-self: start;
 			justify-self: stretch;
@@ -261,6 +262,60 @@
 			max-block-size: 100%;
 		}
 	}
+
+	/* A split parent's pages, shown in place. A dropdown with a link beside
+	   its toggle (or, once the module runs, a toggle that reports expanded) is
+	   a tree, not a menu, so behind the toggle its pages sit in the list
+	   itself: indented one step per level, and part of the panel's own scroll.
+	   The author rule gives a popover that is still closed a box in normal
+	   flow, so it pushes the rows below it down and never enters the top
+	   layer. The group stays closed as a popover, which keeps its focusable
+	   links in visual order. With no module the toggle has nothing to do, so
+	   it is hidden and the parent's link takes the whole row. The links read
+	   the panel's tokens, not the dropdown's, so the tree looks like the list
+	   it sits in. The color is set once on the group and inherited, so the
+	   current and ancestor rules below are not outranked by a link rule. */
+	.nav > ul[popover]:popover-open .dropdown > a + button:not([aria-expanded]) { display: none; }
+	.nav > ul[popover]:popover-open .dropdown:has(> a + button:not([aria-expanded])) > a {
+		display: flex;
+		inline-size: 100%;
+	}
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] {
+		display: block;
+		position: static;
+		inset: auto;
+		inline-size: auto;
+		min-inline-size: 0;
+		block-size: auto;
+		max-block-size: none;
+		margin: 0;
+		padding: 0;
+		padding-inline-start: var(--yeti-space-md);
+		border: 0;
+		border-radius: 0;
+		background-color: transparent;
+		box-shadow: none;
+		color: var(--yeti-nav-panel-text);
+		overflow: visible;
+		opacity: 1;
+	}
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child) {
+		display: flex;
+		align-items: center;
+		inline-size: 100%;
+		min-block-size: var(--yeti-control-size);
+		padding: var(--yeti-space-xs) var(--yeti-space-sm);
+		border-radius: var(--yeti-nav-radius);
+		font-stretch: var(--yeti-stretch-small);
+	}
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child):hover {
+		background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle));
+	}
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] .dropdown:has([aria-current="page"]) > :is(a, button),
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] {
+		color: var(--yeti-nav-current, var(--_yeti-variant-text));
+	}
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] { font-weight: var(--yeti-weight-strong); }
 
 	/* Entering: the sheet and the screen fade in, the drawer slides in.
 	   Leaving is instant. The durations are tokens, so reduced motion

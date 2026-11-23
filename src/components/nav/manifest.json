@@ -76,7 +76,7 @@
       "selector": ".dropdown",
       "min": 0,
       "max": null,
-      "description": "A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges."
+      "description": "A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, with its toggle hidden until the module runs; a label-only dropdown becomes a full-width block docked under its trigger and squared off against the open panel's edges."
     },
     {
       "selector": "> [data-actions]",
@@ -235,6 +235,11 @@
       "name": "--yeti-weight-strong",
       "public": true,
       "description": "Weight of the brand, and of the current page's link."
+    },
+    {
+      "name": "--yeti-space-md",
+      "public": true,
+      "description": "How far each level of a submenu shown in place in the open panel is indented."
     },
     {
       "name": "--yeti-space-xs",

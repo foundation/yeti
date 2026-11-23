@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, style, axe, painted } from '../lib/layout.js';
+import { stage, rect, style, axe, painted, withoutModule } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/nav.html');
@@ -538,5 +538,72 @@ test.describe('nav', () => {
 		await open(page, 1000);
 		await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
 		expect(await style(page, '#nt-about-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
+	});
+	for (const shape of ['sheet', 'drawer', 'screen']) {
+		test(`in the open ${shape} every level is shown in place, indented, with no toggle`, async ({ page }) => {
+			await withoutModule(page, 'nav');
+			await open(page, 400);
+			await page.evaluate((v) => document.querySelector('#nt').setAttribute('data-panel', v), shape);
+			await page.click('#nt-toggle');
+			await settle(page, '#nt-menu');
+			const [panel, about, history, leaf, lab] = await Promise.all(['#nt-menu', '#nt-about-link', '#nt-history', '#nt-leaf', '#nt-lab-trigger'].map((s) => rect(page, s)));
+			expect(history.top).toBeGreaterThanOrEqual(about.bottom - 1);
+			expect(leaf.top).toBeGreaterThanOrEqual(history.bottom - 1);
+			expect(lab.top).toBeGreaterThanOrEqual(leaf.bottom - 1);
+			if (shape !== 'screen') {
+				expect(history.left).toBeGreaterThan(about.left);
+				expect(leaf.left).toBeGreaterThan(history.left);
+			}
+			expect(leaf.right).toBeLessThanOrEqual(panel.right);
+			await expect(page.locator('#nt-about-toggle')).toBeHidden();
+			await expect(page.locator('#nt-team-toggle')).toBeHidden();
+			expect(await isOpen(page, 'nt-about-menu')).toBe(false);
+			expect(await isOpen(page, 'nt-team-menu')).toBe(false);
+		});
+	}
+
+	test('a label-only dropdown in the panel still opens as a docked block without the module', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+		await page.click('#nt-lab-trigger'); await settle(page, '#nt-lab-menu');
+		expect(await isOpen(page, 'nt-lab-menu')).toBe(true);
+		expect(await isOpen(page, 'nt-menu')).toBe(true);
+	});
+
+	test('links shown in place in the panel read the nav panel tokens, not the dropdown ones', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.addStyleTag({ content: '#nt { --yeti-nav-panel-text: rgb(1, 2, 3); --yeti-nav-hover: rgb(4, 5, 6); --yeti-nav-current: rgb(7, 8, 9); --yeti-dropdown-text: rgb(200, 0, 0); --yeti-dropdown-hover: rgb(0, 200, 0); }' });
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		expect(await style(page, '#nt-history', 'color')).toBe('rgb(1, 2, 3)');
+		expect(await style(page, '#nt-leaf', 'color')).toBe('rgb(7, 8, 9)');
+		expect(Number(await style(page, '#nt-leaf', 'font-weight'))).toBeGreaterThanOrEqual(600);
+		expect(await style(page, '#nt-team-link', 'color')).toBe('rgb(7, 8, 9)');
+		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(600);
+		expect(await style(page, '#nt-lab-trigger', 'color')).toBe('rgb(1, 2, 3)');
+		await page.hover('#nt-history');
+		expect(await style(page, '#nt-history', 'background-color')).toBe('rgb(4, 5, 6)');
+		await page.hover('#nt-leaf');
+		expect(await style(page, '#nt-leaf', 'background-color')).toBe('rgb(4, 5, 6)');
+		// The same size and radius as a link at the top of the panel.
+		const [home, history] = await Promise.all(['#nt-home', '#nt-history'].map((s) => rect(page, s)));
+		expect(Math.abs(home.height - history.height)).toBeLessThan(2);
+		expect(await style(page, '#nt-history', 'border-top-left-radius')).toBe(await style(page, '#nt-home', 'border-top-left-radius'));
+	});
+
+	test('Tab walks the links in visual order, skipping the hidden toggles', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		await page.focus('#nt-home');
+		const order = ['nt-home'];
+		for (let i = 0; i < 5; i++) {
+			await page.keyboard.press('Tab');
+			order.push(await page.evaluate(() => document.activeElement.id));
+		}
+		expect(order).toEqual(['nt-home', 'nt-about-link', 'nt-history', 'nt-team-link', 'nt-leaf', 'nt-lab-trigger']);
 	});
 });
