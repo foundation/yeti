@@ -56,6 +56,28 @@
 					</ul>
 				</li>
 			</ul>
+			<ul role="list" id="h-tree-list" style="margin-inline-start: 120px; margin-block-start: 80px;">
+				<li class="dropdown" id="h-tree" data-trigger="hover">
+					<a href="#" id="h-tree-link">Tree</a>
+					<button type="button" popovertarget="h-tree-menu" id="h-tree-toggle" aria-label="Tree pages"></button>
+					<ul id="h-tree-menu" popover role="list">
+						<li><a href="#" id="h-tree-plain">Plain page</a></li>
+						<li class="dropdown" id="h-sub">
+							<a href="#" id="h-sub-link">Sub</a>
+							<button type="button" popovertarget="h-sub-menu" id="h-sub-toggle" aria-label="Sub pages"></button>
+							<ul id="h-sub-menu" popover role="list">
+								<li><a href="#" id="h-leaf">Leaf</a></li>
+							</ul>
+						</li>
+						<li class="dropdown" id="h-lab">
+							<button type="button" popovertarget="h-lab-menu" id="h-lab-trigger">Label</button>
+							<ul id="h-lab-menu" popover role="list">
+								<li><a href="#" id="h-lab-leaf">Label leaf</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 	</main>
 </body>

@@ -77,6 +77,9 @@ test.describe('dropdown', () => {
 	test('a hover dropdown opens under the pointer, and a default one does not', async ({ page }) => {
 		await open(page);
 		expect(await page.evaluate(() => matchMedia('(hover: hover) and (pointer: fine)').matches)).toBe(true);
+		// A longer open delay gives the "still shut" check below room to land
+		// before the timer, which a slow engine could otherwise lose.
+		await page.addStyleTag({ content: '#third { --yeti-dropdown-open-delay: 400ms; }' });
 		await page.hover('#trigger-three');
 		// The pause is the point: a pointer crossing the trigger on its way
 		// somewhere else must not flash the panel open.
@@ -100,6 +103,35 @@ test.describe('dropdown', () => {
 		await page.hover('#item-three');
 		await page.waitForTimeout(600);
 		expect(await isOpen(page, 'menu-three')).toBe(true);
+	});
+
+	test('hover opens each level in turn, and leaving for the page closes them all', async ({ page }) => {
+		await open(page);
+		await page.hover('#h-tree-toggle');
+		await becomes(page, 'h-tree-menu', true);
+		await page.hover('#h-sub-toggle');
+		await becomes(page, 'h-sub-menu', true);
+		await page.hover('#h-leaf');
+		expect(await isOpen(page, 'h-tree-menu')).toBe(true);
+		const v = page.viewportSize();
+		await page.mouse.move(v.width - 5, v.height - 5);
+		await becomes(page, 'h-sub-menu', false);
+		await becomes(page, 'h-tree-menu', false);
+	});
+
+	test('hover leaves alone a panel that is already shown in flow', async ({ page }) => {
+		await open(page);
+		await page.addStyleTag({ content: '#h-tree { --yeti-dropdown-open-delay: 0ms; }' });
+		// The control: the same steps open the panel when it is not in flow.
+		await page.hover('#h-tree-toggle');
+		await becomes(page, 'h-tree-menu', true);
+		await page.keyboard.press('Escape');
+		await becomes(page, 'h-tree-menu', false);
+		await page.hover('h1');
+		await page.addStyleTag({ content: '#h-tree-menu:not(:popover-open) { display: block; position: static; }' });
+		await page.hover('#h-tree-toggle');
+		await page.evaluate(() => new Promise((resolve) => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(resolve)), 0)));
+		expect(await isOpen(page, 'h-tree-menu')).toBe(false);
 	});
 
 	test('the keyboard path is untouched on a hover dropdown', async ({ page }) => {
