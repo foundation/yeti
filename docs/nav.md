@@ -14,7 +14,7 @@ nav_order: 3
 ## Example
 
 <figure class="demo" data-height="lg" data-width="sm">
-<div data-preview="Nav"><iframe title="Nav, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;button type=&quot;button&quot; popovertarget=&quot;site-menu&quot; aria-label=&quot;Menu&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 4h12M2 8h12M2 12h12&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;&#10;	&lt;ul id=&quot;site-menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Docs&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Blog&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;more-menu&quot;&gt;More&lt;/button&gt;&#10;			&lt;div id=&quot;more-menu&quot; popover&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Guides&lt;/a&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Components&lt;/a&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Changelog&lt;/a&gt;&#10;			&lt;/div&gt;&#10;		&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;About&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;	&lt;div data-actions&gt;&lt;a class=&quot;button&quot; href=&quot;#&quot; data-size=&quot;sm&quot;&gt;Get started&lt;/a&gt;&lt;/div&gt;&#10;&lt;/nav&gt;"></iframe></div>
+<div data-preview="Nav"><iframe title="Nav, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;button type=&quot;button&quot; popovertarget=&quot;site-menu&quot; aria-label=&quot;Menu&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 4h12M2 8h12M2 12h12&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;&#10;	&lt;ul id=&quot;site-menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Blog&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;a href=&quot;#&quot;&gt;Docs&lt;/a&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;docs-menu&quot; aria-label=&quot;Docs pages&quot;&gt;&lt;/button&gt;&#10;			&lt;ul id=&quot;docs-menu&quot; popover role=&quot;list&quot;&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Install&lt;/a&gt;&lt;/li&gt;&#10;				&lt;li class=&quot;dropdown&quot;&gt;&#10;					&lt;a href=&quot;#&quot;&gt;Components&lt;/a&gt;&#10;					&lt;button type=&quot;button&quot; popovertarget=&quot;components-menu&quot; aria-label=&quot;Components pages&quot;&gt;&lt;/button&gt;&#10;					&lt;ul id=&quot;components-menu&quot; popover role=&quot;list&quot;&gt;&#10;						&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Nav&lt;/a&gt;&lt;/li&gt;&#10;						&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Dropdown&lt;/a&gt;&lt;/li&gt;&#10;					&lt;/ul&gt;&#10;				&lt;/li&gt;&#10;			&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;more-menu&quot;&gt;More&lt;/button&gt;&#10;			&lt;ul id=&quot;more-menu&quot; popover role=&quot;list&quot;&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Changelog&lt;/a&gt;&lt;/li&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;About&lt;/a&gt;&lt;/li&gt;&#10;			&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;	&lt;div data-actions&gt;&lt;a class=&quot;button&quot; href=&quot;#&quot; data-size=&quot;sm&quot;&gt;Get started&lt;/a&gt;&lt;/div&gt;&#10;&lt;/nav&gt;"></iframe></div>
 
 <details markdown="1">
 <summary>View Code</summary>
@@ -24,17 +24,29 @@ nav_order: 3
 	<a href="#" data-brand>Yeti</a>
 	<button type="button" popovertarget="site-menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 	<ul id="site-menu" popover role="list">
-		<li><a href="#" aria-current="page">Docs</a></li>
 		<li><a href="#">Blog</a></li>
 		<li class="dropdown">
-			<button type="button" popovertarget="more-menu">More</button>
-			<div id="more-menu" popover>
-				<a href="#">Guides</a>
-				<a href="#">Components</a>
-				<a href="#">Changelog</a>
-			</div>
+			<a href="#">Docs</a>
+			<button type="button" popovertarget="docs-menu" aria-label="Docs pages"></button>
+			<ul id="docs-menu" popover role="list">
+				<li><a href="#">Install</a></li>
+				<li class="dropdown">
+					<a href="#">Components</a>
+					<button type="button" popovertarget="components-menu" aria-label="Components pages"></button>
+					<ul id="components-menu" popover role="list">
+						<li><a href="#" aria-current="page">Nav</a></li>
+						<li><a href="#">Dropdown</a></li>
+					</ul>
+				</li>
+			</ul>
 		</li>
-		<li><a href="#">About</a></li>
+		<li class="dropdown">
+			<button type="button" popovertarget="more-menu">More</button>
+			<ul id="more-menu" popover role="list">
+				<li><a href="#">Changelog</a></li>
+				<li><a href="#">About</a></li>
+			</ul>
+		</li>
 	</ul>
 	<div data-actions><a class="button" href="#" data-size="sm">Get started</a></div>
 </nav>
@@ -45,7 +57,7 @@ nav_order: 3
 
 ## When to use it
 
-The bar across the top of a site: the name, the main links, a button or two. It is a bar of links, not a menu system. Sections with their own submenus are the dropdown's job, and a column of links down the side of a page is a `stack` inside a `sidebar`, which needs no component.
+The bar across the top of a site: the name, the main links, a button or two. It is a bar of links, not a menu system. Sections with their own submenus are the dropdown's job, and a column of links down the side of a page, with sections that open in place, is a [subnav](subnav.md).
 
 ## How it works
 
@@ -67,9 +79,7 @@ One list of links, two modes. The list carries `popover` and the button carries 
 
 A panel that is open stays a panel until it is dismissed, whatever the nav's width; widening past the threshold does not return the links to the bar on its own. Escape or a click outside closes the panel, and only then do the links return to the bar. `data-threshold` is the attribute `columns` uses, so a nav and the columns under it can switch at the same width.
 
-A nav item may hold a `dropdown` for a section with children of its own: the item becomes a button rather than a link, since the dropdown brings its own trigger. Its panel is in the top layer, so the bar's own containment cannot clip it.
-
-The panel changes shape with the nav. In the bar it is the dropdown's usual card, anchored under its trigger. Once the links are behind the toggle it becomes a full-width block instead, docked to the foot of its trigger and squared off against the panel's own edges, so a sheet, a drawer and a screen each keep their submenu inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+A nav item may hold a `dropdown` for a section with pages of its own; the Submenus section below shows how.
 
 `data-sticky` keeps the bar at the top of the scrollport as the page scrolls, flush with the edge. Everything else on the page that sticks stops at `--yeti-sticky-offset` and would slide under the bar, so set the token to the bar's own height plus the gap you want on whatever holds them — the shell's body row, say. The bar doesn't read the token; a bar that floats below the edge sets `inset-block-start` itself.
 
@@ -83,7 +93,7 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. The open panel resets `--yeti-nav-link` to its own text color.
 
 A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
@@ -103,9 +113,60 @@ The actions slot takes anything, not only buttons: a running head, a version, a 
 .nav > [data-actions] { font-size: var(--yeti-text-sm); color: var(--yeti-color-text-muted); }
 ```
 
+## Submenus
+
+A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
+
+```html
+<nav class="nav" aria-label="Site" data-panel="drawer">
+	<a href="/" data-brand>Yeti</a>
+	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="menu" popover role="list">
+		<li><a href="/">Home</a></li>
+		<li class="dropdown">
+			<a href="/about/">About</a>
+			<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
+			<ul id="menu-about" popover role="list">
+				<li><a href="/about/history/">History</a></li>
+				<li class="dropdown">
+					<a href="/about/team/">Team</a>
+					<button type="button" popovertarget="menu-about-team" aria-label="Team pages"></button>
+					<ul id="menu-about-team" popover role="list">
+						<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li class="dropdown">
+			<button type="button" popovertarget="menu-more">More</button>
+			<ul id="menu-more" popover role="list">
+				<li><a href="/changelog/">Changelog</a></li>
+			</ul>
+		</li>
+	</ul>
+</nav>
+<script type="module" src="…/js/nav.js"></script>
+```
+
+In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight.
+
+The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. In the open panel on a phone it is the other way round: a submenu shown in place is part of the panel, so its links take the panel's tokens, `--yeti-nav-panel-text`, `--yeti-nav-hover` and `--yeti-nav-current`, and not the dropdown's.
+
+## Submenus in the panel
+
+Once the links are behind the toggle, a split parent's pages are shown in the panel itself, in place, each level indented one step further than the one above it. With no script every level is open and the small buttons are hidden, so every page in the tree is one tap away and Tab walks the links in the order they are shown. That is enough for a short tree.
+
+For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears.
+
+The module marks each button with `aria-expanded` while the panel is open. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
+
+A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently, because hiding its button would hide its label: its panel opens as a full-width block docked to the foot of its button and squared off against the panel's edges, so a sheet, a drawer and a screen each keep it inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+
+In a `screen` panel everything is centred, so a submenu has no indent. Each level steps down in size instead, to 0.875 times the size of the one above it.
+
 ## Accessibility
 
-Give the `nav` an `aria-label`, since a page often has more than one. The toggle needs a name, from `aria-label` or visible text; the browser sets its expanded state. Mark the current page's link with `aria-current="page"`. Put `role="list"` on the `ul`: Yeti's reset only removes list markers where that role says the list is decorative. The open panel follows the toggle in the tab order, so Tab from the toggle reaches the first link; Escape closes the panel and returns focus to the toggle.
+Give the `nav` an `aria-label`, since a page often has more than one. The toggle needs a name, from `aria-label` or visible text; the browser sets its expanded state. Mark the current page's link with `aria-current="page"`. Put `role="list"` on the `ul`, and on each submenu's: Yeti's reset only removes list markers where that role says the list is decorative. A split parent's button has no text, so give it an `aria-label` that names its pages, such as "About pages". The open panel follows the toggle in the tab order, so Tab from the toggle reaches the first link; Escape closes the panel and returns focus to the toggle.
 
 ## Attributes
 
@@ -142,7 +203,7 @@ Attributes that descendants carry, not the root.
 - `> ul[popover]`: exactly 1. The links, one per li, with role="list" and the id the toggle names.
 - `li`: at least 1. An entry in the list; each holds one link.
 - `[data-close]`: 0 to 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
-- `.dropdown`: any number. A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges.
+- `.dropdown`: any number. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, with its toggle hidden until the module runs; a label-only dropdown becomes a full-width block docked under its trigger and squared off against the open panel's edges.
 - `> [data-actions]`: 0 to 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ## Tokens
@@ -161,6 +222,8 @@ Attributes that descendants carry, not the root.
 | `--yeti-nav-logo-size` | Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller. |
 | `--yeti-nav-panel-text` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
 | `--yeti-nav-link` | Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color. |
+| `--yeti-nav-hover` | Background of a bar link or dropdown trigger under the pointer; read with a fallback to the variant's subtle tint. |
+| `--yeti-nav-current` | Color of the current link in the bar; read with a fallback to the variant's text color. |
 | `--yeti-stretch-small` | font-stretch of a link. |
 | `--yeti-control-size` | Minimum height of the bar, the toggle, and each link. |
 | `--yeti-shadow-md` | The open panel's shadow. |
@@ -175,8 +238,10 @@ Attributes that descendants carry, not the root.
 | `--yeti-color-primary-text` | The default variant's text color. |
 | `--yeti-on-primary` | Text on the default variant's color. |
 | `--yeti-weight-strong` | Weight of the brand, and of the current page's link. |
+| `--yeti-space-md` | How far each level of a submenu shown in place in the open panel is indented. |
 | `--yeti-space-xs` | Block padding of a link, and of the close button. |
 | `--yeti-duration-fast` | How long the panel takes to open. |
+| `--yeti-duration-base` | How long a group in the open panel takes to fold or unfold. |
 | `--yeti-ease` | The curve of that transition. |
 | `--yeti-text-lg` | Text size of the links in a screen panel. |
 | `--yeti-space-xl` | Inset of a screen panel that has no close item. |
@@ -194,6 +259,8 @@ Attributes that descendants carry, not the root.
 - `--_yeti-on-variant`
 - `--_yeti-sticky-offset`
 - `--_yeti-nav-link`
+- `--_yeti-turn`
+- `--_yeti-nudge`
 
 </details>
 
@@ -219,6 +286,6 @@ Attributes that descendants carry, not the root.
 
 ## JavaScript
 
-None. This component is CSS only.
+Optional enhancement: `components/nav/nav.js`. The component works without it.
 
 Available since 7.0.0.

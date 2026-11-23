@@ -1,8 +1,15 @@
 <div class="dropdown">
 	<button class="button" type="button" popovertarget="account-menu" data-emphasis="medium">Account</button>
-	<div id="account-menu" popover>
-		<a href="#">Profile</a>
-		<a href="#">Settings</a>
-		<button type="button">Sign out</button>
-	</div>
+	<ul id="account-menu" popover role="list">
+		<li><a href="#">Profile</a></li>
+		<li class="dropdown">
+			<a href="#">Settings</a>
+			<button type="button" popovertarget="settings-menu" aria-label="Settings pages"></button>
+			<ul id="settings-menu" popover role="list">
+				<li><a href="#">Password</a></li>
+				<li><a href="#">Notifications</a></li>
+			</ul>
+		</li>
+		<li><button type="button">Sign out</button></li>
+	</ul>
 </div>

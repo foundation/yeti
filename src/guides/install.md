@@ -45,7 +45,7 @@ With npm:
 npm install @foundation/yeti@next
 ```
 
-The package ships `dist/`: the bundled `yeti.css` and its minified twin `yeti.min.css`, the same source tree unbundled under `css/`, the ten modules under `js/` and all of them in one `yeti.js` with `yeti.min.js` beside it, the two example themes under `themes/`, the starter page and theme under `starter/`, and the machine-readable files described further down.
+The package ships `dist/`: the bundled `yeti.css` and its minified twin `yeti.min.css`, the same source tree unbundled under `css/`, the eleven modules under `js/` and all of them in one `yeti.js` with `yeti.min.js` beside it, the two example themes under `themes/`, the starter page and theme under `starter/`, and the machine-readable files described further down.
 
 Without Node, for a PHP site or anything else with no `node_modules`, copy the files into the project as one folder. Take `llms.txt` with them, so the docs on disk always match the stylesheet they describe, and the licence, which has to travel with any copy:
 

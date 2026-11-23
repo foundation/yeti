@@ -2,17 +2,29 @@
 	<a href="#" data-brand>Yeti</a>
 	<button type="button" popovertarget="site-menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 	<ul id="site-menu" popover role="list">
-		<li><a href="#" aria-current="page">Docs</a></li>
 		<li><a href="#">Blog</a></li>
 		<li class="dropdown">
-			<button type="button" popovertarget="more-menu">More</button>
-			<div id="more-menu" popover>
-				<a href="#">Guides</a>
-				<a href="#">Components</a>
-				<a href="#">Changelog</a>
-			</div>
+			<a href="#">Docs</a>
+			<button type="button" popovertarget="docs-menu" aria-label="Docs pages"></button>
+			<ul id="docs-menu" popover role="list">
+				<li><a href="#">Install</a></li>
+				<li class="dropdown">
+					<a href="#">Components</a>
+					<button type="button" popovertarget="components-menu" aria-label="Components pages"></button>
+					<ul id="components-menu" popover role="list">
+						<li><a href="#" aria-current="page">Nav</a></li>
+						<li><a href="#">Dropdown</a></li>
+					</ul>
+				</li>
+			</ul>
 		</li>
-		<li><a href="#">About</a></li>
+		<li class="dropdown">
+			<button type="button" popovertarget="more-menu">More</button>
+			<ul id="more-menu" popover role="list">
+				<li><a href="#">Changelog</a></li>
+				<li><a href="#">About</a></li>
+			</ul>
+		</li>
 	</ul>
 	<div data-actions><a class="button" href="#" data-size="sm">Get started</a></div>
 </nav>

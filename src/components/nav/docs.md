@@ -1,6 +1,6 @@
 ## When to use it
 
-The bar across the top of a site: the name, the main links, a button or two. It is a bar of links, not a menu system. Sections with their own submenus are the dropdown's job, and a column of links down the side of a page is a `stack` inside a `sidebar`, which needs no component.
+The bar across the top of a site: the name, the main links, a button or two. It is a bar of links, not a menu system. Sections with their own submenus are the dropdown's job, and a column of links down the side of a page, with sections that open in place, is a [subnav](subnav.md).
 
 ## How it works
 
@@ -22,9 +22,7 @@ One list of links, two modes. The list carries `popover` and the button carries 
 
 A panel that is open stays a panel until it is dismissed, whatever the nav's width; widening past the threshold does not return the links to the bar on its own. Escape or a click outside closes the panel, and only then do the links return to the bar. `data-threshold` is the attribute `columns` uses, so a nav and the columns under it can switch at the same width.
 
-A nav item may hold a `dropdown` for a section with children of its own: the item becomes a button rather than a link, since the dropdown brings its own trigger. Its panel is in the top layer, so the bar's own containment cannot clip it.
-
-The panel changes shape with the nav. In the bar it is the dropdown's usual card, anchored under its trigger. Once the links are behind the toggle it becomes a full-width block instead, docked to the foot of its trigger and squared off against the panel's own edges, so a sheet, a drawer and a screen each keep their submenu inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+A nav item may hold a `dropdown` for a section with pages of its own; the Submenus section below shows how.
 
 `data-sticky` keeps the bar at the top of the scrollport as the page scrolls, flush with the edge. Everything else on the page that sticks stops at `--yeti-sticky-offset` and would slide under the bar, so set the token to the bar's own height plus the gap you want on whatever holds them — the shell's body row, say. The bar doesn't read the token; a bar that floats below the edge sets `inset-block-start` itself.
 
@@ -38,7 +36,7 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. The open panel resets `--yeti-nav-link` to its own text color.
 
 A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
@@ -58,6 +56,57 @@ The actions slot takes anything, not only buttons: a running head, a version, a 
 .nav > [data-actions] { font-size: var(--yeti-text-sm); color: var(--yeti-color-text-muted); }
 ```
 
+## Submenus
+
+A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
+
+```html
+<nav class="nav" aria-label="Site" data-panel="drawer">
+	<a href="/" data-brand>Yeti</a>
+	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="menu" popover role="list">
+		<li><a href="/">Home</a></li>
+		<li class="dropdown">
+			<a href="/about/">About</a>
+			<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
+			<ul id="menu-about" popover role="list">
+				<li><a href="/about/history/">History</a></li>
+				<li class="dropdown">
+					<a href="/about/team/">Team</a>
+					<button type="button" popovertarget="menu-about-team" aria-label="Team pages"></button>
+					<ul id="menu-about-team" popover role="list">
+						<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li class="dropdown">
+			<button type="button" popovertarget="menu-more">More</button>
+			<ul id="menu-more" popover role="list">
+				<li><a href="/changelog/">Changelog</a></li>
+			</ul>
+		</li>
+	</ul>
+</nav>
+<script type="module" src="…/js/nav.js"></script>
+```
+
+In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight.
+
+The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. In the open panel on a phone it is the other way round: a submenu shown in place is part of the panel, so its links take the panel's tokens, `--yeti-nav-panel-text`, `--yeti-nav-hover` and `--yeti-nav-current`, and not the dropdown's.
+
+## Submenus in the panel
+
+Once the links are behind the toggle, a split parent's pages are shown in the panel itself, in place, each level indented one step further than the one above it. With no script every level is open and the small buttons are hidden, so every page in the tree is one tap away and Tab walks the links in the order they are shown. That is enough for a short tree.
+
+For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears.
+
+The module marks each button with `aria-expanded` while the panel is open. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
+
+A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently, because hiding its button would hide its label: its panel opens as a full-width block docked to the foot of its button and squared off against the panel's edges, so a sheet, a drawer and a screen each keep it inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+
+In a `screen` panel everything is centred, so a submenu has no indent. Each level steps down in size instead, to 0.875 times the size of the one above it.
+
 ## Accessibility
 
-Give the `nav` an `aria-label`, since a page often has more than one. The toggle needs a name, from `aria-label` or visible text; the browser sets its expanded state. Mark the current page's link with `aria-current="page"`. Put `role="list"` on the `ul`: Yeti's reset only removes list markers where that role says the list is decorative. The open panel follows the toggle in the tab order, so Tab from the toggle reaches the first link; Escape closes the panel and returns focus to the toggle.
+Give the `nav` an `aria-label`, since a page often has more than one. The toggle needs a name, from `aria-label` or visible text; the browser sets its expanded state. Mark the current page's link with `aria-current="page"`. Put `role="list"` on the `ul`, and on each submenu's: Yeti's reset only removes list markers where that role says the list is decorative. A split parent's button has no text, so give it an `aria-label` that names its pages, such as "About pages". The open panel follows the toggle in the tab order, so Tab from the toggle reaches the first link; Escape closes the panel and returns focus to the toggle.

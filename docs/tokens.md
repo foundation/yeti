@@ -459,6 +459,8 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-nav-brand-size` | `1em` | Size of the nav's brand; 1em is the bar's own size. |
 | `--yeti-nav-logo-size` | `var(--yeti-control-size)` | Height of a logo in the nav's brand; its width follows the image. |
 | `--yeti-nav-panel-text` | `var(--yeti-color-text)` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
+| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a bar link or dropdown trigger under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current link in the bar. Read with a fallback to the variant's text color. |
 | `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar; the bar's own color unless set. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. |
 
 </div>
@@ -492,6 +494,18 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-toc-scroll` | `smooth, and auto under reduced motion` | How the page scrolls when a link in a toc, or an in-page link in a nav, is followed. A components-layer declaration outranks the reset, so the preference reaches the page through this token. The name keeps the toc it started with. |
 | `--yeti-toc-padding` | `var(--yeti-space-xs)` | The rows' block padding: a control's density by default, a book's contents page sets it smaller. |
 | `--yeti-toc-hover` | var(--_yeti-variant-subtle) (override only) | Background of a toc link under the pointer. Read with a fallback to the variant's subtle tint; set transparent for an underline-only list. |
+
+</div>
+
+## Subnav
+
+<div class="scroller" role="region" aria-label="Subnav tokens" tabindex="0" markdown="1">
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `--yeti-subnav-indent` | `var(--yeti-space-md)` | How far each level of a subnav steps in from the one above it. |
+| `--yeti-subnav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a subnav link or toggle under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-subnav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link, and of the row of each parent that holds it. Read with a fallback to the variant's text color. |
 
 </div>
 
@@ -561,6 +575,8 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | Token | Default | Description |
 | --- | --- | --- |
 | `--yeti-dropdown-surface` | `var(--yeti-color-surface-raised)` | Background of the open panel. |
+| `--yeti-dropdown-text` | `var(--yeti-color-text)` | Text color of the open panel and its items. |
+| `--yeti-dropdown-hover` | `var(--yeti-color-surface-sunken)` | Background of a panel item under the pointer. |
 | `--yeti-dropdown-radius` | `var(--yeti-radius-md)` | Corner of the panel. |
 | `--yeti-dropdown-padding` | `var(--yeti-space-xs)` | Padding around the items. |
 | `--yeti-dropdown-min` | `12rem` | Least width of the panel. |

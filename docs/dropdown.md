@@ -14,7 +14,7 @@ nav_order: 2
 ## Example
 
 <figure class="demo" data-height="md">
-<div data-preview="Dropdown"><iframe title="Dropdown, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;dropdown&quot;&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;button&quot; popovertarget=&quot;account-menu&quot; data-emphasis=&quot;medium&quot;&gt;Account&lt;/button&gt;&#10;	&lt;div id=&quot;account-menu&quot; popover&gt;&#10;		&lt;a href=&quot;#&quot;&gt;Profile&lt;/a&gt;&#10;		&lt;a href=&quot;#&quot;&gt;Settings&lt;/a&gt;&#10;		&lt;button type=&quot;button&quot;&gt;Sign out&lt;/button&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+<div data-preview="Dropdown"><iframe title="Dropdown, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;dropdown&quot;&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;button&quot; popovertarget=&quot;account-menu&quot; data-emphasis=&quot;medium&quot;&gt;Account&lt;/button&gt;&#10;	&lt;ul id=&quot;account-menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Profile&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;a href=&quot;#&quot;&gt;Settings&lt;/a&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;settings-menu&quot; aria-label=&quot;Settings pages&quot;&gt;&lt;/button&gt;&#10;			&lt;ul id=&quot;settings-menu&quot; popover role=&quot;list&quot;&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Password&lt;/a&gt;&lt;/li&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Notifications&lt;/a&gt;&lt;/li&gt;&#10;			&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;		&lt;li&gt;&lt;button type=&quot;button&quot;&gt;Sign out&lt;/button&gt;&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/div&gt;"></iframe></div>
 
 <details markdown="1">
 <summary>View Code</summary>
@@ -22,11 +22,18 @@ nav_order: 2
 ```html
 <div class="dropdown">
 	<button class="button" type="button" popovertarget="account-menu" data-emphasis="medium">Account</button>
-	<div id="account-menu" popover>
-		<a href="#">Profile</a>
-		<a href="#">Settings</a>
-		<button type="button">Sign out</button>
-	</div>
+	<ul id="account-menu" popover role="list">
+		<li><a href="#">Profile</a></li>
+		<li class="dropdown">
+			<a href="#">Settings</a>
+			<button type="button" popovertarget="settings-menu" aria-label="Settings pages"></button>
+			<ul id="settings-menu" popover role="list">
+				<li><a href="#">Password</a></li>
+				<li><a href="#">Notifications</a></li>
+			</ul>
+		</li>
+		<li><button type="button">Sign out</button></li>
+	</ul>
 </div>
 ```
 
@@ -53,13 +60,109 @@ Where anchor positioning exists the panel hangs under its own trigger, and `data
 </div>
 ```
 
+The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. Set the three together for a dark or tinted panel.
+
+## A parent with its own page
+
+A menu often hangs off a section that is a page in its own right: About has a page, and History and Team sit under it. Write the parent's link first, then an empty button, then the panel. This is a split parent. The link goes to the parent's page, and the button beside it opens the panel. The button has no text, so give it an `aria-label` that names what it opens, such as "About pages". Yeti draws a chevron in it.
+
+```html
+<ul role="list">
+	<li class="dropdown">
+		<a href="/about/">About</a>
+		<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
+		<ul id="menu-about" popover role="list">
+			<li><a href="/about/history/">History</a></li>
+			<li><a href="/about/team/">Team</a></li>
+		</ul>
+	</li>
+</ul>
+```
+
+The panel can be a `ul` of `li`s, as here, or a `div` of bare links, as above. Use a list once a menu has more than one level, because each `li` can hold a dropdown of its own.
+
+A parent that is not a page has no link. Its button is the label, as in the first example on this page, and the whole row opens the panel. Do not give such a parent a link that goes nowhere, such as `href="javascript:void(0)"` or an empty `href`. A screen reader announces it as a link, and Enter on it does nothing. A button is announced as a button and already reports whether its panel is open.
+
+## Submenus
+
+Any item in a list panel can be a dropdown itself, a split parent or a label, and the same shape repeats at every depth. A submenu flies out beside its own row, toward the inline end (the right in a left-to-right page, the left in a right-to-left one), level with the row's top. Where it would run off the screen it flips to the other side. Where anchor positioning is missing the browser centres every panel, as it does for one level.
+
+```html
+<ul role="list">
+	<li class="dropdown">
+		<a href="/about/">About</a>
+		<button type="button" popovertarget="menu-/about/" aria-label="About pages"></button>
+		<ul id="menu-/about/" popover role="list">
+			<li><a href="/about/history/">History</a></li>
+			<li class="dropdown">
+				<a href="/about/team/">Team</a>
+				<button type="button" popovertarget="menu-/about/team/" aria-label="Team pages"></button>
+				<ul id="menu-/about/team/" popover role="list">
+					<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					<li><a href="/about/team/ana/">Ana</a></li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+</ul>
+```
+
+Escape closes the innermost open panel and returns focus to its button. A click outside closes the whole chain. Opening a submenu closes any sibling submenu that was open. All three are the browser's own handling of nested popovers, so there is no script to load for them.
+
+Each button's `popovertarget` names its panel's id, so every id has to be unique on the page. An id can be any string without a space in it. `popovertarget` is an id reference, not a CSS selector, so an id built from the page's path, such as `menu-/about/team/` above, works as it is and needs no escaping. That makes ids easy for a template to write.
+
+The chevron shows that a row opens something, and which way. A split parent's button always has one. A label button has one only where it marks a submenu: inside another dropdown's panel, and inside a nav's list. A standalone dropdown's button, such as the Account button above, is left as it is. A first-level chevron points down and turns up while its panel is open. A nested one points to the inline end and turns back while its panel is open, and mirrors in a right-to-left page.
+
+Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. The color is the variant's text color, or the primary color's outside a variant scope.
+
+## Grouped
+
+`data-grouped` on a dropdown lays its panel out as columns instead of flyouts. Each second-level item that is a split parent becomes a small, strong heading, still a link to its own page, with its pages listed under it, and its button is hidden. Use it for a section with a few groups of pages that a reader should see at once.
+
+```html
+<ul role="list">
+	<li class="dropdown" data-grouped>
+		<a href="/products/">Products</a>
+		<button type="button" popovertarget="menu-products" aria-label="Products pages"></button>
+		<ul id="menu-products" popover role="list">
+			<li class="dropdown">
+				<a href="/products/design/">Design</a>
+				<button type="button" popovertarget="menu-products-design" aria-label="Design pages"></button>
+				<ul id="menu-products-design" popover role="list">
+					<li><a href="/products/design/sketch/">Sketch</a></li>
+					<li><a href="/products/design/print/">Print</a></li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a href="/products/build/">Build</a>
+				<button type="button" popovertarget="menu-products-build" aria-label="Build pages"></button>
+				<ul id="menu-products-build" popover role="list">
+					<li><a href="/products/build/code/">Code</a></li>
+					<li><a href="/products/build/deploy/">Deploy</a></li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+</ul>
+```
+
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits: where it would pass the far edge of the screen, it moves back toward the start to fit. Three levels show. A page under a heading keeps its link, and anything below that page is not shown in the grouped panel.
+
+A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
+
+Inside a nav's open panel on a phone, a grouped dropdown behaves like any other.
+
 ## Opening on hover
 
 Click is the default and never changes. `data-trigger="hover"` adds opening under the pointer on top of it, and needs `hover.js`, loaded once with `<script type="module" src="…/js/hover.js">`. The module is optional: without it the attribute does nothing and the dropdown still works by click.
 
+Write the attribute once, on the outermost dropdown. Every submenu inside it opens under the pointer too, with no attribute of its own.
+
 Hover is added only where the pointer can actually hover, so a touch screen keeps the tap. Opening waits for `--yeti-dropdown-open-delay` so a pointer crossing the trigger on its way somewhere else does not flash the panel open, and closing waits for `--yeti-dropdown-close-delay` so the gap between the trigger and the panel is forgiving. Hovering the panel itself keeps it open.
 
 The module closes only a panel it opened itself. A panel you opened with Enter or a click stays open when the pointer wanders off it, because the deliberate act should outrank the accidental one. Pressing the trigger while hover has the panel open closes it, and a press always cancels an opening that has not happened yet, so the same gesture never does opposite things depending on how long you lingered.
+
+With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as one in a nav's open panel on a phone, so it is never lifted out of the list.
 
 ```html
 <div class="dropdown" data-trigger="hover">
@@ -76,7 +179,7 @@ This module is a stopgap and says so. The `interestfor` attribute is this featur
 
 ## Accessibility
 
-The items are ordinary links and buttons, on purpose. `role="menu"` and `role="menuitem"` promise a full application menu, arrow keys and all, and a half-built one is worse than none; a disclosure panel of links is announced clearly by every screen reader and needs no script. Give the trigger a name, and let the browser handle the expanded state rather than setting `aria-expanded` yourself. Escape closes the panel and returns focus to the trigger, which is the browser's doing.
+The items are ordinary links and buttons, on purpose. `role="menu"` and `role="menuitem"` promise a full application menu, arrow keys and all, and a half-built one is worse than none; a disclosure panel of links is announced clearly by every screen reader and needs no script. Give the trigger a name, and let the browser handle the expanded state rather than setting `aria-expanded` yourself. A split parent's button has no text, so its `aria-label` is its name. Escape closes the panel and returns focus to the trigger, which is the browser's doing; with submenus open it closes the innermost one first.
 
 Opening on hover changes none of that. The module never touches focus, ARIA, or the keyboard; it only opens and closes the same popover the button already opens, and a reader who cannot use a pointer is unaffected either way.
 
@@ -87,12 +190,14 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
 | `data-side` | enum | `start`, `end` | `start` | Which edge of the trigger the panel lines up with. |
+| `data-grouped` | boolean |  |  | List each second-level item as a heading with its pages under it, in columns, instead of flying out beside the row. |
 | `data-trigger` | enum | `click`, `hover` | `click` | What opens the panel. Click always works; hover adds opening under the pointer, and needs the optional module and a pointer that hovers. |
 
 </div>
 
 ## Children
 
+- `> a`: 0 to 1. The parent page's link, before the button. With it the button is a small toggle beside the link.
 - `> button[popovertarget]`: exactly 1. The trigger; its popovertarget names the panel's id.
 - `> [popover]`: exactly 1. The panel, holding ordinary links and buttons.
 
@@ -102,7 +207,11 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 
 | Token | Description |
 | --- | --- |
+| `--yeti-color-primary-text` | The color of the current page's link and of each parent above it, when no variant scope is set. |
+| `--yeti-weight-strong` | The weight of the current page's link in a panel. |
 | `--yeti-dropdown-surface` | Background of the panel. |
+| `--yeti-dropdown-text` | Text color of the open panel and its items. |
+| `--yeti-dropdown-hover` | Background of a panel item under the pointer. |
 | `--yeti-dropdown-radius` | Corner of the panel. |
 | `--yeti-dropdown-padding` | Padding around the items. |
 | `--yeti-dropdown-min` | Least width of the panel. |
@@ -110,14 +219,21 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | `--yeti-control-size` | Least height of an item. |
 | `--yeti-dropdown-open-delay` | How long the pointer must rest before a hover-triggered panel opens. |
 | `--yeti-dropdown-close-delay` | How long a hover-triggered panel waits after the pointer leaves before closing. |
-| `--yeti-color-text` | The panel's text. |
 | `--yeti-duration-fast` | How long the panel takes to open. |
 | `--yeti-ease` | The curve of that transition. |
 | `--yeti-space-xs` | Gap between an item's icon and its label, and between the trigger and the panel. |
 | `--yeti-space-sm` | Inline padding of an item. |
-| `--yeti-color-surface-sunken` | Background of an item under the pointer. |
+| `--yeti-space-md` | The margin kept between a grouped panel and the viewport's edges, and the gap between its columns. |
+| `--yeti-text-sm` | The size of a grouped panel's headings. |
 
 </div>
+
+<details><summary>Internal tokens (may change between minor versions)</summary>
+
+- `--_yeti-turn`
+- `--_yeti-nudge`
+
+</details>
 
 ## Accessibility
 
@@ -136,7 +252,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 ## Browser support
 
 - Used without guards: popover, @starting-style
-- Behind `@supports`: anchor positioning (fallback: the panel is centred by the user agent)
+- Behind `@supports`: anchor positioning, position-try (fallback: the panel is centred by the user agent)
 
 ## JavaScript
 

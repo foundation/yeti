@@ -38,7 +38,7 @@ A parent that is not a page has no link. It is a plain `details` with the sectio
 
 The same shape nests. A list inside a `details` can hold another parent with its own `details`, and each level steps in by `--yeti-subnav-indent`. A title that wraps onto a second line keeps its toggle beside the first line.
 
-The page the reader is on carries `aria-current="page"` and takes the current color in the strong weight. Each parent that holds it shows its own row in the same color at the normal weight, so the reader can see which section they are in. The color is `--yeti-subnav-current`, read with a fallback to the variant's text color, and `data-variant` picks the hue.
+The page the reader is on carries `aria-current="page"` and takes the current color in the strong weight. Each parent that holds it shows its own row in the same color, so the reader can see which section they are in. A parent with its own link shows that link at the normal weight. A parent that is not a page keeps the strong weight every `summary` has and only changes color. The color is `--yeti-subnav-current`, read with a fallback to the variant's text color, and `data-variant` picks the hue.
 
 Open the way to the current page in the template: write `open` on each `details` above it. CSS cannot open a `details`, and the component adds no script to do it, so a page that leaves `open` off arrives with its own section shut.
 
