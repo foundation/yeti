@@ -14,6 +14,11 @@
       "description": "Which edge of the trigger the panel lines up with."
     },
     {
+      "name": "data-grouped",
+      "type": "boolean",
+      "description": "List each second-level item as a heading with its pages under it, in columns, instead of flying out beside the row."
+    },
+    {
       "name": "data-trigger",
       "type": "enum",
       "vocabulary": "trigger",
@@ -124,6 +129,16 @@
       "name": "--yeti-space-sm",
       "public": true,
       "description": "Inline padding of an item."
+    },
+    {
+      "name": "--yeti-space-md",
+      "public": true,
+      "description": "The margin kept between a grouped panel and the viewport's edges, and the gap between its columns."
+    },
+    {
+      "name": "--yeti-text-sm",
+      "public": true,
+      "description": "The size of a grouped panel's headings."
     }
   ],
   "a11y": {

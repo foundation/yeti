@@ -398,11 +398,111 @@ test.describe('dropdown', () => {
 		});
 	}
 
+	test.describe('grouped', () => {
+		const openGrouped = async (page, width = 1000) => {
+			await open(page, width);
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+		};
+
+		test('a grouped dropdown lists the pages of each section under its heading, in columns', async ({ page }) => {
+			await openGrouped(page);
+			const [a, a1, b, b1] = await Promise.all(['#g-a-link', '#g-a-1', '#g-b-link', '#g-b-1'].map((s) => rect(page, s)));
+			expect(a1.top).toBeGreaterThanOrEqual(a.bottom - 1);
+			expect(b.left).toBeGreaterThanOrEqual(a.right - 1);
+			expect(Math.abs(a.top - b.top)).toBeLessThan(2);
+			expect(b1.top).toBeGreaterThanOrEqual(b.bottom - 1);
+			await expect(page.locator('#g-a-toggle')).toBeHidden();
+			expect(await isOpen(page, 'g-a-menu')).toBe(false);
+		});
+
+		test('a heading takes the strong weight and the small size', async ({ page }) => {
+			await openGrouped(page);
+			expect(Number(await style(page, '#g-a-link', 'font-weight'))).toBeGreaterThan(Number(await style(page, '#g-a-1', 'font-weight')));
+			expect(parseFloat(await style(page, '#g-a-link', 'font-size'))).toBeLessThan(parseFloat(await style(page, '#g-a-1', 'font-size')));
+		});
+
+		test('an item with no pages sits in the grid as a column of its own', async ({ page }) => {
+			await openGrouped(page);
+			const [a, b, plain] = await Promise.all(['#g-a-link', '#g-b-link', '#g-plain'].map((s) => rect(page, s)));
+			expect(plain.left).toBeGreaterThanOrEqual(b.right - 1);
+			expect(Math.abs(plain.top - a.top)).toBeLessThan(2);
+			expect((await rect(page, '#g-b-link')).left).toBeGreaterThanOrEqual((await rect(page, '#g-a-link')).right - 1);
+		});
+
+		test('a fourth level is not shown', async ({ page }) => {
+			await page.goto('/test/browser/fixtures/components/dropdown.html');
+			await page.evaluate(() => {
+				const item = document.querySelector('#g-a-1').parentElement;
+				item.classList.add('dropdown');
+				item.insertAdjacentHTML('beforeend', '<button type="button" popovertarget="g-deep" id="g-deep-toggle" aria-label="Deep pages"></button><ul id="g-deep" popover role="list"><li><a href="#" id="g-deep-leaf">Deep leaf</a></li></ul>');
+			});
+			await stage(page, 1000);
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+			await expect(page.locator('#g-a-1')).toBeVisible();
+			await expect(page.locator('#g-deep-leaf')).toBeHidden();
+			await expect(page.locator('#g-deep-toggle')).toBeHidden();
+		});
+
+		test('its columns stack when the viewport is too narrow for them', async ({ page }) => {
+			// A popover sits in the top layer, so only the viewport can narrow it.
+			await page.setViewportSize({ width: 320, height: 720 });
+			await openGrouped(page, 320);
+			const [a, b, menu] = await Promise.all(['#g-a-link', '#g-b-link', '#g-tree-menu'].map((s) => rect(page, s)));
+			expect(b.top).toBeGreaterThan(a.bottom);
+			expect(menu.right).toBeLessThanOrEqual(320.5);
+			expect(menu.left).toBeGreaterThanOrEqual(0);
+		});
+
+		test('hover opens the top panel only, and the sections stay in place', async ({ page }) => {
+			await open(page);
+			await page.evaluate(() => {
+				const tree = document.querySelector('#g-tree');
+				tree.setAttribute('data-trigger', 'hover');
+				tree.style.setProperty('--yeti-dropdown-open-delay', '0ms');
+			});
+			await page.hover('#g-tree-toggle');
+			await becomes(page, 'g-tree-menu', true);
+			await settle(page, '#g-tree-menu');
+			await page.hover('#g-a-link');
+			await page.evaluate(() => new Promise((resolve) => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(resolve)), 0)));
+			expect(await isOpen(page, 'g-a-menu')).toBe(false);
+			await expect(page.locator('#g-a-1')).toBeVisible();
+		});
+
+		test('Tab walks each column in reading order and skips the hidden toggles', async ({ page, browserName }) => {
+			await openGrouped(page);
+			await page.focus('#g-tree-toggle');
+			const order = [];
+			for (let i = 0; i < 6; i++) {
+				await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+				order.push(await page.evaluate(() => document.activeElement.id));
+			}
+			expect(order).toEqual(['g-a-link', 'g-a-1', 'g-a-2', 'g-b-link', 'g-b-1', 'g-b-2']);
+		});
+
+		test('the current page keeps its look and an ancestor heading takes the ancestor color', async ({ page }) => {
+			await open(page);
+			await page.evaluate(() => document.querySelector('#g-b-1').setAttribute('aria-current', 'page'));
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+			const current = await style(page, '#g-b-1', 'color');
+			expect(await style(page, '#g-b-link', 'color')).toBe(current);
+			expect(await style(page, '#g-a-link', 'color')).not.toBe(current);
+			expect(Number(await style(page, '#g-b-1', 'font-weight'))).toBeGreaterThanOrEqual(Number(await style(page, '#g-a-1', 'font-weight')));
+		});
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);
 		await page.click('#trigger-one');
 		await settle(page, '#menu-one');
+		expect(await axe(page)).toEqual([]);
+		await page.keyboard.press('Escape');
+		await page.click('#g-tree-toggle');
+		await settle(page, '#g-tree-menu');
 		expect(await axe(page)).toEqual([]);
 	});
 	test.describe('the current page', () => {

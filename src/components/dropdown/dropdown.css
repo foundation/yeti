@@ -137,6 +137,50 @@
 	}
 	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
 
+	/* Grouped. Each second-level item becomes a heading with its pages listed
+	   under it, in columns, instead of a flyout. The panel is a row of columns
+	   that wraps to further rows where they do not fit, so a narrow screen
+	   stacks them; it never grows past the viewport less a margin each side.
+	   Each section's own panel is still a closed popover, shown in flow the way
+	   the nav shows a group in its open panel: that keeps its links in the tab
+	   order, in visual order, and out of the top layer. The rules apply to the
+	   grouped panel only while it is open as a popover, and never inside an
+	   open nav panel, where a group is an in-place list and the nav's own
+	   rules shape it. */
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: var(--yeti-space-md);
+		max-inline-size: calc(100vw - 2 * var(--yeti-space-md));
+		overflow: auto;
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > li {
+		flex: 0 1 auto;
+		min-inline-size: var(--yeti-dropdown-min);
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown { display: block; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > [popover] {
+		display: block;
+		position: static;
+		inset: auto;
+		inline-size: auto;
+		min-inline-size: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		box-shadow: none;
+		overflow: visible;
+		opacity: 1;
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > a + button { display: none; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > a {
+		font-size: var(--yeti-text-sm);
+		font-weight: var(--yeti-weight-strong);
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > [popover] .dropdown > :is([popover], a + button) { display: none; }
+
 	/* The current page. A link in a panel that points at the page being read
 	   takes the variant's text color and the strong weight. Each parent above
 	   it, link and toggle, takes the same color at the normal weight, so the

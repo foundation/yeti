@@ -568,6 +568,20 @@ test.describe('nav', () => {
 		});
 	}
 
+	test('a grouped dropdown in the open panel is the same in-place list as any other', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt-about').setAttribute('data-grouped', ''));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const [about, history, team, leaf] = await Promise.all(['#nt-about-link', '#nt-history', '#nt-team-link', '#nt-leaf'].map((s) => rect(page, s)));
+		expect(history.top).toBeGreaterThanOrEqual(about.bottom - 1);
+		expect(history.left).toBeGreaterThan(about.left);
+		expect(leaf.top).toBeGreaterThanOrEqual(team.bottom - 1);
+		expect(leaf.left).toBeGreaterThan(team.left);
+		expect(await isOpen(page, 'nt-about-menu')).toBe(false);
+	});
+
 	test('a label-only dropdown in the panel still opens as a docked block without the module', async ({ page }) => {
 		await withoutModule(page, 'nav');
 		await open(page, 400);
