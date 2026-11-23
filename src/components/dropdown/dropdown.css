@@ -193,14 +193,15 @@
 	   way down to the page is traced without a second page looking current.
 	   A parent is matched only when it contains the page, not when it sits
 	   beside it. A dropdown outside the nav has no variant scope of its own,
-	   so the color falls back to the default variant's. The nav colors its own
-	   top-level parents in the bar. */
+	   so the color falls back to the default variant's. A trigger that is a
+	   .button keeps its own text, which is drawn for its own fill. The nav
+	   colors its own top-level parents in the bar. */
 	.dropdown > [popover] a[aria-current="page"] {
 		color: var(--_yeti-variant-text, var(--yeti-color-primary-text));
 		font-weight: var(--yeti-weight-strong);
 	}
-	.dropdown:has([aria-current="page"]) > :is(a, button),
-	.dropdown > [popover] .dropdown:has([aria-current="page"]) > :is(a, button) {
+	.dropdown:has([aria-current="page"]) > :is(a, button):not(.button),
+	.dropdown > [popover] .dropdown:has([aria-current="page"]) > :is(a, button):not(.button) {
 		color: var(--_yeti-variant-text, var(--yeti-color-primary-text));
 	}
 

@@ -595,5 +595,17 @@ test.describe('dropdown', () => {
 			await open(page);
 			expect(await style(page, '#sub-link', 'color')).toBe(await style(page, '#tree-plain', 'color'));
 		});
+
+		test('a button trigger keeps its own text color over a panel that holds the current page', async ({ page }) => {
+			await open(page);
+			// A solid button, the default, whose text is the color on its own fill.
+			await page.evaluate(() => document.querySelector('#trigger-one').removeAttribute('data-emphasis'));
+			await settle(page, '#trigger-one');
+			const before = await style(page, '#trigger-one', 'color');
+			await page.evaluate(() => document.querySelector('#item-one').setAttribute('aria-current', 'page'));
+			// A button transitions its color, so read it once that has finished.
+			await settle(page, '#trigger-one');
+			expect(await style(page, '#trigger-one', 'color')).toBe(before);
+		});
 	});
 });
