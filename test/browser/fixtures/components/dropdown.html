@@ -34,6 +34,28 @@
 					<button type="button">Contact</button>
 				</div>
 			</div>
+			<ul role="list" id="tree-list">
+				<li class="dropdown" id="tree">
+					<a href="#" id="tree-link">Tree</a>
+					<button type="button" popovertarget="tree-menu" id="tree-toggle" aria-label="Tree pages"></button>
+					<ul id="tree-menu" popover role="list">
+						<li><a href="#" id="tree-plain">Plain page</a></li>
+						<li class="dropdown" id="sub">
+							<a href="#" id="sub-link">Sub</a>
+							<button type="button" popovertarget="sub-menu" id="sub-toggle" aria-label="Sub pages"></button>
+							<ul id="sub-menu" popover role="list">
+								<li><a href="#" id="leaf">Leaf</a></li>
+							</ul>
+						</li>
+						<li class="dropdown" id="lab">
+							<button type="button" popovertarget="lab-menu" id="lab-trigger">Label</button>
+							<ul id="lab-menu" popover role="list">
+								<li><a href="#" id="lab-leaf">Label leaf</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 	</main>
 </body>

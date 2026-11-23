@@ -24,6 +24,12 @@
   "classes": [],
   "children": [
     {
+      "selector": "> a",
+      "min": 0,
+      "max": 1,
+      "description": "The parent page's link, before the button. With it the button is a small toggle beside the link."
+    },
+    {
       "selector": "> button[popovertarget]",
       "min": 1,
       "max": 1,

@@ -39,6 +39,67 @@
 	.dropdown > [popover] a:hover,
 	.dropdown > [popover] button:hover { background-color: var(--yeti-dropdown-hover); }
 
+	/* A panel may be a list. The list's own bullets and the items' margins go,
+	   so a ul of li reads the same as a div of bare links. */
+	.dropdown > ul[popover] { list-style: none; }
+	.dropdown > [popover] li { margin: 0; }
+
+	/* A split parent: the label is a real link and a small button beside it
+	   opens the panel. The button is a control-sized square so it is easy to
+	   hit, and it always carries the chevron, because it has no text to say
+	   what it does. */
+	.dropdown:has(> a + button) {
+		display: inline-flex;
+		align-items: flex-start;
+	}
+	.dropdown > a + button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		inline-size: var(--yeti-control-size);
+		block-size: var(--yeti-control-size);
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	/* The chevron is the base layer's two-border square. It points down. A
+	   label trigger draws it only where it marks a submenu, inside another
+	   panel or inside the bar's own panel; a standalone dropdown button is
+	   left as it was. */
+	.dropdown > a + button::after,
+	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after {
+		content: "";
+		inline-size: 0.5em;
+		block-size: 0.5em;
+		border-block-end: 2px solid currentColor;
+		border-inline-end: 2px solid currentColor;
+		rotate: 45deg;
+		translate: 0 -0.15em;
+	}
+	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after { margin-inline-start: auto; }
+
+	/* In a panel the row is the whole panel width. The link takes what the
+	   toggle leaves and wraps when the label is long; the toggle keeps to the
+	   first line at the inline end. */
+	.dropdown > [popover] .dropdown:has(> a + button) {
+		display: flex;
+		align-items: flex-start;
+	}
+	.dropdown > [popover] .dropdown > a:has(+ button) {
+		flex: 1;
+		min-inline-size: 0;
+	}
+	.dropdown > [popover] .dropdown > a + button {
+		padding-inline: 0;
+		border-radius: calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding));
+	}
+	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
+
 	/* Anchored under its own trigger. The name is scoped to this dropdown, so
 	   a page of them does not hang every panel off the last one. Without
 	   anchor positioning the user agent centres the panel, which still opens,

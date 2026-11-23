@@ -183,6 +183,42 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'menu-three')).toBe(true);
 	});
 
+	test('a split parent is a link and a square toggle on one row', async ({ page }) => {
+		await open(page);
+		await page.click('#tree-toggle');
+		await settle(page, '#tree-menu');
+		const [link, toggle, menu] = await Promise.all([rect(page, '#sub-link'), rect(page, '#sub-toggle'), rect(page, '#tree-menu')]);
+		expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+		expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
+		expect(toggle.right).toBeLessThanOrEqual(menu.right);
+		expect(Math.abs(toggle.width - toggle.height)).toBeLessThan(2);
+	});
+
+	test('an empty toggle draws a chevron and has a name', async ({ page }) => {
+		await open(page);
+		expect(await page.evaluate(() => getComputedStyle(document.querySelector('#tree-toggle'), '::after').content)).not.toBe('none');
+		await expect(page.getByRole('button', { name: 'Tree pages' })).toHaveCount(1);
+	});
+
+	test('a standalone dropdown button draws no chevron', async ({ page }) => {
+		await open(page);
+		expect(await page.evaluate(() => getComputedStyle(document.querySelector('#trigger-one'), '::after').content)).toBe('none');
+	});
+
+	test('a long parent label wraps and its toggle stays a square on the first line', async ({ page }) => {
+		// A popover sits in the top layer, so only the viewport can narrow it.
+		await page.setViewportSize({ width: 320, height: 720 });
+		await open(page, 320);
+		await page.evaluate(() => { document.querySelector('#sub-link').textContent = 'A parent page with a very long name that has to wrap in a narrow panel'; });
+		await page.click('#tree-toggle');
+		await settle(page, '#tree-menu');
+		const [link, toggle, menu] = await Promise.all([rect(page, '#sub-link'), rect(page, '#sub-toggle'), rect(page, '#tree-menu')]);
+		expect(link.height).toBeGreaterThan(toggle.height);
+		expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+		expect(toggle.right).toBeLessThanOrEqual(menu.right);
+		expect(menu.right).toBeLessThanOrEqual(320);
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);
