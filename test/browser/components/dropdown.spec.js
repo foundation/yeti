@@ -224,15 +224,18 @@ test.describe('dropdown', () => {
 		await page.click('#tree-toggle');
 		await settle(page, '#tree-menu');
 		expect(await page.evaluate(() => getComputedStyle(document.querySelector('#lab-trigger'), '::after').content)).not.toBe('none');
-		const gap = await page.evaluate(() => {
-			const button = document.querySelector('#lab-trigger');
-			const range = document.createRange();
-			range.selectNodeContents(button.firstChild);
-			return button.getBoundingClientRect().right - range.getBoundingClientRect().right;
+				const { margin, xs } = await page.evaluate(() => {
+			const probe = document.createElement('div');
+			probe.style.inlineSize = 'var(--yeti-space-xs)';
+			document.body.append(probe);
+			const xs = probe.getBoundingClientRect().width;
+			probe.remove();
+			return { margin: parseFloat(getComputedStyle(document.querySelector('#lab-trigger'), '::after').marginInlineStart), xs };
 		});
-		// The text ends well short of the button's edge: the chevron and the
-		// space before it sit at the inline end.
-		expect(gap).toBeGreaterThan(20);
+		// An auto margin on a flex item is not reported as a length: the browser
+		// gives 0px, where the token's fixed space would give its own length.
+		expect(margin).toBeLessThan(1);
+		expect(xs).toBeGreaterThan(1);
 	});
 
 	test('has no accessibility violations, shut and open', async ({ page }) => {

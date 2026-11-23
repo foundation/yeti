@@ -81,10 +81,13 @@
 		rotate: 45deg;
 		translate: 0 -0.15em;
 	}
-	/* The nav's bar trigger has no flex gap of its own, so the chevron keeps
-	   its own space from the text. Inside a dropdown panel it goes to the
+	/* Two cases that never overlap, so neither depends on source order. The
+	   nav's bar trigger has no flex gap of its own, so its chevron keeps a
+	   space from the text; it is a direct child of the nav's list items. A
+	   trigger inside a dropdown panel, even a panel in a nav, goes to the
 	   row's inline end instead. */
-	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
+	.nav > ul[popover] > li.dropdown > button:first-child::after,
+	.nav > ul[popover] > li > .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
 	.dropdown > [popover] .dropdown > button:first-child::after { margin-inline-start: auto; }
 
 	/* In a panel the row is the whole panel width. The link takes what the

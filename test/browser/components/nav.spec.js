@@ -21,10 +21,15 @@ test.describe('nav', () => {
 		await open(page);
 		const chevron = await page.evaluate(() => {
 			const after = getComputedStyle(document.querySelector('#nav-li-trigger'), '::after');
-			return { content: after.content, margin: parseFloat(after.marginInlineStart) };
+			const probe = document.createElement('div');
+			probe.style.inlineSize = 'var(--yeti-space-xs)';
+			document.body.append(probe);
+			const xs = probe.getBoundingClientRect().width;
+			probe.remove();
+			return { content: after.content, margin: parseFloat(after.marginInlineStart), xs };
 		});
 		expect(chevron.content).not.toBe('none');
-		expect(chevron.margin).toBeGreaterThan(0);
+		expect(Math.abs(chevron.margin - chevron.xs)).toBeLessThan(1);
 		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
 	});
 
@@ -46,6 +51,30 @@ test.describe('nav', () => {
 		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
 		await page.hover('#plain');
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
+	test('a label trigger inside a dropdown panel in the nav keeps its chevron at the row end', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => {
+			const row = document.createElement('div');
+			row.className = 'dropdown';
+			row.innerHTML = '<button type="button" id="deep-trigger">Deep</button>';
+			document.querySelector('#nav-li-menu').append(row);
+		});
+		await page.click('#nav-li-trigger');
+		await settle(page, '#nav-li-menu');
+		const { margin, xs } = await page.evaluate(() => {
+			const probe = document.createElement('div');
+			probe.style.inlineSize = 'var(--yeti-space-xs)';
+			document.body.append(probe);
+			const xs = probe.getBoundingClientRect().width;
+			probe.remove();
+			return { margin: parseFloat(getComputedStyle(document.querySelector('#deep-trigger'), '::after').marginInlineStart), xs };
+		});
+		// An auto margin on a flex item is not reported as a length: the browser
+		// gives 0px, where the token's fixed space would give its own length.
+		expect(margin).toBeLessThan(1);
+		expect(xs).toBeGreaterThan(1);
 	});
 
 	test('in the bar, a dropdown whose class is on the li is styled like a link', async ({ page }) => {
