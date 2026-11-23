@@ -83,9 +83,10 @@
 	   inside the list is a button, not a link, and is styled like one. */
 	.nav > ul[popover] > li { margin: 0; }
 	/* The bar's own links: the list's links, and a top-level dropdown's
-	   trigger. Nothing inside a dropdown's panel is matched, so the panel
+	   trigger, whether the dropdown class is on the li or on a wrapper in it. Nothing inside a dropdown's panel is matched, so the panel
 	   answers to the dropdown's tokens and not to the nav's. */
 	.nav > ul[popover] > li > a,
+	.nav > ul[popover] > li.dropdown > :is(a, button),
 	.nav > ul[popover] > li > .dropdown > :is(a, button) {
 		display: inline-flex;
 		align-items: center;
@@ -100,8 +101,10 @@
 		cursor: pointer;
 	}
 	.nav > ul[popover] > li > a:hover,
+	.nav > ul[popover] > li.dropdown > :is(a, button):hover,
 	.nav > ul[popover] > li > .dropdown > :is(a, button):hover { background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle)); }
 	.nav > ul[popover] > li > a[aria-current],
+	.nav > ul[popover] > li.dropdown > a[aria-current],
 	.nav > ul[popover] > li > .dropdown > a[aria-current] {
 		color: var(--yeti-nav-current, var(--_yeti-variant-text));
 		font-weight: var(--yeti-weight-strong);

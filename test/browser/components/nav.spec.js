@@ -37,6 +37,18 @@ test.describe('nav', () => {
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
 	});
 
+	test('in the bar, a dropdown whose class is on the li is styled like a link', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-link: rgb(250, 250, 250); --yeti-nav-hover: rgb(7, 8, 9); --yeti-dropdown-text: rgb(1, 2, 3); }' });
+		expect(await style(page, '#nav-li-trigger', 'color')).toBe('rgb(250, 250, 250)');
+		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
+		await page.hover('#nav-li-trigger');
+		expect(await style(page, '#nav-li-trigger', 'background-color')).toBe('rgb(7, 8, 9)');
+		await page.click('#nav-li-trigger');
+		await settle(page, '#nav-li-menu');
+		expect(await style(page, '#nav-li-first', 'color')).toBe('rgb(1, 2, 3)');
+	});
+
 	test('a painted panel sets its own text, and the links and the close button follow it', async ({ page }) => {
 		await open(page, 300);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-panel: rgb(30, 40, 50); --yeti-nav-panel-text: rgb(250, 240, 230); --yeti-nav-link: rgb(1, 2, 3); }' });
