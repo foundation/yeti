@@ -43,6 +43,16 @@
       "description": "Background of the panel."
     },
     {
+      "name": "--yeti-dropdown-text",
+      "public": true,
+      "description": "Text color of the open panel and its items."
+    },
+    {
+      "name": "--yeti-dropdown-hover",
+      "public": true,
+      "description": "Background of a panel item under the pointer."
+    },
+    {
       "name": "--yeti-dropdown-radius",
       "public": true,
       "description": "Corner of the panel."
@@ -78,11 +88,6 @@
       "description": "How long a hover-triggered panel waits after the pointer leaves before closing."
     },
     {
-      "name": "--yeti-color-text",
-      "public": true,
-      "description": "The panel's text."
-    },
-    {
       "name": "--yeti-duration-fast",
       "public": true,
       "description": "How long the panel takes to open."
@@ -101,11 +106,6 @@
       "name": "--yeti-space-sm",
       "public": true,
       "description": "Inline padding of an item."
-    },
-    {
-      "name": "--yeti-color-surface-sunken",
-      "public": true,
-      "description": "Background of an item under the pointer."
     }
   ],
   "a11y": {

@@ -21,6 +21,17 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'menu-one')).toBe(false);
 	});
 
+	test('the panel takes its text and its hover from the dropdown tokens', async ({ page }) => {
+		await open(page);
+		await page.addStyleTag({ content: '#menu-one { --yeti-dropdown-text: rgb(1, 2, 3); --yeti-dropdown-hover: rgb(4, 5, 6); }' });
+		await page.click('#trigger-one');
+		await settle(page, '#menu-one');
+		const item = page.locator('#menu-one a').first();
+		expect(await item.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(1, 2, 3)');
+		await item.hover();
+		expect(await item.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(4, 5, 6)');
+	});
+
 	test('a click outside shuts it', async ({ page }) => {
 		await open(page);
 		await page.click('#trigger-one');

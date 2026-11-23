@@ -17,6 +17,26 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
+	test('in the bar, a dropdown panel takes the dropdown tokens, not the nav link color', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-link: rgb(250, 250, 250); --yeti-dropdown-text: rgb(1, 2, 3); --yeti-dropdown-hover: rgb(4, 5, 6); }' });
+		await page.click('#nav-more-trigger');
+		await settle(page, '#nav-more');
+		const item = page.locator('#nav-more a').first();
+		expect(await item.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(1, 2, 3)');
+		await item.hover();
+		expect(await item.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(4, 5, 6)');
+		expect(await style(page, '#nav-more-trigger', 'color')).toBe('rgb(250, 250, 250)');
+	});
+
+	test('the bar reads --yeti-nav-hover and --yeti-nav-current', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-hover: rgb(7, 8, 9); --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
 	test('a painted panel sets its own text, and the links and the close button follow it', async ({ page }) => {
 		await open(page, 300);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-panel: rgb(30, 40, 50); --yeti-nav-panel-text: rgb(250, 240, 230); --yeti-nav-link: rgb(1, 2, 3); }' });

@@ -157,6 +157,16 @@
       "description": "Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color."
     },
     {
+      "name": "--yeti-nav-hover",
+      "public": true,
+      "description": "Background of a bar link or dropdown trigger under the pointer; read with a fallback to the variant's subtle tint."
+    },
+    {
+      "name": "--yeti-nav-current",
+      "public": true,
+      "description": "Color of the current link in the bar; read with a fallback to the variant's text color."
+    },
+    {
       "name": "--yeti-stretch-small",
       "public": true,
       "description": "font-stretch of a link."

@@ -16,7 +16,7 @@
 		min-inline-size: var(--yeti-dropdown-min);
 		border-radius: var(--yeti-dropdown-radius);
 		background-color: var(--yeti-dropdown-surface);
-		color: var(--yeti-color-text);
+		color: var(--yeti-dropdown-text);
 		box-shadow: var(--yeti-shadow-md);
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease);
 	}
@@ -37,7 +37,7 @@
 		cursor: pointer;
 	}
 	.dropdown > [popover] a:hover,
-	.dropdown > [popover] button:hover { background-color: var(--yeti-color-surface-sunken); }
+	.dropdown > [popover] button:hover { background-color: var(--yeti-dropdown-hover); }
 
 	/* Anchored under its own trigger. The name is scoped to this dropdown, so
 	   a page of them does not hang every panel off the last one. Without

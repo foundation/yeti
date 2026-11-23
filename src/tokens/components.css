@@ -73,6 +73,8 @@
 		--yeti-tabs-padding: var(--yeti-space-sm) var(--yeti-space-md);
 
 		--yeti-dropdown-surface: var(--yeti-color-surface-raised);
+		--yeti-dropdown-text: var(--yeti-color-text);
+		--yeti-dropdown-hover: var(--yeti-color-surface-sunken);
 		--yeti-dropdown-radius: var(--yeti-radius-md);
 		--yeti-dropdown-padding: var(--yeti-space-xs);
 		--yeti-dropdown-min: 12rem;
