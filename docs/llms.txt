@@ -573,9 +573,9 @@ Children:
 - > [data-brand]: at least 0, at most 1. The site's name or mark, usually a link home.
 - > button[popovertarget]: at least 1, at most 1. The toggle; its popovertarget names the list's id. Hidden while the links are in the bar.
 - > ul[popover]: at least 1, at most 1. The links, one per li, with role="list" and the id the toggle names.
-- li: at least 1. An entry in the list; each holds one link.
+- li: at least 1. An entry in the list; each holds one link, or a dropdown: a split parent's link, toggle and panel, or a label button and its panel.
 - [data-close]: at least 0, at most 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
-- .dropdown: at least 0. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, with its toggle hidden until the module runs; a label-only dropdown becomes a full-width block docked under its trigger and squared off against the open panel's edges.
+- .dropdown: at least 0. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, every level open and its toggle hidden. With nav.js each group, a label-only one included, folds in place behind its button, and the branch holding the current page starts open. Without the module a label-only dropdown opens as a full-width block docked under its trigger and squared off against the open panel's edges.
 - > [data-actions]: at least 0, at most 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ## pagination (component, class="pagination")

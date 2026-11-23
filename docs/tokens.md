@@ -459,9 +459,9 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-nav-brand-size` | `1em` | Size of the nav's brand; 1em is the bar's own size. |
 | `--yeti-nav-logo-size` | `var(--yeti-control-size)` | Height of a logo in the nav's brand; its width follows the image. |
 | `--yeti-nav-panel-text` | `var(--yeti-color-text)` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
-| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a bar link or dropdown trigger under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
-| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current link in the bar. Read with a fallback to the variant's text color. |
-| `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar; the bar's own color unless set. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. |
+| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a link or dropdown trigger under the pointer, in the bar and in the open panel, including a submenu's links and toggles shown in place; not the nav's toggle or the close button, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link and of each parent that holds it, in the bar and in the open panel, including submenus shown in place there; a dropdown's floating panel keeps the variant's text color. Read with a fallback to the variant's text color. |
+| `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
 
 </div>
 
@@ -579,7 +579,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-dropdown-hover` | `var(--yeti-color-surface-sunken)` | Background of a panel item under the pointer. |
 | `--yeti-dropdown-radius` | `var(--yeti-radius-md)` | Corner of the panel. |
 | `--yeti-dropdown-padding` | `var(--yeti-space-xs)` | Padding around the items. |
-| `--yeti-dropdown-min` | `12rem` | Least width of the panel. |
+| `--yeti-dropdown-min` | `12rem` | Least width of the panel, and of each column in a grouped panel. |
 | `--yeti-dropdown-open-delay` | `100ms` | How long the pointer must rest on a data-trigger="hover" dropdown before its panel opens. Read by hover.js, so it has no effect without that module. |
 | `--yeti-dropdown-close-delay` | `200ms` | How long a hover-triggered panel waits after the pointer leaves before it closes, so the gap between trigger and panel is forgiving. Read by hover.js. |
 

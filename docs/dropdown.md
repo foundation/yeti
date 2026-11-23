@@ -109,11 +109,11 @@ Any item in a list panel can be a dropdown itself, a split parent or a label, an
 
 Escape closes the innermost open panel and returns focus to its button. A click outside closes the whole chain. Opening a submenu closes any sibling submenu that was open. All three are the browser's own handling of nested popovers, so there is no script to load for them.
 
-Each button's `popovertarget` names its panel's id, so every id has to be unique on the page. An id can be any string without a space in it. `popovertarget` is an id reference, not a CSS selector, so an id built from the page's path, such as `menu-/about/team/` above, works as it is and needs no escaping. That makes ids easy for a template to write.
+Each button's `popovertarget` names its panel's id, so every id has to be unique on the page. An id can be any string without whitespace. `popovertarget` is an id reference, not a CSS selector, so an id built from the page's path, such as `menu-/about/team/` above, works as it is and needs no escaping. That makes ids easy for a template to write.
 
-The chevron shows that a row opens something, and which way. A split parent's button always has one. A label button has one only where it marks a submenu: inside another dropdown's panel, and inside a nav's list. A standalone dropdown's button, such as the Account button above, is left as it is. A first-level chevron points down and turns up while its panel is open. A nested one points to the inline end and turns back while its panel is open, and mirrors in a right-to-left page.
+The chevron shows that a row opens something, and which way. A split parent's button always has one. A label button has one only where it marks a submenu: inside another dropdown's panel, and inside a nav's list. A standalone dropdown's button, such as the Account button above, is left as it is. A first-level chevron points down and turns up while its panel is open. A nested one points to the inline end and turns back while its panel is open, and mirrors in a right-to-left page. The exception is a nav's open panel with `nav.js`, where every group opens below its own row, so every group's chevron points down and turns up while the group is open.
 
-Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. The color is the variant's text color, or the primary color's outside a variant scope.
+Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. A grouped panel's heading, described below, keeps its strong weight and only changes color. The color is the variant's text color, or the primary color's outside a variant scope.
 
 ## Grouped
 
@@ -146,23 +146,25 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 </ul>
 ```
 
-Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits: where it would pass the far edge of the screen, it moves back toward the start to fit. Three levels show. A page under a heading keeps its link, and anything below that page is not shown in the grouped panel.
+Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
+
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its button. The grouped panel shows three levels: its own button, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all.
 
 A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
 
-Inside a nav's open panel on a phone, a grouped dropdown behaves like any other.
+Once a nav's links are behind its toggle, a grouped dropdown in its open panel behaves like any other.
 
 ## Opening on hover
 
 Click is the default and never changes. `data-trigger="hover"` adds opening under the pointer on top of it, and needs `hover.js`, loaded once with `<script type="module" src="…/js/hover.js">`. The module is optional: without it the attribute does nothing and the dropdown still works by click.
 
-Write the attribute once, on the outermost dropdown. Every submenu inside it opens under the pointer too, with no attribute of its own.
+Write the attribute once, on the outermost dropdown. Every submenu inside it opens under the pointer too, with no attribute of its own. The exception is a grouped panel's sections, which are already shown, so there is nothing to open.
 
 Hover is added only where the pointer can actually hover, so a touch screen keeps the tap. Opening waits for `--yeti-dropdown-open-delay` so a pointer crossing the trigger on its way somewhere else does not flash the panel open, and closing waits for `--yeti-dropdown-close-delay` so the gap between the trigger and the panel is forgiving. Hovering the panel itself keeps it open.
 
 The module closes only a panel it opened itself. A panel you opened with Enter or a click stays open when the pointer wanders off it, because the deliberate act should outrank the accidental one. Pressing the trigger while hover has the panel open closes it, and a press always cancels an opening that has not happened yet, so the same gesture never does opposite things depending on how long you lingered.
 
-With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as one in a nav's open panel on a phone, so it is never lifted out of the list.
+With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as a section of a grouped panel, so it is never lifted out of its column.
 
 ```html
 <div class="dropdown" data-trigger="hover">
@@ -208,13 +210,13 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | Token | Description |
 | --- | --- |
 | `--yeti-color-primary-text` | The color of the current page's link and of each parent above it, when no variant scope is set. |
-| `--yeti-weight-strong` | The weight of the current page's link in a panel. |
+| `--yeti-weight-strong` | The weight of the current page's link in a panel, and of a grouped panel's headings. |
 | `--yeti-dropdown-surface` | Background of the panel. |
 | `--yeti-dropdown-text` | Text color of the open panel and its items. |
 | `--yeti-dropdown-hover` | Background of a panel item under the pointer. |
 | `--yeti-dropdown-radius` | Corner of the panel. |
 | `--yeti-dropdown-padding` | Padding around the items. |
-| `--yeti-dropdown-min` | Least width of the panel. |
+| `--yeti-dropdown-min` | Least width of the panel, and of each column in a grouped panel. |
 | `--yeti-shadow-md` | The panel's shadow. |
 | `--yeti-control-size` | Least height of an item. |
 | `--yeti-dropdown-open-delay` | How long the pointer must rest before a hover-triggered panel opens. |
@@ -237,7 +239,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 
 ## Accessibility
 
-- With data-trigger="hover" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role="menu" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, put the dropdown in the li beside the link it belongs to.
+- With data-trigger="hover" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role="menu" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, a section with its own page is a split parent: the link, then an empty toggle with an aria-label, then the panel, all inside the dropdown.
 
 <div class="scroller" role="region" aria-label="Dropdown keyboard shortcuts" tabindex="0" markdown="1">
 
@@ -245,7 +247,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | --- | --- |
 | `Enter / Space` | On the trigger, opens or closes the panel. |
 | `Tab` | Walks the items, which are ordinary links and buttons. |
-| `Escape` | Closes the panel and returns focus to the trigger. |
+| `Escape` | Closes the innermost open panel and returns focus to its trigger. |
 
 </div>
 

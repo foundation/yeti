@@ -148,19 +148,19 @@ A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's ow
 <script type="module" src="…/js/nav.js"></script>
 ```
 
-In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight.
+In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight. A grouped dropdown's heading keeps its strong weight and only changes color.
 
-The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. In the open panel on a phone it is the other way round: a submenu shown in place is part of the panel, so its links take the panel's tokens, `--yeti-nav-panel-text`, `--yeti-nav-hover` and `--yeti-nav-current`, and not the dropdown's.
+The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. The current page's link inside that panel, and each parent above it there, take the variant's text color rather than `--yeti-nav-current`, which in the bar colors only the list's own links and the top-level parent that holds the page. Once the links are behind the toggle it is the other way round in the nav's open panel: a submenu shown in place is part of the panel, so its links take the panel's tokens, `--yeti-nav-panel-text`, `--yeti-nav-hover` and `--yeti-nav-current`, and not the dropdown's.
 
 ## Submenus in the panel
 
-Once the links are behind the toggle, a split parent's pages are shown in the panel itself, in place, each level indented one step further than the one above it. With no script every level is open and the small buttons are hidden, so every page in the tree is one tap away and Tab walks the links in the order they are shown. That is enough for a short tree.
+Once the links are behind the toggle, a split parent's pages are shown in the nav's open panel itself, in place, each level indented one step further than the one above it. With no script every level of a split parent is open and the small buttons are hidden, so every page under it is one tap away and Tab walks the links in the order they are shown. A label-only section is the exception, even when it sits inside a split parent's pages: it opens as described below. That is enough for a short tree.
 
-For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears.
+For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the nav's open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears.
 
-The module marks each button with `aria-expanded` while the panel is open. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
+The module marks each button with `aria-expanded` while the nav's open panel is shown. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the nav's panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
 
-A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently, because hiding its button would hide its label: its panel opens as a full-width block docked to the foot of its button and squared off against the panel's edges, so a sheet, a drawer and a screen each keep it inside them. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently. A split parent can hide its button because its link names the section; a label-only parent cannot, since its button is its name, and its own panel opens as a full-width block docked to the foot of its button and squared off against the edges of the nav's open panel, so a sheet, a drawer and a screen each keep it inside them. The block keeps the dropdown's own surface and text tokens, not the nav panel's. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the nav's panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
 
 In a `screen` panel everything is centred, so a submenu has no indent. Each level steps down in size instead, to 0.875 times the size of the one above it.
 
@@ -201,9 +201,9 @@ Attributes that descendants carry, not the root.
 - `> [data-brand]`: 0 to 1. The site's name or mark, usually a link home.
 - `> button[popovertarget]`: exactly 1. The toggle; its popovertarget names the list's id. Hidden while the links are in the bar.
 - `> ul[popover]`: exactly 1. The links, one per li, with role="list" and the id the toggle names.
-- `li`: at least 1. An entry in the list; each holds one link.
+- `li`: at least 1. An entry in the list; each holds one link, or a dropdown: a split parent's link, toggle and panel, or a label button and its panel.
 - `[data-close]`: 0 to 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
-- `.dropdown`: any number. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, with its toggle hidden until the module runs; a label-only dropdown becomes a full-width block docked under its trigger and squared off against the open panel's edges.
+- `.dropdown`: any number. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, every level open and its toggle hidden. With nav.js each group, a label-only one included, folds in place behind its button, and the branch holding the current page starts open. Without the module a label-only dropdown opens as a full-width block docked under its trigger and squared off against the open panel's edges.
 - `> [data-actions]`: 0 to 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 ## Tokens
@@ -221,9 +221,9 @@ Attributes that descendants carry, not the root.
 | `--yeti-nav-brand-size` | Size of the brand; 1em keeps the bar's. |
 | `--yeti-nav-logo-size` | Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller. |
 | `--yeti-nav-panel-text` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
-| `--yeti-nav-link` | Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color. |
-| `--yeti-nav-hover` | Background of a bar link or dropdown trigger under the pointer; read with a fallback to the variant's subtle tint. |
-| `--yeti-nav-current` | Color of the current link in the bar; read with a fallback to the variant's text color. |
+| `--yeti-nav-link` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
+| `--yeti-nav-hover` | Background of a link or dropdown trigger under the pointer, in the bar and in the open panel, including a submenu's links and toggles shown in place; not the nav's toggle or the close button, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | Color of the current page's link and of each parent that holds it, in the bar and in the open panel, including submenus shown in place there; a dropdown's floating panel keeps the variant's text color. Read with a fallback to the variant's text color. |
 | `--yeti-stretch-small` | font-stretch of a link. |
 | `--yeti-control-size` | Minimum height of the bar, the toggle, and each link. |
 | `--yeti-shadow-md` | The open panel's shadow. |
@@ -267,13 +267,13 @@ Attributes that descendants carry, not the root.
 ## Accessibility
 
 - Required attributes: `aria-label` or `aria-labelledby`
-- Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current="page". Put role="list" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel="screen" there is no outside to click, so include the close item.
+- Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current="page". Put role="list" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel="screen" there is no outside to click, so include the close item. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it.
 
 <div class="scroller" role="region" aria-label="Nav keyboard shortcuts" tabindex="0" markdown="1">
 
 | Key | Action |
 | --- | --- |
-| `Enter / Space` | On the toggle, opens or closes the list. |
+| `Enter / Space` | On the toggle, opens or closes the list. With nav.js, on a group's button in the open panel, opens or closes that group in place. |
 | `Tab` | From the toggle, into the open list's first link. |
 | `Escape` | Closes the open list and returns focus to the toggle. |
 
@@ -282,7 +282,7 @@ Attributes that descendants carry, not the root.
 ## Browser support
 
 - Used without guards: popover, container size queries, @starting-style
-- Behind `@supports`: anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, and a submenu in the open panel docks to the foot of it)
+- Behind `@supports`: anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, and a label-only submenu in the open panel, without the module, docks to the foot of it)
 
 ## JavaScript
 

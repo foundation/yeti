@@ -58,7 +58,7 @@
     {
       "name": "--yeti-weight-strong",
       "public": true,
-      "description": "The weight of the current page's link in a panel."
+      "description": "The weight of the current page's link in a panel, and of a grouped panel's headings."
     },
     {
       "name": "--yeti-dropdown-surface",
@@ -88,7 +88,7 @@
     {
       "name": "--yeti-dropdown-min",
       "public": true,
-      "description": "Least width of the panel."
+      "description": "Least width of the panel, and of each column in a grouped panel."
     },
     {
       "name": "--yeti-shadow-md",
@@ -154,10 +154,10 @@
       },
       {
         "key": "Escape",
-        "action": "Closes the panel and returns focus to the trigger."
+        "action": "Closes the innermost open panel and returns focus to its trigger."
       }
     ],
-    "notes": "With data-trigger=\"hover\" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role=\"menu\" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, put the dropdown in the li beside the link it belongs to."
+    "notes": "With data-trigger=\"hover\" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role=\"menu\" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, a section with its own page is a split parent: the link, then an empty toggle with an aria-label, then the panel, all inside the dropdown."
   },
   "js": [
     {
