@@ -459,8 +459,8 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-nav-brand-size` | `1em` | Size of the nav's brand; 1em is the bar's own size. |
 | `--yeti-nav-logo-size` | `var(--yeti-control-size)` | Height of a logo in the nav's brand; its width follows the image. |
 | `--yeti-nav-panel-text` | `var(--yeti-color-text)` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
-| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a link or dropdown trigger under the pointer, in the bar and in the open panel, including a submenu's links and toggles shown in place; not the nav's toggle or the close button, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
-| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link and of each parent that holds it, in the bar and in the open panel, including submenus shown in place there; a dropdown's floating panel keeps the variant's text color. Read with a fallback to the variant's text color. |
+| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color. |
 | `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
 
 </div>
@@ -577,6 +577,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-dropdown-surface` | `var(--yeti-color-surface-raised)` | Background of the open panel. |
 | `--yeti-dropdown-text` | `var(--yeti-color-text)` | Text color of the open panel and its items. |
 | `--yeti-dropdown-hover` | `var(--yeti-color-surface-sunken)` | Background of a panel item under the pointer. |
+| `--yeti-dropdown-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link inside a dropdown's panel, and of each parent there that holds it. Read with a fallback to the variant's text color. |
 | `--yeti-dropdown-radius` | `var(--yeti-radius-md)` | Corner of the panel. |
 | `--yeti-dropdown-padding` | `var(--yeti-space-xs)` | Padding around the items. |
 | `--yeti-dropdown-min` | `12rem` | Least width of the panel, and of each column in a grouped panel. |

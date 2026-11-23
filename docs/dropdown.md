@@ -60,7 +60,7 @@ Where anchor positioning exists the panel hangs under its own trigger, and `data
 </div>
 ```
 
-The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. Set the three together for a dark or tinted panel.
+The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. The current page's link, and each parent in the panel that holds it, takes `--yeti-dropdown-current`, which falls back to the variant's text color. Set the four together for a dark or tinted panel.
 
 ## A parent with its own page
 
@@ -113,7 +113,7 @@ Each button's `popovertarget` names its panel's id, so every id has to be unique
 
 The chevron shows that a row opens something, and which way. A split parent's button always has one. A label button has one only where it marks a submenu: inside another dropdown's panel, and inside a nav's list. A standalone dropdown's button, such as the Account button above, is left as it is. A first-level chevron points down and turns up while its panel is open. A nested one points to the inline end and turns back while its panel is open, and mirrors in a right-to-left page. The exception is a nav's open panel with `nav.js`, where every group opens below its own row, so every group's chevron points down and turns up while the group is open.
 
-Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. A grouped panel's heading, described below, keeps its strong weight and only changes color. The color is the variant's text color, or the primary color's outside a variant scope.
+Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. A grouped panel's heading, described below, keeps its strong weight and only changes color. The color is `--yeti-dropdown-current`, which falls back to the variant's text color, or the primary color's outside a variant scope. A button that is a `.button`, such as the Account button above, keeps its own colors, because its text is drawn for its own fill.
 
 ## Grouped
 
@@ -148,7 +148,7 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
 
-Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its button. The grouped panel shows three levels: its own button, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all.
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its button. The grouped panel shows three levels: its own button, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
 
 A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
 
@@ -214,6 +214,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | `--yeti-dropdown-surface` | Background of the panel. |
 | `--yeti-dropdown-text` | Text color of the open panel and its items. |
 | `--yeti-dropdown-hover` | Background of a panel item under the pointer. |
+| `--yeti-dropdown-current` | Color of the current page's link inside a panel, and of each parent there that holds it; the variant's text color unless set. |
 | `--yeti-dropdown-radius` | Corner of the panel. |
 | `--yeti-dropdown-padding` | Padding around the items. |
 | `--yeti-dropdown-min` | Least width of the panel, and of each column in a grouped panel. |

@@ -93,7 +93,7 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. The open panel resets `--yeti-nav-link` to its own text color.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. All three are for the bar. The open panel resets `--yeti-nav-link` to its own text color, and keeps the variant's tints for the hover and the current page, whatever `--yeti-nav-hover` and `--yeti-nav-current` say.
 
 A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
@@ -103,7 +103,7 @@ A bar with one dark color in both modes takes a scheme, not a list of colors. `c
 
 The hover and current tints are the dark scheme's own. A design with its own colors for them, or a bar whose color differs between light and dark, keeps its own rules for the bar and its states instead.
 
-The open panel has its own pair, `--yeti-nav-panel` and `--yeti-nav-panel-text`. Set them together: the panel's links and close button follow the text token, and `--yeti-nav-link` does not reach them.
+The open panel has its own pair, `--yeti-nav-panel` and `--yeti-nav-panel-text`. Set them together: the panel's links and close button follow the text token, and `--yeti-nav-link` does not reach them. Nor do the bar's hover and current tokens, so a dark bar with light ones can sit over a light panel, which keeps the variant's tints.
 
 A long wordmark in a narrow bar breaks into two balanced lines rather than pushing the bar past its edge.
 
@@ -150,11 +150,11 @@ A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's ow
 
 In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight. A grouped dropdown's heading keeps its strong weight and only changes color.
 
-The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. The current page's link inside that panel, and each parent above it there, take the variant's text color rather than `--yeti-nav-current`, which in the bar colors only the list's own links and the top-level parent that holds the page. Once the links are behind the toggle it is the other way round in the nav's open panel: a submenu shown in place is part of the panel, so its links take the panel's tokens, `--yeti-nav-panel-text`, `--yeti-nav-hover` and `--yeti-nav-current`, and not the dropdown's.
+The nav and the dropdown each color their own links. In the bar, the nav's link, hover and current rules reach the list's links and each top-level dropdown's own link and button, and stop at the edge of the dropdown's panel. Everything inside that panel, at every depth, takes the dropdown's tokens: `--yeti-dropdown-surface`, `--yeti-dropdown-text` and `--yeti-dropdown-hover`. So a theme that sets a light `--yeti-nav-link` for a dark bar does not also turn the links on a light dropdown panel light. The current page's link inside that panel, and each parent above it there, take `--yeti-dropdown-current`, which falls back to the variant's text color, rather than `--yeti-nav-current`, which colors only the bar's own links and the top-level parent that holds the page. Once the links are behind the toggle it is the other way round in the nav's open panel: a submenu shown in place is part of the panel, so its links take the panel's text, `--yeti-nav-panel-text`, and not the dropdown's tokens. The open panel has its own surface, so the bar's `--yeti-nav-hover` and `--yeti-nav-current` do not reach it either. Every link in it, a submenu's included, takes the variant's subtle tint under the pointer, and the current page and each parent that holds it take the variant's text color.
 
 ## Submenus in the panel
 
-Once the links are behind the toggle, a split parent's pages are shown in the nav's open panel itself, in place, each level indented one step further than the one above it. With no script every level of a split parent is open and the small buttons are hidden, so every page under it is one tap away and Tab walks the links in the order they are shown. A label-only section is the exception, even when it sits inside a split parent's pages: it opens as described below. That is enough for a short tree.
+Once the links are behind the toggle, a split parent's pages are shown in the nav's open panel itself, in place, each level indented one step further than the one above it. They look like the panel's own links: the panel's text color, and the variant's tints for the hover and the current page. With no script every level of a split parent is open and the small buttons are hidden, so every page under it is one tap away and Tab walks the links in the order they are shown. A label-only section is the exception, even when it sits inside a split parent's pages: it opens as described below. That is enough for a short tree.
 
 For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the nav's open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears.
 
@@ -222,8 +222,8 @@ Attributes that descendants carry, not the root.
 | `--yeti-nav-logo-size` | Height of a logo in the brand; the width follows the image. The default is the bar's control size, so a logo never makes the bar taller. |
 | `--yeti-nav-panel-text` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
 | `--yeti-nav-link` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
-| `--yeti-nav-hover` | Background of a link or dropdown trigger under the pointer, in the bar and in the open panel, including a submenu's links and toggles shown in place; not the nav's toggle or the close button, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
-| `--yeti-nav-current` | Color of the current page's link and of each parent that holds it, in the bar and in the open panel, including submenus shown in place there; a dropdown's floating panel keeps the variant's text color. Read with a fallback to the variant's text color. |
+| `--yeti-nav-hover` | Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color. |
 | `--yeti-stretch-small` | font-stretch of a link. |
 | `--yeti-control-size` | Minimum height of the bar, the toggle, and each link. |
 | `--yeti-shadow-md` | The open panel's shadow. |
@@ -259,6 +259,8 @@ Attributes that descendants carry, not the root.
 - `--_yeti-on-variant`
 - `--_yeti-sticky-offset`
 - `--_yeti-nav-link`
+- `--_yeti-nav-hover`
+- `--_yeti-nav-current`
 - `--_yeti-turn`
 - `--_yeti-nudge`
 
