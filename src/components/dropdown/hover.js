@@ -47,6 +47,8 @@ const isWrapper = (el) => !!el.querySelector(':scope > [popovertarget]') && !!el
 // submenu's leaf is inside the submenu's wrapper and each wrapper above it.
 const wrappersOf = (node) => {
 	const found = [];
+	// Pages and regions that do not use hover pay for one lookup, as before.
+	if (!node?.closest?.('[data-trigger="hover"]')) return found;
 	for (let el = node?.closest?.('*'); el; el = el.parentElement) {
 		if (isWrapper(el)) found.push(el);
 	}
@@ -62,7 +64,12 @@ document.addEventListener('pointerover', (event) => {
 	if (!fine.matches) return;
 	// Only the innermost wrapper opens. The ones above it are already open,
 	// because the pointer had to cross them to get here.
-	const wrapper = wrappersOf(event.target)[0];
+	const wrappers = wrappersOf(event.target);
+	// Being back over a level cancels the close it, and every level above it,
+	// scheduled when the pointer crossed a gap on the way here. Without this
+	// the parent's close fires later and takes the submenu down with it.
+	for (const outer of wrappers) clearTimeout(timers.get(outer));
+	const wrapper = wrappers[0];
 	const parts = wrapper && partsOf(wrapper);
 	if (!parts) return;
 	schedule(wrapper, delay(wrapper, '--yeti-dropdown-open-delay'), () => {
@@ -89,8 +96,9 @@ document.addEventListener('pointerover', (event) => {
 // the panel is still up; without this the press that follows closes the panel
 // and the stale timer springs it open again a moment later.
 document.addEventListener('pointerdown', (event) => {
-	const wrapper = event.target?.closest?.('[data-trigger="hover"]');
-	if (wrapper) clearTimeout(timers.get(wrapper));
+	// Every level that holds the press, since the attribute sits only on the
+	// outermost one and a nested level has its own pending open.
+	for (const wrapper of wrappersOf(event.target)) clearTimeout(timers.get(wrapper));
 }, { capture: true });
 
 document.addEventListener('pointerout', (event) => {

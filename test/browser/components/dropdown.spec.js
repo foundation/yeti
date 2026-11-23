@@ -169,6 +169,40 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'menu-three')).toBe(false);
 	});
 
+	test('a press at a nested level is not raced by its pending open', async ({ page }) => {
+		await open(page);
+		// A long open delay keeps the re-entry's open pending when the press lands.
+		await page.addStyleTag({ content: '#h-tree { --yeti-dropdown-open-delay: 300ms; }' });
+		await page.hover('#h-tree-toggle');
+		await becomes(page, 'h-tree-menu', true);
+		await page.hover('#h-sub-toggle');
+		await becomes(page, 'h-sub-menu', true);
+		await page.hover('#h-tree-plain');
+		await page.hover('#h-sub-toggle');
+		await page.click('#h-sub-toggle');
+		expect(await isOpen(page, 'h-sub-menu')).toBe(false);
+		await page.waitForTimeout(700);
+		expect(await isOpen(page, 'h-sub-menu')).toBe(false);
+	});
+
+	test('coming back over a submenu within the close delay keeps its parents open', async ({ page }) => {
+		await open(page);
+		await page.addStyleTag({ content: '#h-tree { --yeti-dropdown-close-delay: 400ms; }' });
+		await page.hover('#h-tree-toggle');
+		await becomes(page, 'h-tree-menu', true);
+		await page.hover('#h-sub-toggle');
+		await becomes(page, 'h-sub-menu', true);
+		// Really leave every wrapper so a close is scheduled for each, then
+		// return to the leaf well inside the delay.
+		const v = page.viewportSize();
+		await page.mouse.move(v.width - 5, v.height - 5);
+		await page.hover('#h-leaf');
+		// Nothing to wait on but the absence of a close, so wait past the delay.
+		await page.waitForTimeout(900);
+		expect(await isOpen(page, 'h-sub-menu')).toBe(true);
+		expect(await isOpen(page, 'h-tree-menu')).toBe(true);
+	});
+
 	test('that guarantee holds after the panel has once been opened by hover', async ({ page }) => {
 		await open(page);
 		// showPopover queues its own open toggle, so bookkeeping attached right
