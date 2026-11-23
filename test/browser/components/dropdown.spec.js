@@ -445,6 +445,54 @@ test.describe('dropdown', () => {
 			await expect(page.locator('#g-deep-toggle')).toBeHidden();
 		});
 
+		test('a label-only section keeps its button and flies out as a card without covering the others', async ({ page }) => {
+			await openGrouped(page);
+			await expect(page.locator('#g-lab-leaf')).toBeHidden();
+			expect(await isOpen(page, 'g-lab-menu')).toBe(false);
+			await page.click('#g-lab-trigger');
+			await settle(page, '#g-lab-menu');
+			expect(await isOpen(page, 'g-lab-menu')).toBe(true);
+			expect(await style(page, '#g-lab-menu', 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+			const menu = await rect(page, '#g-lab-menu');
+			for (const id of ['#g-a', '#g-b']) {
+				const r = await rect(page, id);
+				const apart = menu.right <= r.left + 1 || menu.left >= r.right - 1 || menu.bottom <= r.top + 1 || menu.top >= r.bottom - 1;
+				expect(apart, `${id} is not covered`).toBe(true);
+			}
+			const own = await rect(page, '#g-lab');
+			expect(own.width).toBeGreaterThan(100);
+			await expect(page.locator('#g-a-1')).toBeVisible();
+			await expect(page.locator('#g-b-1')).toBeVisible();
+		});
+
+		test('a label-only item at the third level is not shown', async ({ page }) => {
+			await page.goto('/test/browser/fixtures/components/dropdown.html');
+			await page.evaluate(() => {
+				document.querySelector('#g-a-menu').insertAdjacentHTML('beforeend', '<li class="dropdown" id="g-deep-lab"><button type="button" popovertarget="g-deep-lab-menu" id="g-deep-lab-trigger">Deep label</button><ul id="g-deep-lab-menu" popover role="list"><li><a href="#" id="g-deep-lab-leaf">Deep label leaf</a></li></ul></li>');
+			});
+			await stage(page, 1000);
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+			await expect(page.locator('#g-a-1')).toBeVisible();
+			await expect(page.locator('#g-deep-lab-trigger')).toBeHidden();
+			await expect(page.locator('#g-deep-lab-leaf')).toBeHidden();
+		});
+
+		test('far along the line the panel still holds its columns and stays on screen', async ({ page }) => {
+			await page.setViewportSize({ width: 1280, height: 720 });
+			await open(page, 1280);
+			test.skip(!(await anchored(page)) || !(await page.evaluate(() => CSS.supports('position-try-fallbacks', 'flip-inline'))), 'anchor positioning is missing, so the user agent centres the panel');
+			await page.addStyleTag({ content: '#g-tree { margin-inline-start: calc(100vw - 12rem); }' });
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+			const [a, b, menu, toggle] = await Promise.all(['#g-a-link', '#g-b-link', '#g-tree-menu', '#g-tree-toggle'].map((s) => rect(page, s)));
+			expect(Math.abs(a.top - b.top)).toBeLessThan(2);
+			expect(b.left).toBeGreaterThanOrEqual(a.right - 1);
+			expect(menu.left).toBeGreaterThanOrEqual(0);
+			expect(menu.right).toBeLessThanOrEqual(1280.5);
+			expect(menu.top).toBeGreaterThanOrEqual(toggle.bottom - 1);
+		});
+
 		test('its columns stack when the viewport is too narrow for them', async ({ page }) => {
 			// A popover sits in the top layer, so only the viewport can narrow it.
 			await page.setViewportSize({ width: 320, height: 720 });

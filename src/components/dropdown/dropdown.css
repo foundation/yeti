@@ -137,16 +137,19 @@
 	}
 	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
 
-	/* Grouped. Each second-level item becomes a heading with its pages listed
-	   under it, in columns, instead of a flyout. The panel is a row of columns
-	   that wraps to further rows where they do not fit, so a narrow screen
-	   stacks them; it never grows past the viewport less a margin each side.
-	   Each section's own panel is still a closed popover, shown in flow the way
-	   the nav shows a group in its open panel: that keeps its links in the tab
-	   order, in visual order, and out of the top layer. The rules apply to the
-	   grouped panel only while it is open as a popover, and never inside an
-	   open nav panel, where a group is an in-place list and the nav's own
-	   rules shape it. */
+	/* Grouped. Each second-level item that is a page with children becomes a
+	   heading with its pages listed under it, in columns, instead of a flyout.
+	   The panel is a row of columns that wraps to further rows where they do
+	   not fit, so a narrow screen stacks them; it never grows past the
+	   viewport less a margin each side. Each such section's own panel is still
+	   a closed popover, shown in flow the way the nav shows a group in its open
+	   panel: that keeps its links in the tab order, in visual order, and out of
+	   the top layer. Only a section with a link can be a heading, because a
+	   button would open its popover over the list. A section that is only a
+	   label is left as it is in any panel: its button and its flyout card,
+	   one more entry in the columns. The rules apply to the grouped panel only
+	   while it is open as a popover, and never inside an open nav panel, where
+	   a group is an in-place list and the nav's own rules shape it. */
 	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
 		flex-direction: row;
 		flex-wrap: wrap;
@@ -160,7 +163,7 @@
 		min-inline-size: var(--yeti-dropdown-min);
 	}
 	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown { display: block; }
-	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > [popover] {
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] {
 		display: block;
 		position: static;
 		inset: auto;
@@ -174,12 +177,15 @@
 		overflow: visible;
 		opacity: 1;
 	}
-	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > a + button { display: none; }
-	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > a {
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > a + button { display: none; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > a {
 		font-size: var(--yeti-text-sm);
 		font-weight: var(--yeti-weight-strong);
 	}
-	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown > [popover] .dropdown > :is([popover], a + button) { display: none; }
+	/* A page's own children would be a fourth level: its link stays, and its
+	   toggle and panel go. A label with only children has nothing to show. */
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] .dropdown > :is([popover], a + button) { display: none; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] .dropdown:not(:has(> a)) { display: none; }
 
 	/* The current page. A link in a panel that points at the page being read
 	   takes the variant's text color and the strong weight. Each parent above
@@ -212,6 +218,22 @@
 			margin-block-start: var(--yeti-space-xs);
 		}
 		.dropdown[data-side="end"] > [popover]:popover-open { position-area: block-end span-inline-start; }
+		/* A grouped panel is as wide as its columns, not as wide as the room
+		   left beside its trigger, so it lines up with the trigger's inline
+		   start and overflows that area on purpose. Where the columns would pass
+		   the far edge, the fallback gives it the whole line and sets it against
+		   the viewport margin instead. */
+		@supports (position-try-fallbacks: flip-inline) {
+			.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+				inline-size: max-content;
+				justify-self: start;
+				position-try-fallbacks: --yeti-dropdown-edge;
+			}
+			.dropdown[data-grouped][data-side="end"] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+				justify-self: end;
+				position-try-fallbacks: --yeti-dropdown-edge-start;
+			}
+		}
 		/* A nested panel flies out beside its own row and flips to the other
 		   side where it would leave the screen. The row is the anchor, because
 		   a split row's toggle is too small to align a panel against. */
@@ -223,6 +245,16 @@
 			margin-block: 0;
 			margin-inline: var(--yeti-space-xs);
 		}
+	}
+	@position-try --yeti-dropdown-edge {
+		position-area: block-end span-all;
+		justify-self: end;
+		margin-inline: 0 var(--yeti-space-md);
+	}
+	@position-try --yeti-dropdown-edge-start {
+		position-area: block-end span-all;
+		justify-self: start;
+		margin-inline: var(--yeti-space-md) 0;
 	}
 	@starting-style {
 		.dropdown > [popover]:popover-open { opacity: 0; }

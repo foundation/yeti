@@ -582,6 +582,20 @@ test.describe('nav', () => {
 		expect(await isOpen(page, 'nt-about-menu')).toBe(false);
 	});
 
+	test('a grouped label-only dropdown in the open panel still docks as a full-width block', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt-lab').setAttribute('data-grouped', ''));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		await page.click('#nt-lab-trigger');
+		await settle(page, '#nt-lab-menu');
+		expect(await isOpen(page, 'nt-lab-menu')).toBe(true);
+		const [panel, menu] = await Promise.all(['#nt-menu', '#nt-lab-menu'].map((s) => rect(page, s)));
+		expect(Math.abs(menu.width - panel.width)).toBeLessThan(2);
+		expect(await style(page, '#nt-lab-menu', 'flex-direction')).toBe('column');
+	});
+
 	test('a label-only dropdown in the panel still opens as a docked block without the module', async ({ page }) => {
 		await withoutModule(page, 'nav');
 		await open(page, 400);
