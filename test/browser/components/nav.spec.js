@@ -514,17 +514,29 @@ test.describe('nav', () => {
 	test('each ancestor of the current page is marked, more quietly than the page itself', async ({ page }) => {
 		await open(page, 1000);
 		await page.addStyleTag({ content: '#nt { --yeti-nav-current: rgb(10, 11, 12); }' });
-		expect(await style(page, '#nt-team-link', 'color')).toBe('rgb(10, 11, 12)');
-		expect(await style(page, '#nt-team-toggle', 'color')).toBe('rgb(10, 11, 12)');
-		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(600);
+		expect(await style(page, '#nt-about-link', 'color')).toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-about-toggle', 'color')).toBe('rgb(10, 11, 12)');
+		expect(Number(await style(page, '#nt-about-link', 'font-weight'))).toBeLessThan(600);
 		expect(await style(page, '#nt-home', 'color')).not.toBe('rgb(10, 11, 12)');
-		expect(await style(page, '#nt-about-link', 'color')).not.toBe('rgb(10, 11, 12)');
 		expect(await style(page, '#nt-lab-trigger', 'color')).not.toBe('rgb(10, 11, 12)');
+	});
+
+	test('inside the panels, the parents of the current page are marked and their siblings are not', async ({ page }) => {
+		await open(page, 1000);
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		await page.click('#nt-team-toggle');
+		await settle(page, '#nt-team-menu');
+		const leaf = await style(page, '#nt-leaf', 'color');
+		expect(await style(page, '#nt-team-link', 'color')).toBe(leaf);
+		expect(await style(page, '#nt-team-toggle', 'color')).toBe(leaf);
+		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(Number(await style(page, '#nt-leaf', 'font-weight')));
+		expect(await style(page, '#nt-history', 'color')).not.toBe(leaf);
 	});
 
 	test('with no current page, nothing is marked', async ({ page }) => {
 		await open(page, 1000);
 		await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
-		expect(await style(page, '#nt-team-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
+		expect(await style(page, '#nt-about-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
 	});
 });
