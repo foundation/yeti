@@ -378,6 +378,20 @@ test.describe('dropdown', () => {
 		expect(fly.right).toBeLessThanOrEqual(parent.left + 1);
 	});
 
+	test('in a right-to-left page it flips to the right at the viewport edge, and stays on screen', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+		// The inline start is the right, so this pushes the tree to the left edge.
+		await page.addStyleTag({ content: '#tree { margin-inline-start: calc(100vw - 16rem); }' });
+		await openTree(page);
+		const [fly, parent] = await Promise.all([rect(page, '#sub-menu'), rect(page, '#tree-menu')]);
+		expect(parent.left).toBeLessThan(fly.width);
+		expect(fly.left).toBeGreaterThanOrEqual(parent.right - 1);
+		expect(fly.left).toBeGreaterThanOrEqual(0);
+		expect(fly.right).toBeLessThanOrEqual(page.viewportSize().width + 0.5);
+	});
+
 	test('with data-side="end" a split parent\'s panel lines up with the end of its row', async ({ page }) => {
 		await open(page);
 		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');

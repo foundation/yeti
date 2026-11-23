@@ -229,8 +229,9 @@
 	/* A dropdown inside the open panel. In the bar its panel is a small card
 	   anchored under a small trigger; in a full-width list that shape reads as
 	   a detached tooltip and hangs past the panel's own edge, so here it
-	   becomes a full-width block docked under its trigger, sharing the panel's
-	   surface and padding so the two read as one list. The guard is the panel
+	   becomes a full-width block docked under its trigger. It takes the
+	   panel's padding, so its items line up with the list's, and keeps the
+	   dropdown's own surface and text tokens. The guard is the panel
 	   being open, which is exactly the condition the inline rules are gated
 	   against, so a dropdown in the bar keeps its card. The wrapper needs
 	   display: block, or it shrink-wraps and the trigger sits narrower than
@@ -414,11 +415,20 @@
 		--_yeti-turn: 225deg;
 		--_yeti-nudge: 0 0.15em;
 	}
+	/* A top-level label trigger keeps its chevron beside its text in the bar.
+	   As a group's toggle in the open panel it fills the row, and its chevron
+	   goes to the row's inline end like every other toggle there. A screen
+	   panel centres the trigger as a unit, so there it stays beside the text. */
+	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li.dropdown > button[aria-expanded]:first-child::after,
+	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li > .dropdown > button[aria-expanded]:first-child::after { margin-inline-start: auto; }
 
 	/* In a screen panel the link and its toggle are one centred unit, with
 	   the pages centred below it. The outer columns are flexible, so the group
-	   spanning them does not widen the two that hold the link and the toggle. */
-	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) {
+	   spanning them does not widen the two that hold the link and the toggle.
+	   The doubled class is there to outrank the screen panel's flex column
+	   above, which matches the same dropdowns with the same weight otherwise,
+	   so the grid does not depend on coming later in the file. */
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown.dropdown:has(> button[aria-expanded]) {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
 		align-items: start;

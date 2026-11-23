@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, style, axe, painted, withoutModule } from '../lib/layout.js';
+import { stage, rect, style, axe, painted, withoutModule, token } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/nav.html');
@@ -42,17 +42,12 @@ const variant = (page, inside, name) => page.evaluate(([s, n]) => {
 test.describe('nav', () => {
 	test('a label trigger in the bar draws a chevron with a space before it', async ({ page }) => {
 		await open(page);
-		const chevron = await page.evaluate(() => {
-			const after = getComputedStyle(document.querySelector('#nav-li-trigger'), '::after');
-			const probe = document.createElement('div');
-			probe.style.inlineSize = 'var(--yeti-space-xs)';
-			document.body.append(probe);
-			const xs = probe.getBoundingClientRect().width;
-			probe.remove();
-			return { content: after.content, margin: parseFloat(after.marginInlineStart), xs };
+		const after = await page.evaluate(() => {
+			const cs = getComputedStyle(document.querySelector('#nav-li-trigger'), '::after');
+			return { content: cs.content, margin: parseFloat(cs.marginInlineStart) };
 		});
-		expect(chevron.content).not.toBe('none');
-		expect(Math.abs(chevron.margin - chevron.xs)).toBeLessThan(1);
+		expect(after.content).not.toBe('none');
+		expect(Math.abs(after.margin - await token(page, '--yeti-space-xs'))).toBeLessThan(1);
 		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
 	});
 
@@ -574,6 +569,29 @@ test.describe('nav', () => {
 		await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
 		expect(await style(page, '#nt-about-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
 	});
+
+	test('a parent whose own link is the current page is styled as the current page, in the bar, in its panel and in place', async ({ page }) => {
+		await open(page, 1000);
+		const move = (id) => page.evaluate((i) => {
+			document.querySelector('#nt [aria-current]').removeAttribute('aria-current');
+			document.getElementById(i).setAttribute('aria-current', 'page');
+		}, id);
+		const weight = async (s) => Number(await style(page, s, 'font-weight'));
+		await move('nt-about-link');
+		expect(await weight('#nt-about-link')).toBeGreaterThan(await weight('#nt-home'));
+		expect(await style(page, '#nt-about-link', 'color')).not.toBe(await style(page, '#nt-home', 'color'));
+		await move('nt-team-link');
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		expect(await weight('#nt-team-link')).toBeGreaterThan(await weight('#nt-history'));
+		expect(await style(page, '#nt-team-link', 'color')).not.toBe(await style(page, '#nt-history', 'color'));
+		await page.keyboard.press('Escape');
+		await stage(page, 400);
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		expect(await weight('#nt-team-link')).toBeGreaterThan(await weight('#nt-history'));
+		expect(await style(page, '#nt-team-link', 'color')).not.toBe(await style(page, '#nt-history', 'color'));
+	});
 	for (const shape of ['sheet', 'drawer', 'screen']) {
 		test(`in the open ${shape} every level is shown in place, indented, with no toggle`, async ({ page }) => {
 			await withoutModule(page, 'nav');
@@ -780,6 +798,40 @@ test.describe('nav', () => {
 			expect(await expanded(page, 'nt-about-toggle')).toBe(null);
 			await page.click('#nt-about-toggle');
 			expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		});
+		test('after the window widens while the panel is open, Escape leaves no aria-expanded and a bar toggle opens its popover', async ({ page }) => {
+			await openPanel(page);
+			await page.click('#nt-lab-trigger');
+			expect(await expanded(page, 'nt-lab-trigger')).toBe('true');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
+			await stage(page, 1000);
+			expect(await isOpen(page, 'nt-menu')).toBe(true);
+			await page.keyboard.press('Escape');
+			expect(await isOpen(page, 'nt-menu')).toBe(false);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBe(0);
+			await page.click('#nt-about-toggle');
+			expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		});
+		test('with the current page at the top level every group starts collapsed and no parent is marked', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => {
+				document.querySelector('#nt-leaf').removeAttribute('aria-current');
+				document.querySelector('#nt-home').setAttribute('aria-current', 'page');
+			});
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			for (const id of ['nt-about-toggle', 'nt-team-toggle', 'nt-lab-trigger']) expect(await expanded(page, id), id).toBe('false');
+			const plain = await style(page, '#nt-lab-trigger', 'color');
+			expect(await style(page, '#nt-about-link', 'color')).toBe(plain);
+			expect(await style(page, '#nt-about-toggle', 'color')).toBe(plain);
+			expect(await style(page, '#nt-team-link', 'color')).toBe(await style(page, '#nt-history', 'color'));
+			expect(await style(page, '#nt-home', 'color')).not.toBe(plain);
+		});
+		test('a label trigger that is a group toggle puts its chevron at the row end, like the other toggles', async ({ page }) => {
+			await openPanel(page);
+			const [trigger, row, toggle] = await Promise.all(['#nt-lab-trigger', '#nt-lab', '#nt-about-toggle'].map((s) => rect(page, s)));
+			expect(Math.abs(trigger.right - row.right)).toBeLessThanOrEqual(2);
+			expect(Math.abs(toggle.right - row.right)).toBeLessThanOrEqual(2);
+			expect(await chevronRoom(page, '#nt-lab-trigger')).toBeLessThan(2);
 		});
 		test('with no current page every group starts collapsed', async ({ page }) => {
 			await open(page, 400);
