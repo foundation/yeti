@@ -651,5 +651,12 @@ test.describe('dropdown', () => {
 			for (const id of ['#leaf', '#sub-link', '#sub-toggle', '#tree-link']) expect(await style(page, id, 'color'), id).toBe('rgb(9, 8, 7)');
 			expect(await style(page, '#tree-plain', 'color')).not.toBe('rgb(9, 8, 7)');
 		});
+
+		test('any aria-current value marks the link itself', async ({ page }) => {
+			await open(page);
+			await page.evaluate(() => document.querySelector('#leaf').setAttribute('aria-current', 'true'));
+			expect(await style(page, '#leaf', 'color')).not.toBe(await style(page, '#tree-plain', 'color'));
+			expect(Number(await style(page, '#leaf', 'font-weight'))).toBeGreaterThan(Number(await style(page, '#tree-plain', 'font-weight')));
+		});
 	});
 });

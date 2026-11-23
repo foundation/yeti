@@ -205,7 +205,7 @@
 	   back to the default variant's. A trigger that is a .button keeps its
 	   own text, which is drawn for its own fill. The nav colors its own
 	   top-level parents in the bar. */
-	.dropdown > [popover] a[aria-current="page"] {
+	.dropdown > [popover] a[aria-current] {
 		color: var(--yeti-dropdown-current, var(--_yeti-variant-text, var(--yeti-color-primary-text)));
 		font-weight: var(--yeti-weight-strong);
 	}
