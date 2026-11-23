@@ -43,6 +43,8 @@
     }
   ],
   "tokens": [
+    { "name": "--_yeti-turn", "public": false },
+    { "name": "--_yeti-nudge", "public": false },
     {
       "name": "--yeti-dropdown-surface",
       "public": true,
@@ -144,7 +146,7 @@
       "@starting-style"
     ],
     "guarded": [
-      "anchor positioning (fallback: the panel is centred by the user agent)"
+      "anchor positioning, position-try (fallback: the panel is centred by the user agent)"
     ]
   },
   "since": "7.0.0",

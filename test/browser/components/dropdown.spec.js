@@ -238,6 +238,92 @@ test.describe('dropdown', () => {
 		expect(xs).toBeGreaterThan(1);
 	});
 
+	const openTree = async (page) => {
+		await page.click('#tree-toggle'); await settle(page, '#tree-menu');
+		await page.click('#sub-toggle'); await settle(page, '#sub-menu');
+	};
+
+	test('a nested panel flies out beside its own row', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await openTree(page);
+		const [row, fly, parent] = await Promise.all([rect(page, '#sub'), rect(page, '#sub-menu'), rect(page, '#tree-menu')]);
+		expect(fly.left).toBeGreaterThanOrEqual(parent.right - 1);
+		expect(Math.abs(fly.top - row.top)).toBeLessThan(8);
+	});
+
+	test('it flips to the other side at the viewport edge, and stays on screen', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await page.addStyleTag({ content: '#tree { margin-inline-start: calc(100vw - 16rem); }' });
+		await openTree(page);
+		const [fly, parent] = await Promise.all([rect(page, '#sub-menu'), rect(page, '#tree-menu')]);
+		expect(fly.right).toBeLessThanOrEqual(parent.left + 1);
+		expect(fly.left).toBeGreaterThanOrEqual(0);
+	});
+
+	test('in a right-to-left page it flies out to the left', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+		await openTree(page);
+		const [fly, parent] = await Promise.all([rect(page, '#sub-menu'), rect(page, '#tree-menu')]);
+		expect(fly.right).toBeLessThanOrEqual(parent.left + 1);
+	});
+
+	test('Escape closes the innermost panel and returns focus; a click outside closes the chain', async ({ page }) => {
+		await open(page);
+		// Opened from the keyboard: WebKit does not focus a button on a mouse click,
+		// so after a click there is no focus for Escape to hand back.
+		await page.focus('#tree-toggle'); await page.keyboard.press('Enter'); await settle(page, '#tree-menu');
+		await page.focus('#sub-toggle'); await page.keyboard.press('Enter'); await settle(page, '#sub-menu');
+		await page.keyboard.press('Escape');
+		expect(await isOpen(page, 'sub-menu')).toBe(false);
+		expect(await isOpen(page, 'tree-menu')).toBe(true);
+		expect(await page.evaluate(() => document.activeElement.id)).toBe('sub-toggle');
+		await page.click('#sub-toggle'); await settle(page, '#sub-menu');
+		const v = page.viewportSize();
+		await page.mouse.click(v.width - 5, v.height - 5);
+		expect(await isOpen(page, 'tree-menu')).toBe(false);
+		expect(await isOpen(page, 'sub-menu')).toBe(false);
+	});
+
+	test('opening a sibling submenu closes the one beside it and keeps their parent open', async ({ page }) => {
+		await open(page);
+		await openTree(page);
+		await page.click('#lab-trigger'); await settle(page, '#lab-menu');
+		expect(await isOpen(page, 'lab-menu')).toBe(true);
+		expect(await isOpen(page, 'sub-menu')).toBe(false);
+		expect(await isOpen(page, 'tree-menu')).toBe(true);
+	});
+
+	const turn = (page, sel) => page.evaluate((s) => {
+		const cs = getComputedStyle(document.querySelector(s), '::after');
+		return `${cs.rotate}|${cs.transform}`;
+	}, sel);
+
+	test('a first-level chevron points down and turns up while its panel is open', async ({ page }) => {
+		await open(page);
+		const closed = await turn(page, '#tree-toggle');
+		await page.click('#tree-toggle'); await settle(page, '#tree-menu');
+		const opened = await turn(page, '#tree-toggle');
+		expect(opened).not.toBe(closed);
+	});
+
+	test('a nested chevron points to the inline end and turns back while its panel is open', async ({ page }) => {
+		await open(page);
+		await page.click('#tree-toggle'); await settle(page, '#tree-menu');
+		const first = await turn(page, '#tree-toggle');
+		const closed = await turn(page, '#sub-toggle');
+		expect(closed).not.toBe(first);
+		await page.click('#sub-toggle'); await settle(page, '#sub-menu');
+		expect(await turn(page, '#sub-toggle')).not.toBe(closed);
+		const labClosed = await turn(page, '#lab-trigger');
+		expect(labClosed).toBe(closed);
+		await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+		expect(await turn(page, '#lab-trigger')).not.toBe(labClosed);
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);

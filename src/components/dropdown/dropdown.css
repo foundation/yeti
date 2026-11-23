@@ -78,8 +78,8 @@
 		block-size: 0.5em;
 		border-block-end: 2px solid currentColor;
 		border-inline-end: 2px solid currentColor;
-		rotate: 45deg;
-		translate: 0 -0.15em;
+		rotate: var(--_yeti-turn, 45deg);
+		translate: var(--_yeti-nudge, 0 -0.15em);
 	}
 	/* Two cases that never overlap, so neither depends on source order. The
 	   nav's bar trigger has no flex gap of its own, so its chevron keeps a
@@ -89,6 +89,34 @@
 	.nav > ul[popover] > li.dropdown > button:first-child::after,
 	.nav > ul[popover] > li > .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
 	.dropdown > [popover] .dropdown > button:first-child::after { margin-inline-start: auto; }
+
+	/* Direction. A first-level chevron points down and turns up while its own
+	   panel is open. Inside a panel it points to the inline end, so a
+	   right-to-left page mirrors it, and turns back toward the inline start
+	   while its own panel is open. The turn is set on the button as a private
+	   property, which the chevron above reads, so no rule here has to outrank
+	   the chevron's own selector. The nudge puts the rotated corner back in
+	   the middle of the box. */
+	.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: 225deg;
+		--_yeti-nudge: 0 0.15em;
+	}
+	.dropdown > [popover] .dropdown > :is(a + button, button:first-child) {
+		--_yeti-turn: -45deg;
+		--_yeti-nudge: -0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: 135deg;
+		--_yeti-nudge: 0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:dir(rtl) > :is(a + button, button:first-child) {
+		--_yeti-turn: 135deg;
+		--_yeti-nudge: 0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:dir(rtl):has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: -45deg;
+		--_yeti-nudge: -0.15em 0;
+	}
 
 	/* In a panel the row is the whole panel width. The link takes what the
 	   toggle leaves and wraps when the label is long; the toggle keeps to the
@@ -121,6 +149,17 @@
 			margin-block-start: var(--yeti-space-xs);
 		}
 		.dropdown[data-side="end"] > [popover]:popover-open { position-area: block-end span-inline-start; }
+		/* A nested panel flies out beside its own row and flips to the other
+		   side where it would leave the screen. The row is the anchor, because
+		   a split row's toggle is too small to align a panel against. */
+		.dropdown > [popover] .dropdown { anchor-name: --yeti-dropdown; }
+		.dropdown > [popover] .dropdown > button[popovertarget] { anchor-name: none; }
+		.dropdown > [popover] .dropdown > [popover]:popover-open {
+			position-area: inline-end span-block-end;
+			position-try-fallbacks: flip-inline;
+			margin-block: 0;
+			margin-inline: var(--yeti-space-xs);
+		}
 	}
 	@starting-style {
 		.dropdown > [popover]:popover-open { opacity: 0; }
