@@ -500,4 +500,31 @@ test.describe('nav', () => {
 		});
 		expect(painted).toBe(true);
 	});
+	test('in the bar a split parent is its link and a compact toggle on one row', async ({ page }) => {
+		await open(page, 1000);
+		const [link, toggle, home] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-home'].map((s) => rect(page, s)));
+		expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+		expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
+		expect(toggle.left - link.right).toBeLessThan(2);
+		expect(Math.abs(toggle.height - home.height)).toBeLessThan(2);
+		expect(toggle.width).toBeLessThan(link.width);
+		expect(toggle.width).toBeLessThanOrEqual(home.height + 1);
+	});
+
+	test('each ancestor of the current page is marked, more quietly than the page itself', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nt { --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#nt-team-link', 'color')).toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-team-toggle', 'color')).toBe('rgb(10, 11, 12)');
+		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(600);
+		expect(await style(page, '#nt-home', 'color')).not.toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-about-link', 'color')).not.toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-lab-trigger', 'color')).not.toBe('rgb(10, 11, 12)');
+	});
+
+	test('with no current page, nothing is marked', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
+		expect(await style(page, '#nt-team-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
+	});
 });

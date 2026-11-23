@@ -137,6 +137,23 @@
 	}
 	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
 
+	/* The current page. A link in a panel that points at the page being read
+	   takes the variant's text color and the strong weight. Each parent above
+	   it, link and toggle, takes the same color at the normal weight, so the
+	   way down to the page is traced without a second page looking current.
+	   A parent is matched only when it contains the page, not when it sits
+	   beside it. A dropdown outside the nav has no variant scope of its own,
+	   so the color falls back to the default variant's. The nav colors its own
+	   top-level parents in the bar. */
+	.dropdown > [popover] a[aria-current="page"] {
+		color: var(--_yeti-variant-text, var(--yeti-color-primary-text));
+		font-weight: var(--yeti-weight-strong);
+	}
+	.dropdown:has([aria-current="page"]) > :is(a, button),
+	.dropdown > [popover] .dropdown:has([aria-current="page"]) > :is(a, button) {
+		color: var(--_yeti-variant-text, var(--yeti-color-primary-text));
+	}
+
 	/* Anchored under its own trigger. The name is scoped to this dropdown, so
 	   a page of them does not hang every panel off the last one. Without
 	   anchor positioning the user agent centres the panel, which still opens,

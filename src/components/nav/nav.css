@@ -109,6 +109,27 @@
 		color: var(--yeti-nav-current, var(--_yeti-variant-text));
 		font-weight: var(--yeti-weight-strong);
 	}
+	/* A top-level parent that holds the current page, in its link or its
+	   toggle or trigger, takes the current color at the normal weight, so the
+	   bar shows which section the reader is in without shouting. Only a
+	   dropdown that contains the page matches, not one that sits beside it. */
+	.nav > ul[popover] > li.dropdown:has([aria-current="page"]) > :is(a, button),
+	.nav > ul[popover] > li > .dropdown:has([aria-current="page"]) > :is(a, button) {
+		color: var(--yeti-nav-current, var(--_yeti-variant-text));
+	}
+	/* A split parent in the bar is its link and a compact toggle on one row.
+	   The toggle is not padded like a link: it stretches to the row's height,
+	   keeps only a little room either side of the chevron, and sits against
+	   the link with no gap. A label trigger is not split, so it keeps the
+	   link's own padding. */
+	.nav > ul[popover] > li.dropdown > a + button,
+	.nav > ul[popover] > li > .dropdown > a + button {
+		align-self: stretch;
+		inline-size: auto;
+		block-size: auto;
+		min-inline-size: 0;
+		padding-inline: var(--yeti-space-xs);
+	}
 	/* The panel sits on its own surface, so a link color chosen for the bar
 	   must not follow the links into it. */
 	.nav > ul[popover]:popover-open { --_yeti-nav-link: currentColor; }

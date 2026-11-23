@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, axe, withoutModule } from '../lib/layout.js';
+import { stage, rect, style, axe, withoutModule } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/dropdown.html');
@@ -404,5 +404,32 @@ test.describe('dropdown', () => {
 		await page.click('#trigger-one');
 		await settle(page, '#menu-one');
 		expect(await axe(page)).toEqual([]);
+	});
+	test.describe('the current page', () => {
+		const mark = (page) => page.evaluate(() => document.querySelector('#leaf').setAttribute('aria-current', 'page'));
+
+		test('each parent above the current page takes its color at a lighter weight', async ({ page }) => {
+			await open(page);
+			await mark(page);
+			const leaf = await style(page, '#leaf', 'color');
+			expect(await style(page, '#sub-link', 'color')).toBe(leaf);
+			expect(await style(page, '#sub-toggle', 'color')).toBe(leaf);
+			expect(await style(page, '#tree-link', 'color')).toBe(leaf);
+			expect(Number(await style(page, '#sub-link', 'font-weight'))).toBeLessThan(Number(await style(page, '#leaf', 'font-weight')));
+			expect(Number(await style(page, '#tree-link', 'font-weight'))).toBeLessThan(Number(await style(page, '#leaf', 'font-weight')));
+		});
+
+		test('a dropdown beside the current page is not marked', async ({ page }) => {
+			await open(page);
+			await mark(page);
+			const leaf = await style(page, '#leaf', 'color');
+			expect(await style(page, '#lab-trigger', 'color')).not.toBe(leaf);
+			expect(await style(page, '#tree-plain', 'color')).not.toBe(leaf);
+		});
+
+		test('with no current page, nothing is marked', async ({ page }) => {
+			await open(page);
+			expect(await style(page, '#sub-link', 'color')).toBe(await style(page, '#tree-plain', 'color'));
+		});
 	});
 });

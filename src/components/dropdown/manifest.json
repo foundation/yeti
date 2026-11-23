@@ -46,6 +46,16 @@
     { "name": "--_yeti-turn", "public": false },
     { "name": "--_yeti-nudge", "public": false },
     {
+      "name": "--yeti-color-primary-text",
+      "public": true,
+      "description": "The color of the current page's link and of each parent above it, when no variant scope is set."
+    },
+    {
+      "name": "--yeti-weight-strong",
+      "public": true,
+      "description": "The weight of the current page's link in a panel."
+    },
+    {
       "name": "--yeti-dropdown-surface",
       "public": true,
       "description": "Background of the panel."
