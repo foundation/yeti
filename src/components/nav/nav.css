@@ -317,6 +317,32 @@
 	}
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] { font-weight: var(--yeti-weight-strong); }
 
+	/* In a screen panel everything is centred, so a submenu's pages are too:
+	   no indent, and no full-width rows. The hierarchy shows as size instead,
+	   one step smaller per level, because the font size compounds through the
+	   nested groups. The parent and its group stack in a centred column, or
+	   the parent's link would sit at the start of a row as wide as its pages. */
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> a + button:not([aria-expanded])) > a {
+		display: inline-flex;
+		inline-size: auto;
+	}
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-inline-start: 0;
+		font-size: 0.875em;
+	}
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child) {
+		display: inline-flex;
+		inline-size: auto;
+	}
+
 	/* Entering: the sheet and the screen fade in, the drawer slides in.
 	   Leaving is instant. The durations are tokens, so reduced motion
 	   makes entering instant too. */

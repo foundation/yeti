@@ -606,4 +606,30 @@ test.describe('nav', () => {
 		}
 		expect(order).toEqual(['nt-home', 'nt-about-link', 'nt-history', 'nt-team-link', 'nt-leaf', 'nt-lab-trigger']);
 	});
+	test('in a screen panel every level is centred on one axis and steps down in size', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt').setAttribute('data-panel', 'screen'));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const ids = ['#nt-home', '#nt-about-link', '#nt-history', '#nt-team-link', '#nt-leaf', '#nt-lab-trigger'];
+		const rects = await Promise.all(ids.map((s) => rect(page, s)));
+		const mid = (r) => (r.left + r.right) / 2;
+		for (const r of rects) expect(Math.abs(mid(r) - mid(rects[0]))).toBeLessThan(2);
+		for (let i = 1; i < rects.length; i++) expect(rects[i].top).toBeGreaterThanOrEqual(rects[i - 1].bottom - 1);
+		const size = async (s) => parseFloat(await style(page, s, 'font-size'));
+		expect(await size('#nt-history')).toBeLessThan(await size('#nt-about-link'));
+		expect(await size('#nt-leaf')).toBeLessThan(await size('#nt-history'));
+	});
+
+	test('in the bar a split dropdown still opens as a floating card under its parent', async ({ page }) => {
+		await open(page, 1000);
+		await expect(page.locator('#nt-about-menu')).toBeHidden();
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		const [link, menu] = await Promise.all(['#nt-about-link', '#nt-about-menu'].map((s) => rect(page, s)));
+		expect(menu.top).toBeGreaterThanOrEqual(link.bottom - 1);
+		expect(await style(page, '#nt-about-menu', 'position')).not.toBe('static');
+	});
 });
