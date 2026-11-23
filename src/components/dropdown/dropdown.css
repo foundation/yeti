@@ -38,6 +38,13 @@
 	}
 	.dropdown > [popover] a:hover,
 	.dropdown > [popover] button:hover { background-color: var(--yeti-dropdown-hover); }
+	/* A button does not fill its row the way a link does: with an automatic
+	   width it shrinks to its label, so a label-only submenu row or a plain
+	   action such as Sign out would be a short pill, with its chevron beside
+	   the text and only the text clickable. A button that starts its row
+	   fills it instead. The split toggle comes after its link, so it is never
+	   matched and keeps its square. */
+	.dropdown > [popover] :is(li, .dropdown) > button:first-child { inline-size: 100%; }
 
 	/* A panel may be a list. The list's own bullets and the items' margins go,
 	   so a ul of li reads the same as a div of bare links. */
@@ -86,8 +93,9 @@
 	/* Two cases that never overlap, so neither depends on source order. The
 	   nav's bar trigger has no flex gap of its own, so its chevron keeps a
 	   space from the text; it is a direct child of the nav's list items. A
-	   trigger inside a dropdown panel, even a panel in a nav, goes to the
-	   row's inline end instead. */
+	   trigger inside a dropdown panel, even a panel in a nav, fills its row
+	   (the rule above), so the auto margin takes the free space and puts its
+	   chevron at the row's inline end. */
 	.nav > ul[popover] > li.dropdown > button:first-child::after,
 	.nav > ul[popover] > li > .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
 	.dropdown > [popover] .dropdown > button:first-child::after { margin-inline-start: auto; }

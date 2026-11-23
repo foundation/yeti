@@ -10,6 +10,18 @@ const isOpen = (page, id) => page.evaluate((i) => document.getElementById(i).mat
 const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 	.then(() => Promise.all(document.querySelector(s).getAnimations().map((a) => a.finished.catch(() => {})))), selector);
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a') && CSS.supports('position-area', 'block-end'));
+// The room left between a trigger's chevron and the end of its content box, in
+// a left-to-right page. A pseudo-element has no box to measure, so its end is
+// the label's end plus the flex gap, the chevron's used margin and its width.
+const chevronRoom = (page, selector) => page.evaluate((s) => {
+	const el = document.querySelector(s);
+	const cs = getComputedStyle(el);
+	const after = getComputedStyle(el, '::after');
+	const range = document.createRange();
+	range.selectNodeContents(el);
+	const end = range.getBoundingClientRect().right + (parseFloat(cs.columnGap) || 0) + parseFloat(after.marginInlineStart) + parseFloat(after.width);
+	return el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - end;
+}, selector);
 
 test.describe('dropdown', () => {
 	test('the panel is shut until the trigger is pressed, and Escape shuts it again', async ({ page }) => {
@@ -316,23 +328,21 @@ test.describe('dropdown', () => {
 		expect(menu.right).toBeLessThanOrEqual(320.5);
 	});
 
-	test('a label trigger in a panel draws a chevron at the row end', async ({ page }) => {
+	test('a button in a list panel fills its row, so a label trigger\'s chevron is at the row end', async ({ page }) => {
 		await open(page);
+		await page.evaluate(() => document.querySelector('#tree-menu').insertAdjacentHTML('beforeend', '<li id="plain-button-row"><button type="button" id="plain-button">Sign out</button></li>'));
 		await page.click('#tree-toggle');
 		await settle(page, '#tree-menu');
 		expect(await page.evaluate(() => getComputedStyle(document.querySelector('#lab-trigger'), '::after').content)).not.toBe('none');
-				const { margin, xs } = await page.evaluate(() => {
-			const probe = document.createElement('div');
-			probe.style.inlineSize = 'var(--yeti-space-xs)';
-			document.body.append(probe);
-			const xs = probe.getBoundingClientRect().width;
-			probe.remove();
-			return { margin: parseFloat(getComputedStyle(document.querySelector('#lab-trigger'), '::after').marginInlineStart), xs };
-		});
-		// An auto margin on a flex item is not reported as a length: the browser
-		// gives 0px, where the token's fixed space would give its own length.
-		expect(margin).toBeLessThan(1);
-		expect(xs).toBeGreaterThan(1);
+		for (const [button, row] of [['#lab-trigger', '#lab'], ['#plain-button', '#plain-button-row']]) {
+			const [b, r] = await Promise.all([rect(page, button), rect(page, row)]);
+			expect(Math.abs(b.right - r.right), `${button} reaches its row's end`).toBeLessThanOrEqual(2);
+			expect(Math.abs(b.width - r.width), `${button} is as wide as its row`).toBeLessThanOrEqual(2);
+		}
+		expect(await chevronRoom(page, '#lab-trigger')).toBeLessThan(2);
+		// The split toggle is a button in a row too, and stays a square.
+		const toggle = await rect(page, '#sub-toggle');
+		expect(Math.abs(toggle.width - toggle.height)).toBeLessThan(2);
 	});
 
 	const openTree = async (page) => {

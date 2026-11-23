@@ -17,6 +17,18 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 // WebKit does not tab to links with plain Tab; Alt+Tab is its link-reaching key.
 const tab = (page, browserName) => page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
+// The room left between a trigger's chevron and the end of its content box, in
+// a left-to-right page. A pseudo-element has no box to measure, so its end is
+// the label's end plus the flex gap, the chevron's used margin and its width.
+const chevronRoom = (page, selector) => page.evaluate((s) => {
+	const el = document.querySelector(s);
+	const cs = getComputedStyle(el);
+	const after = getComputedStyle(el, '::after');
+	const range = document.createRange();
+	range.selectNodeContents(el);
+	const end = range.getBoundingClientRect().right + (parseFloat(cs.columnGap) || 0) + parseFloat(after.marginInlineStart) + parseFloat(after.width);
+	return el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - end;
+}, selector);
 
 test.describe('nav', () => {
 	test('a label trigger in the bar draws a chevron with a space before it', async ({ page }) => {
@@ -55,28 +67,21 @@ test.describe('nav', () => {
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
 	});
 
-	test('a label trigger inside a dropdown panel in the nav keeps its chevron at the row end', async ({ page }) => {
+	test('a label trigger inside a dropdown panel in the nav fills its row and keeps its chevron at the row end', async ({ page }) => {
 		await open(page, 1000);
 		await page.evaluate(() => {
 			const row = document.createElement('div');
 			row.className = 'dropdown';
+			row.id = 'deep-row';
 			row.innerHTML = '<button type="button" id="deep-trigger">Deep</button>';
 			document.querySelector('#nav-li-menu').append(row);
 		});
 		await page.click('#nav-li-trigger');
 		await settle(page, '#nav-li-menu');
-		const { margin, xs } = await page.evaluate(() => {
-			const probe = document.createElement('div');
-			probe.style.inlineSize = 'var(--yeti-space-xs)';
-			document.body.append(probe);
-			const xs = probe.getBoundingClientRect().width;
-			probe.remove();
-			return { margin: parseFloat(getComputedStyle(document.querySelector('#deep-trigger'), '::after').marginInlineStart), xs };
-		});
-		// An auto margin on a flex item is not reported as a length: the browser
-		// gives 0px, where the token's fixed space would give its own length.
-		expect(margin).toBeLessThan(1);
-		expect(xs).toBeGreaterThan(1);
+		const [trigger, row] = await Promise.all([rect(page, '#deep-trigger'), rect(page, '#deep-row')]);
+		expect(Math.abs(trigger.right - row.right)).toBeLessThanOrEqual(2);
+		expect(Math.abs(trigger.width - row.width)).toBeLessThanOrEqual(2);
+		expect(await chevronRoom(page, '#deep-trigger')).toBeLessThan(2);
 	});
 
 	test('in the bar, a dropdown whose class is on the li is styled like a link', async ({ page }) => {
