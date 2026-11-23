@@ -51,6 +51,7 @@
 @import "components/breadcrumbs/breadcrumbs.css";
 @import "components/pagination/pagination.css";
 @import "components/toc/toc.css";
+@import "components/subnav/subnav.css";
 @import "components/alert/alert.css";
 @import "components/progress/progress.css";
 @import "components/spinner/spinner.css";

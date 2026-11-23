@@ -111,6 +111,9 @@
 		   contents page sets it smaller. */
 		--yeti-toc-padding: var(--yeti-space-xs);
 
+		/* Subnav: how far each level of a sidebar's sections steps in. */
+		--yeti-subnav-indent: var(--yeti-space-md);
+
 		/* Per element, not per theme: the filled share of a range's track. */
 		--yeti-range-value: 0%;
 

@@ -1,0 +1,143 @@
+{
+  "$schema": "../../../schema/manifest.schema.json",
+  "name": "subnav",
+  "kind": "component",
+  "group": "Navigation",
+  "description": "A vertical navigation for a sidebar, whose sections open in place: a parent page is its link with a toggle beside it, and its pages open below both.",
+  "class": "subnav",
+  "attributes": [
+    {
+      "name": "data-variant",
+      "type": "enum",
+      "vocabulary": "variant",
+      "default": "primary",
+      "description": "The hue of the current page, its parents' rows, and the hover fill."
+    }
+  ],
+  "classes": [],
+  "children": [
+    {
+      "selector": "> ul",
+      "min": 1,
+      "max": 1,
+      "description": "The links, one per li, with role=\"list\"."
+    },
+    {
+      "selector": "li",
+      "min": 1,
+      "max": null,
+      "description": "One entry: a link, a link followed by a details holding its pages, or a details alone for a parent that is not a page. Each li holds at most one link and at most one details, as its own children."
+    },
+    {
+      "selector": "a",
+      "min": 1,
+      "max": null,
+      "description": "A page. The current one carries aria-current=\"page\"."
+    },
+    {
+      "selector": "details",
+      "min": 0,
+      "max": null,
+      "description": "A parent's pages, after its link or alone in its li. The template writes open on each details above the current page."
+    },
+    {
+      "selector": "summary",
+      "min": 0,
+      "max": null,
+      "description": "The toggle, first in each details. Beside a link it is empty and named by aria-label; without a link it holds the section's name. After it, each details holds one ul with role=\"list\", one indent further in, which may nest the same shape again."
+    }
+  ],
+  "tokens": [
+    {
+      "name": "--yeti-subnav-indent",
+      "public": true,
+      "description": "How far each level steps in."
+    },
+    {
+      "name": "--yeti-subnav-hover",
+      "public": true,
+      "description": "The fill under the pointer; transparent turns it off."
+    },
+    {
+      "name": "--yeti-subnav-current",
+      "public": true,
+      "description": "The current page, and the rows of the parents that hold it."
+    },
+    {
+      "name": "--yeti-control-size",
+      "public": true,
+      "description": "A row's least height, and the toggle's square."
+    },
+    {
+      "name": "--yeti-space-xs",
+      "public": true,
+      "description": "A row's block padding."
+    },
+    {
+      "name": "--yeti-space-sm",
+      "public": true,
+      "description": "A row's inline padding."
+    },
+    {
+      "name": "--yeti-color-text",
+      "public": true,
+      "description": "A link that is not current."
+    },
+    {
+      "name": "--yeti-weight-strong",
+      "public": true,
+      "description": "Weight of the current page's link."
+    },
+    {
+      "name": "--yeti-duration-base",
+      "public": true,
+      "description": "How long a section takes to open or close."
+    },
+    {
+      "name": "--yeti-ease",
+      "public": true,
+      "description": "The curve of that transition."
+    },
+    {
+      "name": "--yeti-color-primary-subtle",
+      "public": true,
+      "description": "The default variant's hover fill."
+    },
+    {
+      "name": "--yeti-color-primary-text",
+      "public": true,
+      "description": "The default variant's current color."
+    },
+    {
+      "name": "--_yeti-variant-subtle",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-text",
+      "public": false
+    }
+  ],
+  "a11y": {
+    "requiredAttributes": [
+      "aria-label | aria-labelledby"
+    ],
+    "keyboard": [
+      { "key": "Tab", "action": "Moves through the links and toggles in order; the pages of a closed section are skipped." },
+      { "key": "Enter / Space", "action": "Opens or closes the section under the focused toggle." }
+    ],
+    "notes": "Give the nav an aria-label such as \"Docs\", since a page with a sidebar has at least two navs. Put role=\"list\" on every ul, because the reset only removes list markers where that role says the list is decorative. The current page's link carries aria-current=\"page\". A toggle beside a link has no text, so its summary carries an aria-label naming the section's pages, such as \"Layouts pages\". The summary is the browser's own disclosure button: it takes the keyboard and announces whether its section is open. Never put the link inside the summary, because a link inside a button is lost to screen readers."
+  },
+  "js": null,
+  "support": {
+    "unguarded": [
+      ":has()",
+      "subgrid",
+      "::details-content",
+      "details name attribute",
+      "animating a grid row between 0fr and 1fr"
+    ],
+    "guarded": []
+  },
+  "since": "7.0.0",
+  "example": "example.html"
+}
