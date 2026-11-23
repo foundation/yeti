@@ -203,6 +203,22 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'h-tree-menu')).toBe(true);
 	});
 
+	test('a button in a hover panel that opens a popover elsewhere is not a submenu', async ({ page }) => {
+		await open(page);
+		await page.hover('#h-share-trigger');
+		await becomes(page, 'h-share-menu', true);
+		await settle(page, '#h-share-menu');
+		// Resting on an item past the open delay must not open the popover that
+		// a button beside it names: that popover is not this panel's child, so
+		// its button is not a submenu's trigger.
+		await page.hover('#h-share-link');
+		await page.waitForTimeout(600);
+		expect(await isOpen(page, 'h-share-menu')).toBe(true);
+		expect(await isOpen(page, 'h-other')).toBe(false);
+		await page.click('#h-other-button');
+		expect(await isOpen(page, 'h-other')).toBe(true);
+	});
+
 	test('that guarantee holds after the panel has once been opened by hover', async ({ page }) => {
 		await open(page);
 		// showPopover queues its own open toggle, so bookkeeping attached right

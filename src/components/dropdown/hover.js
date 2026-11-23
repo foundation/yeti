@@ -39,8 +39,16 @@ const schedule = (wrapper, ms, run) => {
 
 // A wrapper is any element that owns a trigger for a panel, inside an element
 // that opted in. data-trigger="hover" is written once, on the outermost
-// dropdown, and every level nested inside it follows.
-const isWrapper = (el) => !!el.querySelector(':scope > [popovertarget]') && !!el.closest('[data-trigger="hover"]');
+// dropdown, and every level nested inside it follows. A nested level must own
+// the panel its trigger names, as a submenu's wrapper holds its panel. A panel
+// that holds a button for some other popover on the page is not a submenu, or
+// resting on any of its items would open that popover and close the menu.
+const isWrapper = (el) => {
+	const trigger = el.querySelector(':scope > [popovertarget]');
+	if (!trigger || !el.closest('[data-trigger="hover"]')) return false;
+	if (el.matches('[data-trigger="hover"]')) return true;
+	return document.getElementById(trigger.getAttribute('popovertarget'))?.parentElement === el;
+};
 
 // Every wrapper that holds the node, innermost first. The panel is a DOM child
 // of its wrapper even while it paints in the top layer, so the pointer on a
