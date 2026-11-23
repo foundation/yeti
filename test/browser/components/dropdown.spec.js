@@ -219,6 +219,20 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'h-other')).toBe(true);
 	});
 
+	test('from a split parent\'s link the pointer goes straight down into its hover panel', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await page.addStyleTag({ content: '#h-tree { --yeti-dropdown-close-delay: 300ms; }' });
+		await page.hover('#h-tree-link');
+		await becomes(page, 'h-tree-menu', true);
+		await settle(page, '#h-tree-menu');
+		const [link, menu] = await Promise.all([rect(page, '#h-tree-link'), rect(page, '#h-tree-menu')]);
+		await page.mouse.move((link.left + link.right) / 2, menu.top + 12, { steps: 12 });
+		// Nothing to wait on but the absence of a close, so wait past the delay.
+		await page.waitForTimeout(700);
+		expect(await isOpen(page, 'h-tree-menu')).toBe(true);
+	});
+
 	test('that guarantee holds after the panel has once been opened by hover', async ({ page }) => {
 		await open(page);
 		// showPopover queues its own open toggle, so bookkeeping attached right
@@ -352,6 +366,18 @@ test.describe('dropdown', () => {
 		await openTree(page);
 		const [fly, parent] = await Promise.all([rect(page, '#sub-menu'), rect(page, '#tree-menu')]);
 		expect(fly.right).toBeLessThanOrEqual(parent.left + 1);
+	});
+
+	test('with data-side="end" a split parent\'s panel lines up with the end of its row', async ({ page }) => {
+		await open(page);
+		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+		await page.evaluate(() => document.querySelector('#tree').setAttribute('data-side', 'end'));
+		await page.addStyleTag({ content: '#tree { margin-inline-start: 20rem; }' });
+		await page.click('#tree-toggle');
+		await settle(page, '#tree-menu');
+		const [row, menu] = await Promise.all([rect(page, '#tree'), rect(page, '#tree-menu')]);
+		expect(Math.abs(menu.right - row.right)).toBeLessThanOrEqual(2);
+		expect(menu.top).toBeGreaterThanOrEqual(row.bottom - 1);
 	});
 
 	test('Escape closes the innermost panel and returns focus; a click outside closes the chain', async ({ page }) => {

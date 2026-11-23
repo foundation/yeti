@@ -212,6 +212,12 @@
 	@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
 		.dropdown { anchor-scope: --yeti-dropdown; }
 		.dropdown > button[popovertarget] { anchor-name: --yeti-dropdown; }
+		/* A split parent's panel opens under the whole row, its link and its
+		   toggle, not under the small toggle alone: the first level reads as
+		   the item's own, and a pointer that moves straight down from the link
+		   lands in the panel instead of leaving the dropdown. */
+		.dropdown:has(> a + button) { anchor-name: --yeti-dropdown; }
+		.dropdown:has(> a + button) > button[popovertarget] { anchor-name: none; }
 		.dropdown > [popover]:popover-open {
 			position: fixed;
 			position-anchor: --yeti-dropdown;

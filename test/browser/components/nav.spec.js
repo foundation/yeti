@@ -664,6 +664,8 @@ test.describe('nav', () => {
 		expect(await isOpen(page, 'nt-about-menu')).toBe(true);
 		const [link, menu] = await Promise.all(['#nt-about-link', '#nt-about-menu'].map((s) => rect(page, s)));
 		expect(menu.top).toBeGreaterThanOrEqual(link.bottom - 1);
+		// The first level opens under its item, the link, not under the small toggle.
+		if (await anchored(page)) expect(Math.abs(menu.left - link.left)).toBeLessThanOrEqual(2);
 		expect(await style(page, '#nt-about-menu', 'position')).not.toBe('static');
 	});
 
