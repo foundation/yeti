@@ -216,7 +216,8 @@ test.describe('dropdown', () => {
 		expect(link.height).toBeGreaterThan(toggle.height);
 		expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
 		expect(toggle.right).toBeLessThanOrEqual(menu.right);
-		expect(menu.right).toBeLessThanOrEqual(320);
+		// Firefox reports the edge a hair past the viewport.
+		expect(menu.right).toBeLessThanOrEqual(320.5);
 	});
 
 	test('a label trigger in a panel draws a chevron at the row end', async ({ page }) => {
@@ -297,32 +298,39 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'tree-menu')).toBe(true);
 	});
 
-	const turn = (page, sel) => page.evaluate((s) => {
-		const cs = getComputedStyle(document.querySelector(s), '::after');
-		return `${cs.rotate}|${cs.transform}`;
+	// The chevron is drawn with its physical bottom and right borders, so an
+	// angle means the same direction in either page direction: 45 is down,
+	// -45 right, 135 left, 225 up.
+	const angle = (page, sel) => page.evaluate((s) => {
+		const deg = parseFloat(getComputedStyle(document.querySelector(s), '::after').rotate);
+		return ((deg % 360) + 360) % 360;
 	}, sel);
+	const DOWN = 45, UP = 225, RIGHT = 315, LEFT = 135;
 
-	test('a first-level chevron points down and turns up while its panel is open', async ({ page }) => {
-		await open(page);
-		const closed = await turn(page, '#tree-toggle');
-		await page.click('#tree-toggle'); await settle(page, '#tree-menu');
-		const opened = await turn(page, '#tree-toggle');
-		expect(opened).not.toBe(closed);
-	});
-
-	test('a nested chevron points to the inline end and turns back while its panel is open', async ({ page }) => {
-		await open(page);
-		await page.click('#tree-toggle'); await settle(page, '#tree-menu');
-		const first = await turn(page, '#tree-toggle');
-		const closed = await turn(page, '#sub-toggle');
-		expect(closed).not.toBe(first);
-		await page.click('#sub-toggle'); await settle(page, '#sub-menu');
-		expect(await turn(page, '#sub-toggle')).not.toBe(closed);
-		const labClosed = await turn(page, '#lab-trigger');
-		expect(labClosed).toBe(closed);
-		await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
-		expect(await turn(page, '#lab-trigger')).not.toBe(labClosed);
-	});
+	for (const dir of ['ltr', 'rtl']) {
+		test(`chevrons point the right way in a ${dir} page`, async ({ page }) => {
+			await open(page);
+			await page.evaluate((d) => { document.documentElement.dir = d; }, dir);
+			const inlineEnd = dir === 'ltr' ? RIGHT : LEFT;
+			const inlineStart = dir === 'ltr' ? LEFT : RIGHT;
+			expect(await angle(page, '#tree-toggle')).toBe(DOWN);
+			await page.click('#tree-toggle'); await settle(page, '#tree-menu');
+			expect(await angle(page, '#tree-toggle')).toBe(UP);
+			expect(await angle(page, '#sub-toggle')).toBe(inlineEnd);
+			expect(await angle(page, '#lab-trigger')).toBe(inlineEnd);
+			await page.click('#sub-toggle'); await settle(page, '#sub-menu');
+			expect(await angle(page, '#sub-toggle')).toBe(inlineStart);
+			expect(await angle(page, '#tree-toggle')).toBe(UP);
+			const borders = await page.evaluate(() => {
+				const cs = getComputedStyle(document.querySelector('#sub-toggle'), '::after');
+				return [cs.borderBottomWidth, cs.borderRightWidth, cs.borderTopWidth, cs.borderLeftWidth].map(parseFloat);
+			});
+			expect(borders[0]).toBeGreaterThan(0);
+			expect(borders[1]).toBeGreaterThan(0);
+			expect(borders[2]).toBe(0);
+			expect(borders[3]).toBe(0);
+		});
+	}
 
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
