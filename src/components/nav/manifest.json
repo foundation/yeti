@@ -252,6 +252,11 @@
       "description": "How long the panel takes to open."
     },
     {
+      "name": "--yeti-duration-base",
+      "public": true,
+      "description": "How long a group in the open panel takes to fold or unfold."
+    },
+    {
       "name": "--yeti-ease",
       "public": true,
       "description": "The curve of that transition."
@@ -301,6 +306,14 @@
     {
       "name": "--_yeti-nav-link",
       "public": false
+    },
+    {
+      "name": "--_yeti-turn",
+      "public": false
+    },
+    {
+      "name": "--_yeti-nudge",
+      "public": false
     }
   ],
   "a11y": {
@@ -323,7 +336,7 @@
     ],
     "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item."
   },
-  "js": null,
+  "js": [{ "module": "nav.js", "optional": true }],
   "support": {
     "unguarded": [
       "popover",

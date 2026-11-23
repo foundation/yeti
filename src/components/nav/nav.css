@@ -343,6 +343,70 @@
 		inline-size: auto;
 	}
 
+	/* With the module, a group in the open panel can fold. Its button then
+	   reports aria-expanded, which is what these rules read. The dropdown is a
+	   two-row grid: the link and its toggle share the first row, and the group
+	   spans the second. Folding moves that row from 1fr to 0fr, the way the
+	   base layer opens a details, because a row measured in fr animates in
+	   every engine where height: auto does not. The group clips its overflow
+	   so the pages are revealed rather than squashed. A folded group is also
+	   hidden, or its links would stay in the tab order at no height; the
+	   visibility waits for the end of the fold, so the pages are visible while
+	   they shrink. Nothing here names a hidden state of its own: a descendant
+	   inherits the group's visibility, so a branch inside a folded one stays
+	   folded however its own toggle reads. */
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto 1fr;
+		align-content: start;
+		align-items: start;
+		transition: grid-template-rows var(--yeti-duration-base) var(--yeti-ease);
+	}
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded="false"]) { grid-template-rows: auto 0fr; }
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > a { grid-column: 1; }
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > button:first-child { grid-column: 1 / -1; }
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > [popover] {
+		grid-column: 1 / -1;
+		align-self: stretch;
+		min-block-size: 0;
+		overflow: clip;
+		transition: visibility var(--yeti-duration-base) var(--yeti-ease);
+	}
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded="false"]) > [popover] { visibility: hidden; }
+
+	/* The toggle beside a link is a control-sized square at the row's inline
+	   end. Its chevron points down and turns up while its group is open, set
+	   through the dropdown's private properties so the dropdown's own rules
+	   for a chevron inside a panel do not have to be outranked one by one. */
+	.nav > ul[popover]:popover-open .dropdown > a + button[aria-expanded] {
+		grid-column: 2;
+		inline-size: var(--yeti-control-size);
+		block-size: var(--yeti-control-size);
+		min-inline-size: 0;
+		padding: 0;
+	}
+	.nav > ul[popover]:popover-open .dropdown > a + button[aria-expanded]:hover { background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle)); }
+	.nav > ul[popover]:popover-open .dropdown > button[aria-expanded] {
+		--_yeti-turn: 45deg;
+		--_yeti-nudge: 0 -0.15em;
+	}
+	.nav > ul[popover]:popover-open .dropdown > button[aria-expanded="true"] {
+		--_yeti-turn: 225deg;
+		--_yeti-nudge: 0 0.15em;
+	}
+
+	/* In a screen panel the link and its toggle are one centred unit, with
+	   the pages centred below it. The outer columns are flexible, so the group
+	   spanning them does not widen the two that hold the link and the toggle. */
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
+		align-items: start;
+	}
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > a { grid-column: 2; }
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown > a + button[aria-expanded] { grid-column: 3; }
+
 	/* Entering: the sheet and the screen fade in, the drawer slides in.
 	   Leaving is instant. The durations are tokens, so reduced motion
 	   makes entering instant too. */
