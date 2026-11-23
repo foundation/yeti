@@ -219,6 +219,22 @@ test.describe('dropdown', () => {
 		expect(menu.right).toBeLessThanOrEqual(320);
 	});
 
+	test('a label trigger in a panel draws a chevron at the row end', async ({ page }) => {
+		await open(page);
+		await page.click('#tree-toggle');
+		await settle(page, '#tree-menu');
+		expect(await page.evaluate(() => getComputedStyle(document.querySelector('#lab-trigger'), '::after').content)).not.toBe('none');
+		const gap = await page.evaluate(() => {
+			const button = document.querySelector('#lab-trigger');
+			const range = document.createRange();
+			range.selectNodeContents(button.firstChild);
+			return button.getBoundingClientRect().right - range.getBoundingClientRect().right;
+		});
+		// The text ends well short of the button's edge: the chevron and the
+		// space before it sit at the inline end.
+		expect(gap).toBeGreaterThan(20);
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);

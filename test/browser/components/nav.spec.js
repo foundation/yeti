@@ -17,6 +17,17 @@ const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) =>
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
+	test('a label trigger in the bar draws a chevron with a space before it', async ({ page }) => {
+		await open(page);
+		const chevron = await page.evaluate(() => {
+			const after = getComputedStyle(document.querySelector('#nav-li-trigger'), '::after');
+			return { content: after.content, margin: parseFloat(after.marginInlineStart) };
+		});
+		expect(chevron.content).not.toBe('none');
+		expect(chevron.margin).toBeGreaterThan(0);
+		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
+	});
+
 	test('in the bar, a dropdown panel takes the dropdown tokens, not the nav link color', async ({ page }) => {
 		await open(page, 1000);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-link: rgb(250, 250, 250); --yeti-dropdown-text: rgb(1, 2, 3); --yeti-dropdown-hover: rgb(4, 5, 6); }' });

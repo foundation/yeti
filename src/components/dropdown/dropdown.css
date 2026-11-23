@@ -68,9 +68,9 @@
 	}
 
 	/* The chevron is the base layer's two-border square. It points down. A
-	   label trigger draws it only where it marks a submenu, inside another
-	   panel or inside the bar's own panel; a standalone dropdown button is
-	   left as it was. */
+	   label trigger draws it only where it marks a submenu: inside another
+	   dropdown's panel, or inside the nav's list, which is both the bar and
+	   its open panel. A standalone dropdown button is left as it was. */
 	.dropdown > a + button::after,
 	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after {
 		content: "";
@@ -81,7 +81,11 @@
 		rotate: 45deg;
 		translate: 0 -0.15em;
 	}
-	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after { margin-inline-start: auto; }
+	/* The nav's bar trigger has no flex gap of its own, so the chevron keeps
+	   its own space from the text. Inside a dropdown panel it goes to the
+	   row's inline end instead. */
+	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
+	.dropdown > [popover] .dropdown > button:first-child::after { margin-inline-start: auto; }
 
 	/* In a panel the row is the whole panel width. The link takes what the
 	   toggle leaves and wraps when the label is long; the toggle keeps to the
