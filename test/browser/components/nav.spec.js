@@ -14,6 +14,8 @@ const isOpen = (page, id) => page.evaluate((i) => document.getElementById(i).mat
 // getAnimations() reports it. Waiting on an empty list resolves at once.
 const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 	.then(() => Promise.all(document.querySelector(s).getAnimations().map((a) => a.finished.catch(() => {})))), selector);
+// WebKit does not tab to links with plain Tab; Alt+Tab is its link-reaching key.
+const tab = (page, browserName) => page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
 
 test.describe('nav', () => {
@@ -597,7 +599,7 @@ test.describe('nav', () => {
 		expect(await style(page, '#nt-history', 'border-top-left-radius')).toBe(await style(page, '#nt-home', 'border-top-left-radius'));
 	});
 
-	test('Tab walks the links in visual order, skipping the hidden toggles', async ({ page }) => {
+	test('Tab walks the links in visual order, skipping the hidden toggles', async ({ page, browserName }) => {
 		await withoutModule(page, 'nav');
 		await open(page, 400);
 		await page.click('#nt-toggle');
@@ -605,7 +607,7 @@ test.describe('nav', () => {
 		await page.focus('#nt-home');
 		const order = ['nt-home'];
 		for (let i = 0; i < 5; i++) {
-			await page.keyboard.press('Tab');
+			await tab(page, browserName);
 			order.push(await page.evaluate(() => document.activeElement.id));
 		}
 		expect(order).toEqual(['nt-home', 'nt-about-link', 'nt-history', 'nt-team-link', 'nt-leaf', 'nt-lab-trigger']);
@@ -680,6 +682,9 @@ test.describe('nav', () => {
 			expect(toggle.left - link.right).toBeLessThan(2);
 			const mid = (r) => (r.left + r.right) / 2;
 			expect(Math.abs((link.left + toggle.right) / 2 - mid(home))).toBeLessThan(2);
+			await page.click('#nt-lab-trigger');
+			await expect(page.locator('#nt-lab-leaf')).toBeVisible();
+			expect(Math.abs(mid(await rect(page, '#nt-lab-trigger')) - mid(home))).toBeLessThan(2);
 		});
 		test('each toggle reports its state to assistive technology', async ({ page }) => {
 			await openPanel(page);
@@ -692,7 +697,7 @@ test.describe('nav', () => {
 			await page.click('#nt-about-toggle');
 			await expect(page.locator('#nt-leaf')).toBeHidden();
 			await page.focus('#nt-about-toggle');
-			await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+			await tab(page, browserName);
 			expect(await page.evaluate(() => document.activeElement.id)).toBe('nt-lab-trigger');
 		});
 		test('what was opened is remembered until the page is left', async ({ page }) => {
@@ -724,8 +729,62 @@ test.describe('nav', () => {
 			expect(await expanded(page, 'c-nt-about-toggle')).toBe('true');
 		});
 		test('a nav whose list is in the bar carries no aria-expanded', async ({ page }) => {
-			await open(page, 1000);
-			expect(await page.locator('.nav [aria-expanded]').count()).toBe(0);
+			await openPanel(page);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBeGreaterThan(0);
+			await page.keyboard.press('Escape');
+			await stage(page, 1000);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBe(0);
+		});
+		test('an open group draws its links\' focus rings whole', async ({ page, browserName }) => {
+			await openPanel(page);
+			await page.focus('#nt-about-toggle');
+			const seen = [];
+			for (let i = 0; i < 4; i++) {
+				await tab(page, browserName);
+				const ring = await page.evaluate(() => {
+					const el = document.activeElement;
+					const cs = getComputedStyle(el);
+					const grow = parseFloat(cs.outlineOffset) + parseFloat(cs.outlineWidth);
+					const r = el.getBoundingClientRect();
+					let clip = el.parentElement;
+					while (clip && clip.id !== 'nt-menu' && ['overflow-x', 'overflow-y'].every((p) => getComputedStyle(clip)[p] === 'visible')) clip = clip.parentElement;
+					const c = clip.getBoundingClientRect();
+					return { id: el.id, visible: el.matches(':focus-visible'), width: parseFloat(cs.outlineWidth), box: [r.top - grow, r.right + grow, r.bottom + grow, r.left - grow], clip: [c.top, c.right, c.bottom, c.left] };
+				});
+				seen.push(ring.id);
+				if (ring.id !== 'nt-history' && ring.id !== 'nt-leaf') continue;
+				expect(ring.visible).toBe(true);
+				expect(ring.width).toBeGreaterThan(0);
+				expect(ring.box[0]).toBeGreaterThanOrEqual(ring.clip[0] - 0.5);
+				expect(ring.box[1]).toBeLessThanOrEqual(ring.clip[1] + 0.5);
+				expect(ring.box[2]).toBeLessThanOrEqual(ring.clip[2] + 0.5);
+				expect(ring.box[3]).toBeGreaterThanOrEqual(ring.clip[3] - 0.5);
+			}
+			expect(seen).toEqual(['nt-history', 'nt-team-link', 'nt-team-toggle', 'nt-leaf']);
+		});
+		test('a button the author put in the panel keeps its own click and state', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => {
+				const li = document.createElement('li');
+				li.innerHTML = '<button type="button" aria-expanded="false" popovertarget="own-pop" id="own">Search</button><div popover id="own-pop">Hi</div>';
+				document.querySelector('#nt-menu').append(li);
+				window.addEventListener('click', (e) => { if (e.target.id === 'own') document.querySelector('#own').dataset.prevented = String(e.defaultPrevented); });
+			});
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			await page.click('#own');
+			expect(await page.getAttribute('#own', 'data-prevented')).toBe('false');
+			expect(await expanded(page, 'own')).toBe('false');
+		});
+		test('the keyboard folds and unfolds a group with Enter and Space', async ({ page }) => {
+			await openPanel(page);
+			await page.focus('#nt-about-toggle');
+			await page.keyboard.press('Enter');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('false');
+			await expect(page.locator('#nt-history')).toBeHidden();
+			await page.keyboard.press('Space');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
+			await expect(page.locator('#nt-history')).toBeVisible();
+			await expect.poll(() => style(page, '#nt-about-menu', 'overflow')).toBe('visible');
 		});
 	});
 });

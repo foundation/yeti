@@ -371,7 +371,15 @@
 		align-self: stretch;
 		min-block-size: 0;
 		overflow: clip;
-		transition: visibility var(--yeti-duration-base) var(--yeti-ease);
+		transition: visibility var(--yeti-duration-base) var(--yeti-ease), overflow 0s allow-discrete;
+	}
+	/* The clip is for the fold only. An open group lets its links' focus rings
+	   draw whole, so overflow becomes visible once the unfold has finished: a
+	   zero-length discrete transition, delayed by the unfold's own duration,
+	   holds the clip until then. Folding clips at once. */
+	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded="true"]) > [popover] {
+		overflow: visible;
+		transition: visibility var(--yeti-duration-base) var(--yeti-ease), overflow 0s var(--yeti-duration-base) allow-discrete;
 	}
 	.nav > ul[popover]:popover-open .dropdown:has(> button[aria-expanded="false"]) > [popover] { visibility: hidden; }
 
@@ -406,6 +414,12 @@
 	}
 	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > a { grid-column: 2; }
 	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown > a + button[aria-expanded] { grid-column: 3; }
+	/* A label-only trigger is the whole row, so it is centred as a unit
+	   rather than stretched, or its label sits off the axis of the pages. */
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:has(> button[aria-expanded]) > button:first-child {
+		justify-self: center;
+		inline-size: auto;
+	}
 
 	/* Entering: the sheet and the screen fade in, the drawer slides in.
 	   Leaving is instant. The durations are tokens, so reduced motion

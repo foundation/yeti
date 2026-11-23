@@ -32,7 +32,7 @@ function startsOpen(choice, holdsCurrent) {
 // before the panel's first frame (a group that was folded on open would
 // otherwise be seen folding) and gone as soon as the panel closes. toggle
 // follows a task later and repeats the same work, which costs nothing and
-// covers an opening that something else cancelled.
+// leaves the final state right if a script changed the attribute in between.
 const sync = (event) => {
 	const panel = event.target;
 	if (!panel.matches?.(panels)) return;
@@ -49,7 +49,7 @@ document.addEventListener('beforetoggle', sync, true);
 document.addEventListener('toggle', sync, true);
 
 document.addEventListener('click', (event) => {
-	const button = event.target.closest?.('button[aria-expanded][popovertarget]');
+	const button = event.target.closest?.('.dropdown > button[aria-expanded][popovertarget]');
 	if (!button?.closest(`${panels}:popover-open`)) return;
 	// The panel is open, so this button folds its group rather than opening one.
 	event.preventDefault();
