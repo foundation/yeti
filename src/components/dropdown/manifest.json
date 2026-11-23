@@ -76,6 +76,11 @@
       "description": "Background of a panel item under the pointer."
     },
     {
+      "name": "--yeti-dropdown-current",
+      "public": true,
+      "description": "Color of the current page's link inside a panel, and of each parent there that holds it; the variant's text color unless set."
+    },
+    {
       "name": "--yeti-dropdown-radius",
       "public": true,
       "description": "Corner of the panel."

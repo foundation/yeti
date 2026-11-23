@@ -18,7 +18,7 @@ Where anchor positioning exists the panel hangs under its own trigger, and `data
 </div>
 ```
 
-The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. Set the three together for a dark or tinted panel.
+The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. The current page's link, and each parent in the panel that holds it, takes `--yeti-dropdown-current`, which falls back to the variant's text color. Set the four together for a dark or tinted panel.
 
 ## A parent with its own page
 
@@ -71,7 +71,7 @@ Each button's `popovertarget` names its panel's id, so every id has to be unique
 
 The chevron shows that a row opens something, and which way. A split parent's button always has one. A label button has one only where it marks a submenu: inside another dropdown's panel, and inside a nav's list. A standalone dropdown's button, such as the Account button above, is left as it is. A first-level chevron points down and turns up while its panel is open. A nested one points to the inline end and turns back while its panel is open, and mirrors in a right-to-left page. The exception is a nav's open panel with `nav.js`, where every group opens below its own row, so every group's chevron points down and turns up while the group is open.
 
-Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. A grouped panel's heading, described below, keeps its strong weight and only changes color. The color is the variant's text color, or the primary color's outside a variant scope. A button that is a `.button`, such as the Account button above, keeps its own colors, because its text is drawn for its own fill.
+Mark the page being read with `aria-current="page"` on its link, and nothing else. That link takes the current color and the strong weight. Every dropdown that holds it shows its own link and button in the same color at the normal weight, so the way down to the page can be followed without a second page looking current. A grouped panel's heading, described below, keeps its strong weight and only changes color. The color is `--yeti-dropdown-current`, which falls back to the variant's text color, or the primary color's outside a variant scope. A button that is a `.button`, such as the Account button above, keeps its own colors, because its text is drawn for its own fill.
 
 ## Grouped
 

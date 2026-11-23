@@ -643,5 +643,13 @@ test.describe('dropdown', () => {
 			await settle(page, '#trigger-one');
 			expect(await style(page, '#trigger-one', 'color')).toBe(before);
 		});
+
+		test('--yeti-dropdown-current colors the current page and each parent that holds it', async ({ page }) => {
+			await open(page);
+			await mark(page);
+			await page.addStyleTag({ content: '#tree { --yeti-dropdown-current: rgb(9, 8, 7); }' });
+			for (const id of ['#leaf', '#sub-link', '#sub-toggle', '#tree-link']) expect(await style(page, id, 'color'), id).toBe('rgb(9, 8, 7)');
+			expect(await style(page, '#tree-plain', 'color')).not.toBe('rgb(9, 8, 7)');
+		});
 	});
 });
