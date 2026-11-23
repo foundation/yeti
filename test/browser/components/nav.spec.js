@@ -29,6 +29,15 @@ const chevronRoom = (page, selector) => page.evaluate((s) => {
 	const end = range.getBoundingClientRect().right + (parseFloat(cs.columnGap) || 0) + parseFloat(after.marginInlineStart) + parseFloat(after.width);
 	return el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - end;
 }, selector);
+// The variant's own color for a private variant property, resolved inside an element.
+const variant = (page, inside, name) => page.evaluate(([s, n]) => {
+	const probe = document.createElement('span');
+	probe.style.color = `var(${n})`;
+	document.querySelector(s).append(probe);
+	const value = getComputedStyle(probe).color;
+	probe.remove();
+	return value;
+}, [inside, name]);
 
 test.describe('nav', () => {
 	test('a label trigger in the bar draws a chevron with a space before it', async ({ page }) => {
@@ -65,6 +74,21 @@ test.describe('nav', () => {
 		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
 		await page.hover('#plain');
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
+	test('the open panel keeps the variant\'s tints, not the bar\'s hover and current tokens', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-hover: rgb(7, 8, 9); --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+		await page.mouse.move(5, 5);
+		await stage(page, 400);
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#current', 'color')).toBe(await variant(page, '#nav', '--_yeti-variant-text'));
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe(await variant(page, '#nav', '--_yeti-variant-subtle'));
 	});
 
 	test('a label trigger inside a dropdown panel in the nav fills its row and keeps its chevron at the row end', async ({ page }) => {
@@ -610,22 +634,28 @@ test.describe('nav', () => {
 		expect(await isOpen(page, 'nt-menu')).toBe(true);
 	});
 
-	test('links shown in place in the panel read the nav panel tokens, not the dropdown ones', async ({ page }) => {
+	test('links shown in place in the panel read the panel text and the variant tints, not the bar or dropdown tokens', async ({ page }) => {
 		await withoutModule(page, 'nav');
 		await open(page, 400);
-		await page.addStyleTag({ content: '#nt { --yeti-nav-panel-text: rgb(1, 2, 3); --yeti-nav-hover: rgb(4, 5, 6); --yeti-nav-current: rgb(7, 8, 9); --yeti-dropdown-text: rgb(200, 0, 0); --yeti-dropdown-hover: rgb(0, 200, 0); }' });
+		await page.addStyleTag({ content: '#nt { --yeti-nav-panel-text: rgb(1, 2, 3); --yeti-nav-hover: rgb(4, 5, 6); --yeti-nav-current: rgb(7, 8, 9); --yeti-dropdown-text: rgb(200, 0, 0); --yeti-dropdown-hover: rgb(0, 200, 0); --yeti-dropdown-current: rgb(0, 0, 200); }' });
 		await page.click('#nt-toggle');
 		await settle(page, '#nt-menu');
+		const current = await variant(page, '#nt', '--_yeti-variant-text');
+		for (const color of ['rgb(7, 8, 9)', 'rgb(200, 0, 0)', 'rgb(0, 0, 200)']) expect(current).not.toBe(color);
 		expect(await style(page, '#nt-history', 'color')).toBe('rgb(1, 2, 3)');
-		expect(await style(page, '#nt-leaf', 'color')).toBe('rgb(7, 8, 9)');
+		expect(await style(page, '#nt-leaf', 'color')).toBe(current);
 		expect(Number(await style(page, '#nt-leaf', 'font-weight'))).toBeGreaterThanOrEqual(600);
-		expect(await style(page, '#nt-team-link', 'color')).toBe('rgb(7, 8, 9)');
+		expect(await style(page, '#nt-team-link', 'color')).toBe(current);
 		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(600);
 		expect(await style(page, '#nt-lab-trigger', 'color')).toBe('rgb(1, 2, 3)');
+		// The hover is the variant's tint, the same as a top-level link's in the panel.
+		await page.hover('#nt-home');
+		const tint = await style(page, '#nt-home', 'background-color');
+		for (const color of ['rgb(4, 5, 6)', 'rgb(0, 200, 0)', 'rgba(0, 0, 0, 0)']) expect(tint).not.toBe(color);
 		await page.hover('#nt-history');
-		expect(await style(page, '#nt-history', 'background-color')).toBe('rgb(4, 5, 6)');
+		expect(await style(page, '#nt-history', 'background-color')).toBe(tint);
 		await page.hover('#nt-leaf');
-		expect(await style(page, '#nt-leaf', 'background-color')).toBe('rgb(4, 5, 6)');
+		expect(await style(page, '#nt-leaf', 'background-color')).toBe(tint);
 		// The same size and radius as a link at the top of the panel.
 		const [home, history] = await Promise.all(['#nt-home', '#nt-history'].map((s) => rect(page, s)));
 		expect(Math.abs(home.height - history.height)).toBeLessThan(2);

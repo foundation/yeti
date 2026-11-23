@@ -83,8 +83,11 @@
 	   inside the list is a button, not a link, and is styled like one. */
 	.nav > ul[popover] > li { margin: 0; }
 	/* The bar's own links: the list's links, and a top-level dropdown's
-	   trigger, whether the dropdown class is on the li or on a wrapper in it. Nothing inside a dropdown's panel is matched, so the panel
-	   answers to the dropdown's tokens and not to the nav's. */
+	   trigger, whether the dropdown class is on the li or on a wrapper in
+	   it. Nothing inside a dropdown's panel is matched, so the panel answers
+	   to the dropdown's tokens and not to the nav's. The hover and current
+	   colors are read through private properties that the open panel sets,
+	   so the bar's tokens color the bar only (see the panel's reset below). */
 	.nav > ul[popover] > li > a,
 	.nav > ul[popover] > li.dropdown > :is(a, button),
 	.nav > ul[popover] > li > .dropdown > :is(a, button) {
@@ -102,11 +105,11 @@
 	}
 	.nav > ul[popover] > li > a:hover,
 	.nav > ul[popover] > li.dropdown > :is(a, button):hover,
-	.nav > ul[popover] > li > .dropdown > :is(a, button):hover { background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle)); }
+	.nav > ul[popover] > li > .dropdown > :is(a, button):hover { background-color: var(--_yeti-nav-hover, var(--yeti-nav-hover, var(--_yeti-variant-subtle))); }
 	.nav > ul[popover] > li > a[aria-current],
 	.nav > ul[popover] > li.dropdown > a[aria-current],
 	.nav > ul[popover] > li > .dropdown > a[aria-current] {
-		color: var(--yeti-nav-current, var(--_yeti-variant-text));
+		color: var(--_yeti-nav-current, var(--yeti-nav-current, var(--_yeti-variant-text)));
 		font-weight: var(--yeti-weight-strong);
 	}
 	/* A top-level parent that holds the current page, in its link or its
@@ -115,7 +118,7 @@
 	   dropdown that contains the page matches, not one that sits beside it. */
 	.nav > ul[popover] > li.dropdown:has([aria-current="page"]) > :is(a, button),
 	.nav > ul[popover] > li > .dropdown:has([aria-current="page"]) > :is(a, button) {
-		color: var(--yeti-nav-current, var(--_yeti-variant-text));
+		color: var(--_yeti-nav-current, var(--yeti-nav-current, var(--_yeti-variant-text)));
 	}
 	/* A split parent in the bar is its link and a compact toggle on one row.
 	   The toggle is not padded like a link: it stretches to the row's height,
@@ -130,9 +133,16 @@
 		min-inline-size: 0;
 		padding-inline: var(--yeti-space-xs);
 	}
-	/* The panel sits on its own surface, so a link color chosen for the bar
-	   must not follow the links into it. */
-	.nav > ul[popover]:popover-open { --_yeti-nav-link: currentColor; }
+	/* The panel sits on its own surface, so a link color, hover fill or
+	   current color chosen for the bar must not follow the links into it. A
+	   dark bar's light hover and current colors would vanish on a light
+	   panel. The panel keeps the variant's own tints, which are drawn for an
+	   ordinary surface, for every link, parent, group link and toggle in it. */
+	.nav > ul[popover]:popover-open {
+		--_yeti-nav-link: currentColor;
+		--_yeti-nav-hover: var(--_yeti-variant-subtle);
+		--_yeti-nav-current: var(--_yeti-variant-text);
+	}
 
 	/* The panel: the open list below the threshold. The user agent gives a
 	   popover inset 0, margin auto, a border, and fit-content sizes; the
@@ -272,9 +282,10 @@
 	   layer. The group stays closed as a popover, which keeps its focusable
 	   links in visual order. With no module the toggle has nothing to do, so
 	   it is hidden and the parent's link takes the whole row. The links read
-	   the panel's tokens, not the dropdown's, so the tree looks like the list
-	   it sits in. The color is set once on the group and inherited, so the
-	   current and ancestor rules below are not outranked by a link rule. */
+	   the panel's text and, as the panel's own links do, the variant's hover
+	   and current tints, not the dropdown's tokens, so the tree looks like the
+	   list it sits in. The color is set once on the group and inherited, so
+	   the current and ancestor rules below are not outranked by a link rule. */
 	.nav > ul[popover]:popover-open .dropdown > a + button:not([aria-expanded]) { display: none; }
 	.nav > ul[popover]:popover-open .dropdown:has(> a + button:not([aria-expanded])) > a {
 		display: flex;
@@ -309,11 +320,11 @@
 		font-stretch: var(--yeti-stretch-small);
 	}
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child):hover {
-		background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle));
+		background-color: var(--_yeti-nav-hover);
 	}
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] .dropdown:has([aria-current="page"]) > :is(a, button),
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] {
-		color: var(--yeti-nav-current, var(--_yeti-variant-text));
+		color: var(--_yeti-nav-current);
 	}
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] { font-weight: var(--yeti-weight-strong); }
 
@@ -394,7 +405,7 @@
 		min-inline-size: 0;
 		padding: 0;
 	}
-	.nav > ul[popover]:popover-open .dropdown > a + button[aria-expanded]:hover { background-color: var(--yeti-nav-hover, var(--_yeti-variant-subtle)); }
+	.nav > ul[popover]:popover-open .dropdown > a + button[aria-expanded]:hover { background-color: var(--_yeti-nav-hover); }
 	.nav > ul[popover]:popover-open .dropdown > button[aria-expanded] {
 		--_yeti-turn: 45deg;
 		--_yeti-nudge: 0 -0.15em;

@@ -159,12 +159,12 @@
     {
       "name": "--yeti-nav-hover",
       "public": true,
-      "description": "Background of a link or dropdown trigger under the pointer, in the bar and in the open panel, including a submenu's links and toggles shown in place; not the nav's toggle or the close button, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off."
+      "description": "Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off."
     },
     {
       "name": "--yeti-nav-current",
       "public": true,
-      "description": "Color of the current page's link and of each parent that holds it, in the bar and in the open panel, including submenus shown in place there; a dropdown's floating panel keeps the variant's text color. Read with a fallback to the variant's text color."
+      "description": "Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color."
     },
     {
       "name": "--yeti-stretch-small",
@@ -305,6 +305,14 @@
     },
     {
       "name": "--_yeti-nav-link",
+      "public": false
+    },
+    {
+      "name": "--_yeti-nav-hover",
+      "public": false
+    },
+    {
+      "name": "--_yeti-nav-current",
       "public": false
     },
     {
