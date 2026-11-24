@@ -236,9 +236,10 @@ test.describe('tabnav', () => {
 		}
 	});
 
-	test('a focused link draws its ring inside the row', async ({ page }) => {
+	test('a focused link draws its ring inside the row', async ({ page, browserName }) => {
 		await open(page);
-		await page.keyboard.press('Tab');
+		// WebKit does not tab to links with plain Tab; Alt+Tab is its link-reaching key.
+		await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
 		expect(await page.evaluate(() => document.activeElement.id)).toBe('tn-code');
 		expect(await page.evaluate(() => document.activeElement.matches(':focus-visible'))).toBe(true);
 		expect(parseFloat(await style(page, '#tn-code', 'outline-offset'))).toBeLessThan(0);
