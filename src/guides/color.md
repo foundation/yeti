@@ -33,7 +33,7 @@ The page itself has its own roles at the neutral hue, low in chroma so they read
 
 ## A brand color
 
-A hue is an angle, and most brands are not. When a brand has a color of its own, give it to Yeti as it is. Each of the five accent roles takes one: `--yeti-brand-primary`, `--yeti-brand-secondary`, `--yeti-brand-success`, `--yeti-brand-warning` and `--yeti-brand-alert`. Each is optional and stands on its own, so you can set the primary and leave the other four on their hues. Any CSS color works, and `light-dark()` gives a different color in each scheme. Set them on `:root`, like the hues.
+A hue is an angle, and most brands are not. When a brand has a color of its own, give it to Yeti as it is. Each of the five accent roles takes one: `--yeti-brand-primary`, `--yeti-brand-secondary`, `--yeti-brand-success`, `--yeti-brand-warning` and `--yeti-brand-alert`. Each is optional and stands on its own, so you can set the primary and leave the other four on their hues. Any CSS color works, and `light-dark()` gives a different color in each scheme. Use an opaque one: the base step is the color as you give it, and the contrast promises below are for a color you cannot see through. Set them on `:root`, like the hues.
 
 ```css
 :root {

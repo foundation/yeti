@@ -738,3 +738,21 @@ test.describe('data-palette', () => {
 		expect(worst(await used(page, '#out-check', 'accentColor'), await root(page, 'var(--yeti-color-primary)')), 'outside').toBeLessThanOrEqual(0.5);
 	});
 });
+
+test.describe('a brand color that is not opaque', () => {
+	test('the steps worked out from it are opaque, so they read as the ladder intends', async ({ page }) => {
+		await page.addInitScript(HELPERS);
+		await page.goto('/test/browser/fixtures/color.html');
+		await setRoot(page, '--yeti-brand-primary', 'rgb(228 0 43 / 0.5)');
+		for (const name of ['--yeti-color-primary-line', '--yeti-color-primary-text', '--yeti-color-primary-subtle', '--yeti-color-primary-soft', '--yeti-color-primary-strong', '--yeti-on-primary', '--yeti-color-primary-50']) {
+			const value = await page.evaluate((n) => window.__brand.computed('light', `var(${n})`), name);
+			expect(value, name).not.toBe('');
+			expect(value, name).not.toContain('/');
+		}
+		// The line step is still the red it would be for the opaque color.
+		const line = await read(page, 'light', 'var(--yeti-color-primary-line)');
+		await setRoot(page, '--yeti-brand-primary', 'rgb(228 0 43)');
+		const solid = await read(page, 'light', 'var(--yeti-color-primary-line)');
+		expect(worst(line, solid)).toBeLessThan(0.5);
+	});
+});

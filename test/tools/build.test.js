@@ -5,6 +5,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { bundle, build } from '../../bin/build.js';
 import { LAYER_STATEMENT } from '../../bin/lib/layers.js';
+import { minifyCss } from '../../bin/lib/minify-css.js';
 import { makeTree, validManifest, validTree } from './helpers.js';
 
 const pkg = { name: '@foundation/yeti', version: '7.0.0-alpha.0', license: 'FSL-1.1-MIT', homepage: 'https://foundationcss.com/yeti/' };
@@ -178,4 +179,17 @@ test('build copies the starter to dist/starter and not into dist/css', () => {
 	assert.equal(fs.readFileSync(path.join(root, 'dist/starter/theme.css'), 'utf8'), '/* :root { } */\n');
 	assert.ok(r.outputs.includes('starter/index.html') && r.outputs.includes('starter/theme.css'));
 	assert.ok(!fs.existsSync(path.join(root, 'dist/css/starter')));
+});
+
+test('the minified stylesheet never has a parenthesis straight after a colon', () => {
+	// Stacks reads ":(" as the start of a template tag, and a Stacks theme
+	// carries Yeti's stylesheet inside a template. A custom property whose
+	// value begins with a bare parenthesis minifies to exactly that, so such
+	// a value is written with calc() instead.
+	const root = path.resolve(import.meta.dirname, '../..');
+	const bundled = bundle({ root, pkg: JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) });
+	assert.deepEqual(bundled.errors, []);
+	const { css } = minifyCss({ css: bundled.body });
+	const at = css.indexOf(':(');
+	assert.equal(at, -1, `found ":(" in the minified stylesheet: ${css.slice(Math.max(0, at - 40), at + 40)}`);
 });
