@@ -231,6 +231,23 @@ test.describe('dropdown', () => {
 		expect(await isOpen(page, 'h-other')).toBe(true);
 	});
 
+	test('a hover panel that holds a button and the popover it names is not itself a submenu', async ({ page }) => {
+		await open(page);
+		// The same button, with its popover now the panel's own child. The panel
+		// then holds a trigger and the panel that trigger names, which is the
+		// shape of a submenu's wrapper, but a panel is never a wrapper.
+		await page.evaluate(() => document.getElementById('h-share-menu').append(document.getElementById('h-other')));
+		await page.hover('#h-share-trigger');
+		await becomes(page, 'h-share-menu', true);
+		await settle(page, '#h-share-menu');
+		await page.hover('#h-share-link');
+		await page.waitForTimeout(600);
+		expect(await isOpen(page, 'h-share-menu')).toBe(true);
+		expect(await isOpen(page, 'h-other')).toBe(false);
+		await page.click('#h-other-button');
+		expect(await isOpen(page, 'h-other')).toBe(true);
+	});
+
 	test('from a split parent\'s link the pointer goes straight down into its hover panel', async ({ page }) => {
 		await open(page);
 		test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');

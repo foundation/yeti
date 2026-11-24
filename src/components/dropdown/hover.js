@@ -43,10 +43,14 @@ const schedule = (wrapper, ms, run) => {
 // the panel its trigger names, as a submenu's wrapper holds its panel. A panel
 // that holds a button for some other popover on the page is not a submenu, or
 // resting on any of its items would open that popover and close the menu.
+// Nor is the panel itself ever a level, even when the popover its button names
+// is its own child: the pointer is over a panel the whole time it is in the
+// menu, so that popover would open under any item.
 const isWrapper = (el) => {
 	const trigger = el.querySelector(':scope > [popovertarget]');
 	if (!trigger || !el.closest('[data-trigger="hover"]')) return false;
 	if (el.matches('[data-trigger="hover"]')) return true;
+	if (el.matches('[popover]')) return false;
 	return document.getElementById(trigger.getAttribute('popovertarget'))?.parentElement === el;
 };
 
