@@ -5,6 +5,11 @@
 @layer yeti.components {
 	.dropdown { display: inline-block; }
 	.dropdown > [popover] {
+		/* An item's corners sit inside the panel's, so its radius is the
+		   panel's less the padding between them. With the default tokens that
+		   is nothing, so the fill falls back to the small radius, though never
+		   to more than the panel's own: a square panel keeps square items. */
+		--_yeti-dropdown-item-radius: max(calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding)), min(var(--yeti-dropdown-radius), var(--yeti-radius-sm)));
 		margin: 0;
 		padding: var(--yeti-dropdown-padding);
 		border: 0;
@@ -28,7 +33,7 @@
 		min-block-size: var(--yeti-control-size);
 		padding-inline: var(--yeti-space-sm);
 		border: 0;
-		border-radius: calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding));
+		border-radius: var(--_yeti-dropdown-item-radius);
 		background-color: transparent;
 		color: inherit;
 		font: inherit;
@@ -144,7 +149,7 @@
 	}
 	.dropdown > [popover] .dropdown > a + button {
 		padding-inline: 0;
-		border-radius: calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding));
+		border-radius: var(--_yeti-dropdown-item-radius);
 	}
 	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
 

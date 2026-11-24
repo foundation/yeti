@@ -50,6 +50,7 @@
   "tokens": [
     { "name": "--_yeti-turn", "public": false },
     { "name": "--_yeti-nudge", "public": false },
+    { "name": "--_yeti-dropdown-item-radius", "public": false },
     {
       "name": "--yeti-color-primary-text",
       "public": true,
@@ -94,6 +95,11 @@
       "name": "--yeti-dropdown-min",
       "public": true,
       "description": "Least width of the panel, and of each column in a grouped panel."
+    },
+    {
+      "name": "--yeti-radius-sm",
+      "public": true,
+      "description": "The corners of an item's fill, where the panel's radius less its padding leaves nothing. Never more than the panel's own radius."
     },
     {
       "name": "--yeti-shadow-md",

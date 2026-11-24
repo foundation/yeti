@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, style, axe, withoutModule } from '../lib/layout.js';
+import { stage, rect, style, axe, withoutModule, token } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/dropdown.html');
@@ -42,6 +42,30 @@ test.describe('dropdown', () => {
 		expect(await item.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(1, 2, 3)');
 		await item.hover();
 		expect(await item.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(4, 5, 6)');
+	});
+
+	test('an item is rounded inside a rounded panel, and square inside a square one', async ({ page }) => {
+		await open(page);
+		await page.click('#trigger-one');
+		await settle(page, '#menu-one');
+		// The panel's radius less its padding is nothing with the default
+		// tokens, so the item falls back to the small radius for its fill.
+		const small = await token(page, '--yeti-radius-sm');
+		expect(small).toBeGreaterThan(0);
+		for (const item of ['#menu-one a', '#menu-one button']) expect(parseFloat(await style(page, item, 'border-top-left-radius')), item).toBeCloseTo(small, 1);
+		// A panel rounded past its padding keeps the corners concentric.
+		await page.addStyleTag({ content: '#menu-one { --yeti-dropdown-radius: 20px; --yeti-dropdown-padding: 6px; }' });
+		expect(parseFloat(await style(page, '#menu-one a', 'border-top-left-radius'))).toBeCloseTo(14, 1);
+		// A theme that squares the panel squares its items with it.
+		await page.addStyleTag({ content: '#menu-one { --yeti-dropdown-radius: 0px; }' });
+		expect(parseFloat(await style(page, '#menu-one a', 'border-top-left-radius'))).toBe(0);
+	});
+
+	test('a split parent\'s toggle in a panel takes the same corners as an item', async ({ page }) => {
+		await open(page);
+		await page.click('#tree-toggle');
+		await settle(page, '#tree-menu');
+		expect(parseFloat(await style(page, '#sub-toggle', 'border-top-left-radius'))).toBeCloseTo(await token(page, '--yeti-radius-sm'), 1);
 	});
 
 	test('a click outside shuts it', async ({ page }) => {
