@@ -232,6 +232,18 @@ test.describe('base disclosures', () => {
 		expect(parseFloat(await after(page, 'summary', 'transition-duration'))).toBeGreaterThan(0.01);
 	});
 
+	test('the chevron points down in a right-to-left page too', async ({ page }) => {
+		// The corner is drawn by the bottom and right borders and then turned.
+		// Logical borders would move to the left side here, and the same turn
+		// would point the corner sideways.
+		await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+		const [bottom, right, top, left] = await Promise.all(['bottom', 'right', 'top', 'left'].map((side) => after(page, 'summary', `border-${side}-width`)));
+		expect(parseFloat(bottom)).toBeGreaterThan(0);
+		expect(parseFloat(right)).toBeGreaterThan(0);
+		expect(parseFloat(top)).toBe(0);
+		expect(parseFloat(left)).toBe(0);
+	});
+
 	test('the panel is a grid row that grows from nothing', async ({ page }) => {
 		// The row is what the transition runs on, so it is the row that has to
 		// differ between the two states; a panel that only faded arrived at full
