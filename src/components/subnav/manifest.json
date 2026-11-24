@@ -59,6 +59,11 @@
       "description": "The fill under the pointer; transparent turns it off."
     },
     {
+      "name": "--yeti-subnav-current-surface",
+      "public": true,
+      "description": "Background of the current page's link; off unless set. The parents above it are not filled."
+    },
+    {
       "name": "--yeti-subnav-current",
       "public": true,
       "description": "The current page, and the rows of the parents that hold it."

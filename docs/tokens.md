@@ -461,6 +461,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-nav-panel-text` | `var(--yeti-color-text)` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
 | `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
 | `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color. |
+| `--yeti-nav-current-surface` | transparent (override only) | Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. A link under the pointer still takes --yeti-nav-hover. It does not reach a dropdown's floating panel or the open panel. |
 | `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
 
 </div>
@@ -506,6 +507,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-subnav-indent` | `var(--yeti-space-md)` | How far each level of a subnav steps in from the one above it. |
 | `--yeti-subnav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a subnav link or toggle under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
 | `--yeti-subnav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link, and of the row of each parent that holds it. Read with a fallback to the variant's text color. |
+| `--yeti-subnav-current-surface` | transparent (override only) | Background of the current page's link in a subnav; off unless set. The parents above it are not filled, and a link under the pointer still takes --yeti-subnav-hover. |
 
 </div>
 

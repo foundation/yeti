@@ -43,6 +43,16 @@ test.describe('subnav', () => {
 		expect(await style(page, '#sn-parent-link', 'color')).toBe('rgb(10, 11, 12)');
 		expect(await style(page, '#sn-plain', 'color')).not.toBe('rgb(10, 11, 12)');
 	});
+	test('--yeti-subnav-current-surface fills the current page, and not the parents above it', async ({ page }) => {
+		await open(page);
+		expect(await style(page, '#sn-leaf', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.addStyleTag({ content: '#sn { --yeti-subnav-current-surface: rgb(13, 14, 15); --yeti-subnav-hover: rgb(7, 8, 9); }' });
+		expect(await style(page, '#sn-leaf', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#sn-parent-link', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		expect(await style(page, '#sn-plain', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.hover('#sn-leaf');
+		expect(await style(page, '#sn-leaf', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
 	test('a parent that is not a page is a plain disclosure with its name in the summary', async ({ page }) => {
 		await open(page);
 		await expect(page.getByText('Reference')).toBeVisible();

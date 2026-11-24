@@ -162,6 +162,12 @@
       "description": "Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off."
     },
     {
+      "name": "--yeti-nav-current-surface",
+      "public": true,
+      "description": "Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. It does not reach a dropdown's floating panel or the open panel."
+    },
+    { "name": "--_yeti-nav-current-surface", "public": false },
+    {
       "name": "--yeti-nav-current",
       "public": true,
       "description": "Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color."

@@ -40,6 +40,11 @@
 		padding: var(--yeti-space-xs) var(--yeti-space-sm);
 		padding-inline-end: calc(var(--yeti-control-size) / 2 - 0.25em);
 	}
+	/* The current page's fill, off unless a theme sets it. Only the page's own
+	   link takes it: its parents are all in view above it, and a column of
+	   filled rows would hide which one the reader is on. It comes before the
+	   hover rule, which weighs the same, so the pointer still shows on it. */
+	.subnav a[aria-current] { background-color: var(--yeti-subnav-current-surface, transparent); }
 	/* Read with a fallback, so a per-element --yeti-subnav-hover still wins over
 	   whichever variant is set here, and transparent turns the fill off. */
 	.subnav :is(a, summary):hover { background-color: var(--yeti-subnav-hover, var(--_yeti-variant-subtle)); }

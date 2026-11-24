@@ -103,6 +103,15 @@
 		text-decoration: none;
 		cursor: pointer;
 	}
+	/* The current page's fill, off unless a theme sets it. It reaches what the
+	   current color below reaches: the page's own link, and the top-level
+	   parent that holds the page. It comes before the hover rule on purpose.
+	   The two weigh the same, so the pointer still shows on the current link. */
+	.nav > ul[popover] > li > a[aria-current],
+	.nav > ul[popover] > li.dropdown > a[aria-current],
+	.nav > ul[popover] > li > .dropdown > a[aria-current],
+	.nav > ul[popover] > li.dropdown:has([aria-current="page"]) > :is(a, button),
+	.nav > ul[popover] > li > .dropdown:has([aria-current="page"]) > :is(a, button) { background-color: var(--_yeti-nav-current-surface, var(--yeti-nav-current-surface, transparent)); }
 	.nav > ul[popover] > li > a:hover,
 	.nav > ul[popover] > li.dropdown > :is(a, button):hover,
 	.nav > ul[popover] > li > .dropdown > :is(a, button):hover { background-color: var(--_yeti-nav-hover, var(--yeti-nav-hover, var(--_yeti-variant-subtle))); }
@@ -133,8 +142,8 @@
 		min-inline-size: 0;
 		padding-inline: var(--yeti-space-xs);
 	}
-	/* The panel sits on its own surface, so a link color, hover fill or
-	   current color chosen for the bar must not follow the links into it. A
+	/* The panel sits on its own surface, so a link color, hover fill, current
+	   color or current fill chosen for the bar must not follow the links into it. A
 	   dark bar's light hover and current colors would vanish on a light
 	   panel. The panel keeps the variant's own tints, which are drawn for an
 	   ordinary surface, for every link, parent, group link and toggle in it. */
@@ -142,6 +151,7 @@
 		--_yeti-nav-link: currentColor;
 		--_yeti-nav-hover: var(--_yeti-variant-subtle);
 		--_yeti-nav-current: var(--_yeti-variant-text);
+		--_yeti-nav-current-surface: transparent;
 	}
 
 	/* The panel: the open list below the threshold. The user agent gives a

@@ -71,6 +71,29 @@ test.describe('nav', () => {
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
 	});
 
+	test('--yeti-nav-current-surface fills the current page in the bar, and the parent that holds it', async ({ page }) => {
+		await open(page, 1000);
+		// Off by default, so the pointer still shows on the current link.
+		expect(await style(page, '#current', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.addStyleTag({ content: '#nav, #nt { --yeti-nav-current-surface: rgb(13, 14, 15); --yeti-nav-hover: rgb(7, 8, 9); }' });
+		expect(await style(page, '#current', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		expect(await style(page, '#nt-about-link', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#nt-about-toggle', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#nt-home', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		expect(await style(page, '#nt-lab-trigger', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.hover('#current');
+		expect(await style(page, '#current', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
+	test('the open panel does not take the bar\'s current fill', async ({ page }) => {
+		await open(page, 400);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-current-surface: rgb(13, 14, 15); }' });
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#current', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+	});
+
 	test('the open panel keeps the variant\'s tints, not the bar\'s hover and current tokens', async ({ page }) => {
 		await open(page, 1000);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-hover: rgb(7, 8, 9); --yeti-nav-current: rgb(10, 11, 12); }' });

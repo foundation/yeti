@@ -2226,7 +2226,7 @@ The brand is a wordmark, a logo or both, so it has tokens of its own: `--yeti-na
 
 The name is the link's text, so the logo beside it is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. A brand that is only a logo has no text, so give the logo the name: `alt="The Copper Pan"`, or `aria-label` on the link. A name too long for a narrow bar wraps beside the logo. A short name you would rather keep on one line takes `white-space: nowrap` on the brand, at the risk of pushing a narrow bar past its edge.
 
-Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. All three are for the bar. The open panel resets `--yeti-nav-link` to its own text color, and keeps the variant's tints for the hover and the current page, whatever `--yeti-nav-hover` and `--yeti-nav-current` say.
+Plain links take `--yeti-nav-link`, the bar's own color by default; set it when only the links should change. A link under the pointer takes `--yeti-nav-hover` as its background, and the current link takes `--yeti-nav-current` as its color. Neither is set by default, so they fall back to the variant's subtle tint and its text color, and `data-variant` picks the hue. For a filled current link, the pill many bars use, set `--yeti-nav-current-surface`: it is the background of the current link and of the top-level parent that holds the current page, and it is off until you set it. A link under the pointer still shows the hover fill, the current one included. All four are for the bar. The open panel resets `--yeti-nav-link` to its own text color, and keeps the variant's tints for the hover and the current page, whatever `--yeti-nav-hover` and `--yeti-nav-current` say, and it does not take the current fill.
 
 A bar with one dark color in both modes takes a scheme, not a list of colors. `color-scheme: dark` flips the bar, its links, the hover and current tints, the toggle and the open panel together, and `--yeti-nav-surface` gives the bar its color:
 
@@ -2322,6 +2322,7 @@ Tokens:
 - --yeti-nav-panel-text — Text of the open panel, its links and its close button. Set it with --yeti-nav-panel.
 - --yeti-nav-link — Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color.
 - --yeti-nav-hover — Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off.
+- --yeti-nav-current-surface — Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. It does not reach a dropdown's floating panel or the open panel.
 - --yeti-nav-current — Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color.
 - --yeti-stretch-small — font-stretch of a link.
 - --yeti-control-size — Minimum height of the bar, the toggle, and each link.
@@ -2590,7 +2591,7 @@ A parent that is not a page has no link. It is a plain `details` with the sectio
 
 The same shape nests. A list inside a `details` can hold another parent with its own `details`, and each level steps in by `--yeti-subnav-indent`. A title that wraps onto a second line keeps its toggle beside the first line.
 
-The page the reader is on carries `aria-current="page"` and takes the current color in the strong weight. Each parent that holds it shows its own row in the same color, so the reader can see which section they are in. A parent with its own link shows that link at the normal weight. A parent that is not a page keeps the strong weight every `summary` has and only changes color. The color is `--yeti-subnav-current`, read with a fallback to the variant's text color, and `data-variant` picks the hue.
+The page the reader is on carries `aria-current="page"` and takes the current color in the strong weight. Each parent that holds it shows its own row in the same color, so the reader can see which section they are in. A parent with its own link shows that link at the normal weight. A parent that is not a page keeps the strong weight every `summary` has and only changes color. The color is `--yeti-subnav-current`, read with a fallback to the variant's text color, and `data-variant` picks the hue. To fill the current page's row as well, set `--yeti-subnav-current-surface`. It is off until you set it, and only the page's own link takes it, not the parents above.
 
 Open the way to the current page in the template: write `open` on each `details` above it. CSS cannot open a `details`, and the component adds no script to do it, so a page that leaves `open` off arrives with its own section shut.
 
@@ -2644,6 +2645,7 @@ Children:
 Tokens:
 - --yeti-subnav-indent — How far each level steps in.
 - --yeti-subnav-hover — The fill under the pointer; transparent turns it off.
+- --yeti-subnav-current-surface — Background of the current page's link; off unless set. The parents above it are not filled.
 - --yeti-subnav-current — The current page, and the rows of the parents that hold it.
 - --yeti-control-size — A row's least height, and the toggle's square.
 - --yeti-space-xs — A row's block padding.
@@ -3435,6 +3437,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-nav-panel-text (nav): var(--yeti-color-text) — Text of the open panel, its links and its close button. Set it with --yeti-nav-panel.
 - --yeti-nav-hover (nav): var(--_yeti-variant-subtle) — Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off.
 - --yeti-nav-current (nav): var(--_yeti-variant-text) — Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color.
+- --yeti-nav-current-surface (nav): transparent — Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. A link under the pointer still takes --yeti-nav-hover. It does not reach a dropdown's floating panel or the open panel.
 - --yeti-nav-link (nav): currentColor — Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color.
 - --yeti-breadcrumbs-separator (breadcrumbs): "/" — The string between crumbs; a theme may prefer "›".
 - --yeti-pagination-radius (pagination): var(--yeti-radius-md) — Corner of each page target.
@@ -3477,6 +3480,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-subnav-indent (subnav): var(--yeti-space-md) — How far each level of a subnav steps in from the one above it.
 - --yeti-subnav-hover (subnav): var(--_yeti-variant-subtle) — Background of a subnav link or toggle under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off.
 - --yeti-subnav-current (subnav): var(--_yeti-variant-text) — Color of the current page's link, and of the row of each parent that holds it. Read with a fallback to the variant's text color.
+- --yeti-subnav-current-surface (subnav): transparent — Background of the current page's link in a subnav; off unless set. The parents above it are not filled, and a link under the pointer still takes --yeti-subnav-hover.
 - --yeti-range-value (field): 0% — The filled share of a range's track. Set it on the input, inline or from your own script, since CSS cannot read the value. Not a theme value.
 - --yeti-demo-border (demo): var(--yeti-color-border) — The preview box's edge.
 - --yeti-demo-radius (demo): var(--yeti-radius-md) — The preview box's corner, the summary's, and the stop label's.
