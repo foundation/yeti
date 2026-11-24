@@ -48,7 +48,7 @@ A short list of things to go to or to do, hung off one button: an account menu, 
 
 The panel carries `popover` and the button carries `popovertarget`, so the browser opens it, puts it in the top layer, closes it on Escape or a click outside, and keeps the button's expanded state current. Yeti adds the surface, the shadow, and the placement. Because the panel is in the top layer, nothing on the page can clip it, which is why a dropdown inside a nav works even though the bar is a query container.
 
-Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. The anchor name is scoped to each dropdown, so a page full of them behaves. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
+Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. A [split parent's](#a-parent-with-its-own-page) panel hangs under its whole row, the link and the button together, so it starts under the link and not under the small button. The anchor name is scoped to each dropdown, so a page full of them behaves. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
 
 ```html
 <div class="dropdown" data-side="end">
@@ -148,7 +148,7 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
 
-Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its button sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its button. The grouped panel shows three levels: its own button, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its trigger sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its trigger. The grouped panel shows three levels: its own trigger, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
 
 A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
 
@@ -218,6 +218,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 | `--yeti-dropdown-radius` | Corner of the panel. |
 | `--yeti-dropdown-padding` | Padding around the items. |
 | `--yeti-dropdown-min` | Least width of the panel, and of each column in a grouped panel. |
+| `--yeti-radius-sm` | The corners of an item's fill, where the panel's radius less its padding leaves nothing. Never more than the panel's own radius. |
 | `--yeti-shadow-md` | The panel's shadow. |
 | `--yeti-control-size` | Least height of an item. |
 | `--yeti-dropdown-open-delay` | How long the pointer must rest before a hover-triggered panel opens. |
@@ -235,6 +236,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 
 - `--_yeti-turn`
 - `--_yeti-nudge`
+- `--_yeti-dropdown-item-radius`
 
 </details>
 
