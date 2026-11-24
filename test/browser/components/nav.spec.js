@@ -833,6 +833,30 @@ test.describe('nav', () => {
 			expect(Math.abs(toggle.right - row.right)).toBeLessThanOrEqual(2);
 			expect(await chevronRoom(page, '#nt-lab-trigger')).toBeLessThan(2);
 		});
+		test('a label long enough to wrap still keeps a space before its chevron', async ({ page }) => {
+			await openPanel(page);
+			await page.evaluate(() => { document.querySelector('#nt-lab-trigger').textContent = 'Everything else we could not find a better heading for anywhere on this site'; });
+			// Lines set against the end of the label's box, so the label's end is
+			// the box's end and a short last word cannot pass for the space.
+			await page.addStyleTag({ content: '#nt-lab-trigger { text-align: end; }' });
+			// The chevron sits at the end of the content box at its full width,
+			// so the space is what is left between the label's end and its start.
+			const { gap, chevron, lines } = await page.evaluate(() => {
+				const el = document.querySelector('#nt-lab-trigger');
+				const cs = getComputedStyle(el);
+				const after = getComputedStyle(el, '::after');
+				const range = document.createRange();
+				range.selectNodeContents(el);
+				const label = range.getBoundingClientRect();
+				const width = parseFloat(after.width) + (after.boxSizing === 'border-box' ? 0 : parseFloat(after.borderRightWidth));
+				const start = el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - width;
+				return { gap: start - label.right, chevron: parseFloat(after.width), lines: range.getClientRects().length };
+			});
+			expect(lines).toBeGreaterThan(1);
+			expect(gap).toBeGreaterThanOrEqual((await token(page, '--yeti-space-xs')) - 0.5);
+			// It is not squeezed to make room, either.
+			expect(chevron).toBeCloseTo(0.5 * parseFloat(await style(page, '#nt-lab-trigger', 'font-size')), 0);
+		});
 		test('with no current page every group starts collapsed', async ({ page }) => {
 			await open(page, 400);
 			await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));

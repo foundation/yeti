@@ -421,6 +421,10 @@
 	   panel centres the trigger as a unit, so there it stays beside the text. */
 	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li.dropdown > button[aria-expanded]:first-child::after,
 	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li > .dropdown > button[aria-expanded]:first-child::after { margin-inline-start: auto; }
+	/* An auto margin is nothing once the label fills the row, so the gap is
+	   what keeps a label long enough to wrap off its chevron. */
+	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li.dropdown > button[aria-expanded]:first-child,
+	.nav:not([data-panel="screen"]) > ul[popover]:popover-open > li > .dropdown > button[aria-expanded]:first-child { column-gap: var(--yeti-space-xs); }
 
 	/* In a screen panel the link and its toggle are one centred unit, with
 	   the pages centred below it. The outer columns are flexible, so the group

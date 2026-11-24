@@ -83,6 +83,9 @@
 	.dropdown > a + button::after,
 	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after {
 		content: "";
+		/* A label long enough to wrap takes the whole row, and would squeeze
+		   the chevron to make room. */
+		flex: none;
 		inline-size: 0.5em;
 		block-size: 0.5em;
 		border-bottom: 2px solid currentColor;
