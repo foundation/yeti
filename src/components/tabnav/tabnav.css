@@ -12,14 +12,21 @@
 @layer yeti.components {
 	.tabnav:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
 	/* The rule is the nav's own edge, outside the list that scrolls, so it
-	   spans the whole component and stays put while the links move. */
-	.tabnav { border-block-end: var(--yeti-border-width) solid var(--yeti-tabs-border); }
+	   spans the whole component and stays put while the links move. The list
+	   is the scroll container, not the nav, so without the zero minimum a nav
+	   in a flex or grid row would be as wide as all its links and push the
+	   page sideways instead of letting the list scroll. */
+	.tabnav {
+		min-inline-size: 0;
+		border-block-end: var(--yeti-border-width) solid var(--yeti-tabs-border);
+	}
 	/* The list is pulled down over the rule by the rule's width, so a marked
 	   link's edge, which is twice as thick, covers the rule instead of sitting
 	   on it. The overlap is inside the list's own box, so the list's clipping
 	   never cuts the edge off. */
 	.tabnav > ul {
 		display: flex;
+		gap: var(--yeti-space-xs);
 		margin: 0;
 		margin-block-end: calc(-1 * var(--yeti-border-width));
 		padding: 0;
@@ -27,11 +34,19 @@
 		overflow-x: auto;
 		overflow-y: hidden;
 		overscroll-behavior-inline: contain;
-		/* The signal where the fade below is not available. */
+		/* The browser's own scrollbar is always there, thin, because a reader
+		   with a plain wheel mouse scrolls up and down and the bar is how they
+		   reach the links past the edge. A classic scrollbar sits inside the
+		   list, between the links and the rule. An overlay one, as on a phone,
+		   shows nothing at rest, so where there is no fade a tab cut off at the
+		   edge is the only sign. */
 		scrollbar-width: thin;
 	}
-	/* The prose layer spaces list items; a tab carries its own room. */
+	/* The prose layer spaces list items; a tab carries its own room. Each item
+	   is a flex container so its link fills it: beside a taller tab, one with
+	   an icon or a badge, every link still reaches down to the rule. */
 	.tabnav > ul > li {
+		display: flex;
 		flex: none;
 		margin: 0;
 	}
@@ -43,6 +58,9 @@
 		font-weight: var(--yeti-weight-strong);
 		text-decoration: none;
 		white-space: nowrap;
+		/* The same transition as a tab in tabs, for the same reason: the fill
+		   and the text of a filled link change together. */
+		transition: color var(--yeti-duration-fast) var(--yeti-ease), background-color var(--yeti-duration-fast) var(--yeti-ease), border-color var(--yeti-duration-fast) var(--yeti-ease);
 	}
 	.tabnav > ul > li > a:hover { background-color: var(--_yeti-variant-subtle); }
 	/* Any aria-current but false: the page itself, or a section tab that holds
@@ -68,20 +86,20 @@
 		border-start-end-radius: var(--yeti-radius-sm);
 	}
 
-	/* Where a scroll timeline can drive it, the scrollbar goes and the row
-	   fades out at whichever edge has more links beyond it. The list's own
-	   inline scroll position runs the animation: at the start only the end
-	   fades, at the end only the start does, and a row that fits has no
+	/* Where a scroll timeline can drive it, the row also fades out at
+	   whichever edge has more links beyond it, on top of the scrollbar. The
+	   list's own inline scroll position runs the animation: at the start only
+	   the end fades, at the end only the start does, and a row that fits has no
 	   timeline, so the fades keep their initial zero. The mask is on the list,
 	   so the rule along the nav's edge is never faded. The fade is feedback on
 	   where the reader is, not motion, so it stays under reduced motion: the
 	   shorthand here is in the components layer, so it outranks the duration
-	   the reset collapses for user-agent animation. The scroll padding keeps
-	   a link brought into view by focus or by the starting position clear of
-	   the faded edge. */
+	   the reset collapses for user-agent animation. The scroll padding is the
+	   fade's width: the starting position stops the marked link just clear of
+	   the fade, and focus brings a link into view when it sits wholly under a
+	   fade or past it, though a link already partly in view stays where it is. */
 	@supports (animation-timeline: scroll()) {
 		.tabnav > ul {
-			scrollbar-width: none;
 			scroll-padding-inline: var(--yeti-space-xl);
 			mask-image: linear-gradient(to right, transparent, black var(--_yeti-tabnav-fade-start), black calc(100% - var(--_yeti-tabnav-fade-end)), transparent);
 			animation: yeti-tabnav-fade linear both;

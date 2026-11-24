@@ -26,7 +26,7 @@
       "selector": "> ul",
       "min": 1,
       "max": 1,
-      "description": "The links, one per li, with role=\"list\"."
+      "description": "The links, one per li, with role=\"list\", which keeps WebKit announcing it as a list once the markers are gone."
     },
     {
       "selector": "li",
@@ -68,9 +68,24 @@
       "description": "Corner radius of the current link with data-emphasis=\"high\"."
     },
     {
+      "name": "--yeti-space-xs",
+      "public": true,
+      "description": "Gap between links."
+    },
+    {
+      "name": "--yeti-duration-fast",
+      "public": true,
+      "description": "How long a link takes to change color."
+    },
+    {
+      "name": "--yeti-ease",
+      "public": true,
+      "description": "The curve of that transition."
+    },
+    {
       "name": "--yeti-space-xl",
       "public": true,
-      "description": "How wide the fade is at an edge with more links beyond it."
+      "description": "How wide the fade is at an edge with more links beyond it, and the scroll padding that keeps the marked link clear of it."
     },
     {
       "name": "--yeti-color-primary",
@@ -143,7 +158,7 @@
       { "key": "Tab", "action": "Moves through the links in order, scrolling the row to bring each one into view." },
       { "key": "Enter", "action": "Follows the focused link." }
     ],
-    "notes": "Give the nav an aria-label such as \"Repository\", since the page has at least one other nav. Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. The current page's link carries aria-current=\"page\"; a tab for a section that holds the current page may carry aria-current=\"true\". These are links, not tabs: there is no tablist role, no arrow keys and no script. For panels that switch on one page, use tabs."
+    "notes": "Give the nav an aria-label such as \"Repository\", since the page has at least one other nav. Put role=\"list\" on the ul, which keeps WebKit announcing it as a list once its markers are gone. The current page's link carries aria-current=\"page\"; a tab for a section that holds the current page may carry aria-current=\"true\". These are links, not tabs: there is no tablist role, no arrow keys and no script. For panels that switch on one page, use tabs."
   },
   "js": null,
   "support": {
@@ -155,7 +170,7 @@
       "scroll-initial-target (where missing, the row starts at its start)"
     ],
     "guarded": [
-      "animation-timeline: scroll() (fallback: no fade, and the browser's thin scrollbar shows instead)"
+      "animation-timeline: scroll() (fallback: no fade; the browser's own scrollbar, which is always there, is the only signal)"
     ]
   },
   "since": "7.0.0",
