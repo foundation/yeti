@@ -157,6 +157,11 @@
       "description": "Border of an invalid control."
     },
     {
+      "name": "--yeti-color-alert-line",
+      "public": true,
+      "description": "Border of an invalid control when the alert role has a brand color; the base step otherwise."
+    },
+    {
       "name": "--yeti-color-primary",
       "public": true,
       "description": "The default variant's color, when data-variant is absent."

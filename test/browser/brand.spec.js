@@ -1,10 +1,11 @@
 import { test, expect } from 'playwright/test';
 import { contrast } from './lib/color.js';
+import { painted } from './lib/layout.js';
 
 // A brand color per role (--yeti-brand-primary and the others) derives the
-// whole ladder from one opaque color. Without one, every color must be what
-// the hue alone gave before the brand input existed, so the first test
-// compares each step with that literal formula.
+// whole ladder from one color. Without one, every color must be what the hue
+// alone gave before the brand input existed, so the first test compares each
+// step with that literal formula, and the line step has no value at all.
 //
 // The derived tokens are declared on :root, and a custom property that holds
 // var() is resolved where it is declared, so every input here is set on the
@@ -13,7 +14,8 @@ import { contrast } from './lib/color.js';
 
 const ROLES = ['primary', 'secondary', 'success', 'warning', 'alert'];
 const HUES = { primary: 250, secondary: 300, success: 145, warning: 80, alert: 25 };
-const STEPS = ['subtle', 'soft', 'base', 'strong', 'text', 'line', 'on'];
+// The line step is left out: it has a value only when the role has a brand color.
+const STEPS = ['subtle', 'soft', 'base', 'strong', 'text', 'on'];
 const CHROMA = 0.15;
 
 // The ladder as it stood before the brand input: lightness per scheme, and
@@ -34,10 +36,12 @@ const token = (role, step) => {
 };
 
 // The formula each step had before this change, written out with numbers.
+// The chroma share stays a calc() as it was in the declaration, so the
+// computed color can be compared as a string.
 const literal = (step, scheme, hue) => {
 	if (step === 'on') return scheme === 'light' ? 'oklch(0.99 0 0)' : 'oklch(0.15 0 0)';
-	const s = LADDER[step === 'line' ? 'base' : step];
-	return `oklch(${s[scheme]} ${CHROMA * s.c} ${hue})`;
+	const s = LADDER[step];
+	return `oklch(${s[scheme]} ${s.c === 1 ? CHROMA : `calc(${CHROMA} * ${s.c})`} ${hue})`;
 };
 
 // Two hosts, one per scheme, each holding a probe. Reading inside a host
@@ -61,6 +65,13 @@ window.__brand = {
 		probe.style.backgroundColor = 'color(from ' + expr + ' srgb r g b)';
 		const m = getComputedStyle(probe).backgroundColor.match(/color\\(srgb\\s+([-\\d.e]+)\\s+([-\\d.e]+)\\s+([-\\d.e]+)/);
 		return m ? m.slice(1, 4).map((v) => parseFloat(v) * 255) : null;
+	},
+	// The computed color string, exactly as the engine writes it.
+	computed(scheme, expr) {
+		const probe = this.host(scheme).firstElementChild;
+		probe.style.backgroundColor = '';
+		probe.style.backgroundColor = expr;
+		return getComputedStyle(probe).backgroundColor;
 	},
 	set(name, value) {
 		if (value === null) document.documentElement.style.removeProperty(name);
@@ -106,9 +117,21 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('3E: without a brand color every step and tone is what the hue gave before', async ({ page }) => {
+	// No role's line step has a value, so everything that draws a line falls
+	// back to the base step.
+	const lines = await page.evaluate((roles) => roles.map((r) => getComputedStyle(document.documentElement).getPropertyValue(`--yeti-color-${r}-line`)), ROLES);
+	expect(lines).toEqual(ROLES.map(() => ''));
+
 	const mismatches = [];
 	const missing = [];
-	const check = async (scheme, expr, expected, label) => {
+	// A step is the old declaration character for character, so its computed
+	// color string must equal the literal's exactly.
+	const step = async (scheme, expr, expected, label) => {
+		const [a, b] = await page.evaluate(([s, x, y]) => [window.__brand.computed(s, x), window.__brand.computed(s, y)], [scheme, expr, expected]);
+		if (a !== b) mismatches.push(`${label}: ${a} is not ${b}`);
+	};
+	// A tone is now a mix, so it is compared as numbers.
+	const tone = async (scheme, expr, expected, label) => {
 		const [a, b] = await Promise.all([read(page, scheme, expr), read(page, scheme, expected)]);
 		if (!a) { missing.push(label); return; }
 		const d = worst(a, b);
@@ -117,20 +140,20 @@ test('3E: without a brand color every step and tone is what the hue gave before'
 	for (const scheme of ['light', 'dark']) {
 		for (let hue = 0; hue < 360; hue += 30) {
 			await setRoot(page, '--yeti-hue-primary', String(hue));
-			for (const step of STEPS) {
-				await check(scheme, `var(${token('primary', step)})`, literal(step, scheme, hue), `${scheme} hue ${hue} primary ${step}`);
+			for (const s of STEPS) {
+				await step(scheme, `var(${token('primary', s)})`, literal(s, scheme, hue), `${scheme} hue ${hue} primary ${s}`);
 			}
 			for (const [n, share] of Object.entries(TONES)) {
-				await check(scheme, `var(--yeti-color-primary-${n})`, `oklch(from var(--yeti-grey-${n}) l ${CHROMA * share} ${hue})`, `${scheme} hue ${hue} primary-${n}`);
+				await tone(scheme, `var(--yeti-color-primary-${n})`, `oklch(from var(--yeti-grey-${n}) l ${CHROMA * share} ${hue})`, `${scheme} hue ${hue} primary-${n}`);
 			}
 		}
 		await setRoot(page, '--yeti-hue-primary', null);
 		for (const role of ROLES.slice(1)) {
-			for (const step of STEPS) {
-				await check(scheme, `var(${token(role, step)})`, literal(step, scheme, HUES[role]), `${scheme} ${role} ${step}`);
+			for (const s of STEPS) {
+				await step(scheme, `var(${token(role, s)})`, literal(s, scheme, HUES[role]), `${scheme} ${role} ${s}`);
 			}
 			for (const [n, share] of Object.entries(TONES)) {
-				await check(scheme, `var(--yeti-color-${role}-${n})`, `oklch(from var(--yeti-grey-${n}) l ${CHROMA * share} ${HUES[role]})`, `${scheme} ${role}-${n}`);
+				await tone(scheme, `var(--yeti-color-${role}-${n})`, `oklch(from var(--yeti-grey-${n}) l ${CHROMA * share} ${HUES[role]})`, `${scheme} ${role}-${n}`);
 			}
 		}
 	}
@@ -138,13 +161,9 @@ test('3E: without a brand color every step and tone is what the hue gave before'
 	expect(missing).toEqual([]);
 });
 
-test('a brand color that is not set, or is not a color, leaves the base at the hue', async ({ page }) => {
+test('a brand color that is not set leaves the base at the hue', async ({ page }) => {
 	const hueBase = await read(page, 'light', literal('base', 'light', 250));
 	expect(worst(await read(page, 'light', 'var(--yeti-color-primary)'), hueBase)).toBeLessThanOrEqual(0.01);
-	for (const bad of ['250', 'banana']) {
-		await setRoot(page, '--yeti-brand-primary', bad);
-		expect(worst(await read(page, 'light', 'var(--yeti-color-primary)'), hueBase), bad).toBeLessThanOrEqual(0.01);
-	}
 });
 
 test('with a brand color set, the base step is the brand color', async ({ page }) => {
@@ -248,14 +267,263 @@ test('light-dark() works as the brand input', async ({ page }) => {
 	}
 });
 
-test('the focus color is the primary line step, with and without a brand', async ({ page }) => {
+// The brand color is not registered, so a light-dark() pair set on the root
+// travels as written and is resolved where it is used: a section that pins
+// the other scheme gets the other half.
+test('3E: a light-dark() brand color set on the root follows a section that pins the other scheme', async ({ page }) => {
+	await page.evaluate(() => { document.documentElement.style.colorScheme = 'light'; });
+	await setRoot(page, '--yeti-brand-primary', 'light-dark(#0b1f4b, #8aa2d4)');
+	expect(worst(await read(page, 'dark', 'var(--yeti-color-primary)'), hex('#8aa2d4')), 'dark section').toBeLessThanOrEqual(0.5);
+	expect(worst(await read(page, 'light', 'var(--yeti-color-primary)'), hex('#0b1f4b')), 'light section').toBeLessThanOrEqual(0.5);
+});
+
+test('the focus color is the line step with a brand color, and the base step without', async ({ page }) => {
 	for (const brand of [null, '#ffd400', '#0b1f4b']) {
 		await setRoot(page, '--yeti-brand-primary', brand);
 		for (const scheme of ['light', 'dark']) {
 			const focus = await read(page, scheme, 'var(--yeti-color-focus)');
-			const line = await read(page, scheme, 'var(--yeti-color-primary-line)');
-			expect(line, `${brand} ${scheme} line resolves`).not.toBeNull();
-			expect(worst(focus, line), `${brand} ${scheme}`).toBeLessThanOrEqual(0.01);
+			const expected = await read(page, scheme, brand ? 'var(--yeti-color-primary-line)' : 'var(--yeti-color-primary)');
+			expect(expected, `${brand} ${scheme} resolves`).not.toBeNull();
+			expect(worst(focus, expected), `${brand} ${scheme}`).toBeLessThanOrEqual(0.01);
 		}
 	}
+});
+
+// A theme or a section that sets --yeti-color-primary itself, with no brand
+// color, still colors its links and lines: the line step has no value then,
+// and every reader falls back to the base step where it is read.
+test.describe('a direct override still wins', () => {
+	const GREEN = 'rgb(0, 128, 0)';
+
+	const visit = async (page, path) => {
+		const response = await page.goto(path);
+		expect(response.status()).toBe(200);
+	};
+	const style = (page, selector, prop) => page.evaluate(([s, p]) => getComputedStyle(document.querySelector(s))[p], [selector, prop]);
+	// A token's color as computed on an element in the page.
+	const tokenColor = (page, name) => page.evaluate((n) => {
+		const el = document.createElement('span');
+		el.style.color = `var(${n})`;
+		document.body.append(el);
+		const v = getComputedStyle(el).color;
+		el.remove();
+		return v;
+	}, name);
+
+	test('on the root, links, focus, a tab\'s underline and an outline button follow it', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/base.html');
+		await setRoot(page, '--yeti-color-primary', GREEN);
+		await painted(page);
+		expect(await style(page, '#link', 'color'), 'link').toBe(GREEN);
+		expect(await tokenColor(page, '--yeti-color-focus'), 'focus').toBe(GREEN);
+
+		await visit(page, '/test/browser/fixtures/components/tabs.html');
+		await setRoot(page, '--yeti-color-primary', GREEN);
+		await expect(page.locator('#t1')).toHaveAttribute('aria-selected', 'true');
+		await painted(page);
+		expect(await style(page, '#t1', 'borderBottomColor'), 'tab underline').toBe(GREEN);
+
+		await visit(page, '/test/browser/fixtures/components/button.html');
+		await setRoot(page, '--yeti-color-primary', GREEN);
+		await painted(page);
+		expect(await style(page, '#medium', 'borderTopColor'), 'medium button').toBe(GREEN);
+	});
+
+	test('on a section, its own links and outline buttons follow it, and nothing outside', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/base.html');
+		await page.evaluate(() => {
+			const button = document.createElement('button');
+			Object.assign(button, { className: 'button', type: 'button', id: 'sect-button', textContent: 'Outline' });
+			button.dataset.emphasis = 'medium';
+			document.getElementById('sect').append(button);
+		});
+		await painted(page);
+		expect(await style(page, '#sect-link', 'color'), 'link inside').toBe(GREEN);
+		expect(await style(page, '#sect-button', 'borderTopColor'), 'button inside').toBe(GREEN);
+		expect(await style(page, '#link', 'color'), 'link outside').not.toBe(GREEN);
+	});
+});
+
+// A line (a link, an underline, a rule, an outline border, a spinner's arc)
+// is drawn straight onto the page or onto a subtle tint, so it takes the line
+// step, which stays readable there. A fill (a solid button, badge, bar, a
+// checked box, a painted band, a filled tab) keeps the brand color itself.
+// #ffd400 is a yellow far too light to read on white: the line step moves
+// away from it and the fills keep it.
+test.describe('lines and fills with a brand color', () => {
+	const BRAND = '#ffd400';
+
+	const visit = async (page, path, brands = { '--yeti-brand-primary': BRAND }) => {
+		const response = await page.goto(path);
+		expect(response.status()).toBe(200);
+		for (const [name, value] of Object.entries(brands)) await setRoot(page, name, value);
+		await painted(page);
+	};
+
+	// The used value of one property on an element, read through the same
+	// probe as the tokens so both sides are unclamped sRGB floats.
+	const used = (page, selector, prop) => page.evaluate(([s, p]) => {
+		const el = document.querySelector(s);
+		return el ? window.__brand.srgb('light', getComputedStyle(el)[p]) : null;
+	}, [selector, prop]);
+
+	// One pixel of an element as drawn, for a fill no engine exposes to
+	// getComputedStyle: Chromium reports the host's background for
+	// ::-webkit-progress-value. The screenshot is decoded in the page.
+	const pixel = async (page, selector, fx, fy) => {
+		const png = await page.screenshot({ clip: await page.locator(selector).boundingBox() });
+		return page.evaluate(async ([b64, x, y]) => {
+			const image = await createImageBitmap(await (await fetch('data:image/png;base64,' + b64)).blob());
+			const canvas = new OffscreenCanvas(image.width, image.height);
+			const ctx = canvas.getContext('2d');
+			ctx.drawImage(image, 0, 0);
+			return [...ctx.getImageData(Math.floor(image.width * x), Math.floor(image.height * y), 1, 1).data.slice(0, 3)];
+		}, [png.toString('base64'), fx, fy]);
+	};
+
+	const expectLine = async (page, selector, prop, role = 'primary') => {
+		const at = await used(page, selector, prop);
+		const line = await read(page, 'light', `var(--yeti-color-${role}-line)`);
+		expect(at, `${selector} ${prop} resolves`).not.toBeNull();
+		expect(worst(at, line), `${selector} ${prop} is the ${role} line`).toBeLessThanOrEqual(0.5);
+		expect(worst(at, hex(BRAND)), `${selector} ${prop} is not the brand color`).toBeGreaterThan(10);
+	};
+	const expectFill = (at, label) => {
+		expect(at, `${label} resolves`).not.toBeNull();
+		expect(worst(at, hex(BRAND)), `${label} is the brand color`).toBeLessThanOrEqual(1);
+	};
+
+	test('a link in body text is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/base.html');
+		await expectLine(page, '#link', 'color');
+	});
+
+	test('a selected tab\'s underline is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/tabs.html');
+		await expect(page.locator('#t1')).toHaveAttribute('aria-selected', 'true');
+		await painted(page);
+		await expectLine(page, '#t1', 'borderBottomColor');
+	});
+
+	test('a tabnav\'s marked link\'s underline is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/tabnav.html');
+		await expectLine(page, '#tn-issues', 'borderBottomColor');
+	});
+
+	test('the toc\'s current item\'s marker is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/toc.html');
+		await expect(page.locator('#link-one')).toHaveAttribute('aria-current', /.+/);
+		await painted(page);
+		await expectLine(page, '#link-one', 'borderLeftColor');
+	});
+
+	test('a default alert\'s border is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/alert.html');
+		await expectLine(page, '#medium', 'borderTopColor');
+	});
+
+	test('a card with a variant is edged in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/card.html');
+		await page.evaluate(() => { document.getElementById('tinted').dataset.variant = 'primary'; });
+		await painted(page);
+		await expectLine(page, '#tinted', 'borderTopColor');
+	});
+
+	test('a medium-emphasis button\'s border is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/button.html');
+		await expectLine(page, '#medium', 'borderTopColor');
+	});
+
+	test('a standalone spinner\'s arc is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/spinner.html');
+		await expectLine(page, '#spin', 'borderTopColor');
+	});
+
+	test('data-text="primary" is drawn in the line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/layouts/paint.html');
+		await page.evaluate(() => { document.getElementById('text-alert').dataset.text = 'primary'; });
+		await expectLine(page, '#text-alert', 'color');
+	});
+
+	test('an invalid field\'s border is drawn in the alert line step', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/field.html', { '--yeti-brand-alert': BRAND });
+		await expectLine(page, '#name', 'borderTopColor', 'alert');
+	});
+
+	test('a solid button is filled with the brand color, with black text on it', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/button.html');
+		expectFill(await used(page, '#primary', 'backgroundColor'), 'solid button');
+		expect((await used(page, '#primary', 'color')).map(Math.round)).toEqual([0, 0, 0]);
+	});
+
+	test('a solid badge is filled with the brand color', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/badge.html');
+		expectFill(await used(page, '#high', 'backgroundColor'), 'solid badge');
+	});
+
+	test('a progress bar\'s value is filled with the brand color', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/progress.html');
+		// #bar is at 40%, so a tenth of the way in, half way down, is the value.
+		expectFill(await pixel(page, '#bar', 0.1, 0.5), 'progress value');
+	});
+
+	test('a checked checkbox is filled with the brand color', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/field.html');
+		expectFill(await used(page, '#agree', 'backgroundColor'), 'checked checkbox');
+	});
+
+	test('data-paint="primary" is filled with the brand color', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/layouts/paint.html');
+		expectFill(await used(page, '#paint-primary', 'backgroundColor'), 'paint');
+	});
+
+	test('a high-emphasis selected tab is filled with the brand color', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/tabs.html');
+		await expect(page.locator('#f1')).toHaveAttribute('aria-selected', 'true');
+		await painted(page);
+		expectFill(await used(page, '#f1', 'backgroundColor'), 'high tab');
+	});
+
+	test('another role\'s brand reaches its own variant\'s line', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/button.html', { '--yeti-brand-success': BRAND });
+		await page.evaluate(() => { document.getElementById('medium').dataset.variant = 'success'; });
+		await painted(page);
+		await expectLine(page, '#medium', 'borderTopColor', 'success');
+	});
+
+	test('a theme can still set the line step itself', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/base.html', { '--yeti-brand-primary': BRAND, '--yeti-color-primary-line': 'rgb(1, 2, 3)' });
+		expect(await page.evaluate(() => getComputedStyle(document.getElementById('link')).color)).toBe('rgb(1, 2, 3)');
+	});
+
+	test('a hovered link still reads on the page', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/base.html');
+		await page.hover('#link');
+		await painted(page);
+		const at = await used(page, '#link', 'color');
+		const surface = await read(page, 'light', 'var(--yeti-color-surface)');
+		expect(at, 'hovered link resolves').not.toBeNull();
+		expect(ratio(at, surface)).toBeGreaterThanOrEqual(4.5);
+	});
+
+	// Custom properties inherit, so a neutral variant has to clear the line
+	// it would otherwise take from a brand-colored variant around it.
+	test('a neutral variant inside a brand-colored one does not take its line', async ({ page }) => {
+		await visit(page, '/test/browser/fixtures/components/button.html');
+		await page.evaluate(() => {
+			const wrap = document.createElement('div');
+			wrap.dataset.variant = 'primary';
+			const button = document.createElement('button');
+			Object.assign(button, { className: 'button', type: 'button', id: 'nested', textContent: 'Neutral' });
+			button.dataset.variant = 'neutral';
+			button.dataset.emphasis = 'medium';
+			wrap.append(button);
+			document.body.append(wrap);
+		});
+		await painted(page);
+		const at = await used(page, '#nested', 'borderTopColor');
+		const neutral = await read(page, 'light', 'var(--yeti-color-neutral)');
+		expect(at, 'border resolves').not.toBeNull();
+		expect(worst(at, neutral)).toBeLessThanOrEqual(0.5);
+	});
 });

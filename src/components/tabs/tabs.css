@@ -10,7 +10,7 @@
 		gap: var(--_yeti-gap);
 	}
 	.tabs:not([data-gap]) { --_yeti-gap: var(--yeti-space-md); }
-	.tabs:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
+	.tabs:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
 	.tabs > [role="tablist"] {
 		display: flex;
 		flex-wrap: wrap;
@@ -37,7 +37,7 @@
 	.tabs > [role="tablist"] > [role="tab"]:hover { background-color: var(--_yeti-variant-subtle); }
 	.tabs > [role="tablist"] > [role="tab"][aria-selected="true"] {
 		color: var(--_yeti-variant-text);
-		border-block-end-color: var(--_yeti-variant);
+		border-block-end-color: var(--_yeti-variant-line, var(--_yeti-variant));
 	}
 
 	/* data-emphasis="high": the selected tab is a solid chip instead of an
@@ -52,6 +52,10 @@
 		border-start-end-radius: var(--yeti-radius-sm);
 	}
 	.tabs[data-emphasis="high"][data-orientation="vertical"] > [role="tablist"] > [role="tab"][aria-selected="true"] {
+		/* The vertical edge rule below draws a line, and it beats the filled
+		   rule above by coming later at the same weight. This rule is heavier,
+		   so a filled tab's edge keeps the fill's color. */
+		border-inline-end-color: var(--_yeti-variant);
 		border-start-end-radius: 0;
 		border-end-start-radius: var(--yeti-radius-sm);
 	}
@@ -71,6 +75,6 @@
 		margin-block-end: 0;
 		margin-inline-end: calc(-1 * var(--yeti-border-width));
 	}
-	.tabs[data-orientation="vertical"] > [role="tablist"] > [role="tab"][aria-selected="true"] { border-inline-end-color: var(--_yeti-variant); }
+	.tabs[data-orientation="vertical"] > [role="tablist"] > [role="tab"][aria-selected="true"] { border-inline-end-color: var(--_yeti-variant-line, var(--_yeti-variant)); }
 	.tabs[data-orientation="vertical"] > [role="tabpanel"] { flex: 1; }
 }

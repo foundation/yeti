@@ -7,7 +7,7 @@
 		align-items: flex-start;
 		gap: var(--yeti-space-sm);
 		padding: var(--yeti-alert-padding);
-		border: var(--yeti-border-width) solid var(--_yeti-variant);
+		border: var(--yeti-border-width) solid var(--_yeti-variant-line, var(--_yeti-variant));
 		/* Undeclared, so a section that sets its own --yeti-border-width still
 		   gets four of its own, not four of the root's; set --yeti-alert-edge
 		   directly to fix the width regardless of the local border. */
@@ -16,7 +16,7 @@
 		background-color: var(--_yeti-variant-subtle);
 		color: var(--yeti-color-text);
 	}
-	.alert:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
+	.alert:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
 	.alert > * { margin: 0; }
 	.alert > :not(svg, [data-close]) { flex: 1; }
 	.alert[data-emphasis="high"] {

@@ -10,7 +10,7 @@
 @property --_yeti-tabnav-fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
 
 @layer yeti.components {
-	.tabnav:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
+	.tabnav:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
 	/* The rule is the nav's own edge, outside the list that scrolls, so it
 	   spans the whole component and stays put while the links move. The list
 	   is the scroll container, not the nav, so without the zero minimum a nav
@@ -69,7 +69,7 @@
 	   current tab is often past the edge. */
 	.tabnav > ul > li > a[aria-current]:not([aria-current="false"]) {
 		color: var(--_yeti-variant-text);
-		border-block-end-color: var(--_yeti-variant);
+		border-block-end-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		scroll-initial-target: nearest;
 	}
 	/* The ring is drawn inside the link, since the list clips what overflows

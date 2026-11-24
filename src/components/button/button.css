@@ -33,7 +33,7 @@
 			border-color var(--yeti-duration-fast) var(--yeti-ease),
 			color var(--yeti-duration-fast) var(--yeti-ease);
 	}
-	.button:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
+	.button:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
 	.button:not([data-size]) { --_yeti-size-text: var(--yeti-text-md); --_yeti-size-space: var(--yeti-space-sm); }
 	.button > svg {
 		inline-size: 1em;
@@ -48,9 +48,13 @@
 		color: var(--_yeti-on-variant);
 	}
 
-	/* Medium: an outline. Low: text alone. Both tint on hover. */
+	/* Medium: an outline. Low: text alone. Both tint on hover. The outline
+	   sits on the page or on the subtle tint, never on the fill, so it is
+	   drawn in the line step, which stays readable where a light brand
+	   color would not. */
 	.button[data-emphasis="medium"] {
 		background-color: transparent;
+		border-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		color: var(--_yeti-variant-text);
 	}
 	.button[data-emphasis="low"] {
@@ -60,7 +64,7 @@
 	}
 	.button[data-emphasis="medium"]:is(:hover, :active) {
 		background-color: var(--_yeti-variant-subtle);
-		border-color: var(--_yeti-variant);
+		border-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		color: var(--_yeti-variant-text);
 	}
 	.button[data-emphasis="low"]:is(:hover, :active) {
@@ -96,7 +100,7 @@
 	}
 	.button[data-emphasis="medium"]:is(:disabled, [aria-disabled="true"], :has(> input:disabled)):is(:hover, :active) {
 		background-color: transparent;
-		border-color: var(--_yeti-variant);
+		border-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		color: var(--_yeti-variant-text);
 	}
 	.button[data-emphasis="low"]:is(:disabled, [aria-disabled="true"], :has(> input:disabled)):is(:hover, :active) {

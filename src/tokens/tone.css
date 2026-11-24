@@ -10,10 +10,10 @@
    own: the grey gives its lightness and leaves hue and chroma as none, the
    role's tint gives hue and chroma and leaves lightness as none, and
    color-mix() fills each none from the other color. It has to be a mix
-   because the hue and chroma come from the role's brand carrier
-   (--_yeti-k-{role}, in color.css), and a relative color can read only one
-   origin. The tint reads the same macros as the color ladder, so with no
-   brand color it is the hue at --yeti-chroma, as before. Chroma eases off
+   because the hue and chroma come from the role's seed, and a relative
+   color can read only one origin. The seed is the role's brand color, or
+   failing that a color at the role's hue and --yeti-chroma, so with no
+   brand color the tint is the hue at --yeti-chroma, as before. Chroma eases off
    toward the poles the way the ladder's subtle and soft steps do (steps 0,
    10, 90 and 100 at the subtle share, 20 and 80 at the soft share), so the
    extremes stay close to gamut.
@@ -43,9 +43,10 @@
 		--yeti-grey-100: color-mix(in oklch, var(--yeti-color-surface), var(--yeti-color-text) 100%);
 
 		/* Primary: the grey of the same number under this role's hue. */
-		--_yeti-tint-primary-subtle: oklch(from var(--_yeti-k-primary) none calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-primary) / 1);
-		--_yeti-tint-primary-soft: oklch(from var(--_yeti-k-primary) none calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-primary) / 1);
-		--_yeti-tint-primary: oklch(from var(--_yeti-k-primary) none var(--_yeti-c-capped) var(--_yeti-h-primary) / 1);
+		--_yeti-seed-primary: var(--yeti-brand-primary, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-primary)));
+		--_yeti-tint-primary-subtle: oklch(from var(--_yeti-seed-primary) none calc(var(--_yeti-c-capped) * 0.4) h);
+		--_yeti-tint-primary-soft: oklch(from var(--_yeti-seed-primary) none calc(var(--_yeti-c-capped) * 0.7) h);
+		--_yeti-tint-primary: oklch(from var(--_yeti-seed-primary) none var(--_yeti-c-capped) h);
 		--yeti-color-primary-0: color-mix(in oklch, oklch(from var(--yeti-grey-0) l none none), var(--_yeti-tint-primary-subtle));
 		--yeti-color-primary-10: color-mix(in oklch, oklch(from var(--yeti-grey-10) l none none), var(--_yeti-tint-primary-subtle));
 		--yeti-color-primary-20: color-mix(in oklch, oklch(from var(--yeti-grey-20) l none none), var(--_yeti-tint-primary-soft));
@@ -59,9 +60,10 @@
 		--yeti-color-primary-100: color-mix(in oklch, oklch(from var(--yeti-grey-100) l none none), var(--_yeti-tint-primary-subtle));
 
 		/* Secondary: the grey of the same number under this role's hue. */
-		--_yeti-tint-secondary-subtle: oklch(from var(--_yeti-k-secondary) none calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-secondary) / 1);
-		--_yeti-tint-secondary-soft: oklch(from var(--_yeti-k-secondary) none calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-secondary) / 1);
-		--_yeti-tint-secondary: oklch(from var(--_yeti-k-secondary) none var(--_yeti-c-capped) var(--_yeti-h-secondary) / 1);
+		--_yeti-seed-secondary: var(--yeti-brand-secondary, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-secondary)));
+		--_yeti-tint-secondary-subtle: oklch(from var(--_yeti-seed-secondary) none calc(var(--_yeti-c-capped) * 0.4) h);
+		--_yeti-tint-secondary-soft: oklch(from var(--_yeti-seed-secondary) none calc(var(--_yeti-c-capped) * 0.7) h);
+		--_yeti-tint-secondary: oklch(from var(--_yeti-seed-secondary) none var(--_yeti-c-capped) h);
 		--yeti-color-secondary-0: color-mix(in oklch, oklch(from var(--yeti-grey-0) l none none), var(--_yeti-tint-secondary-subtle));
 		--yeti-color-secondary-10: color-mix(in oklch, oklch(from var(--yeti-grey-10) l none none), var(--_yeti-tint-secondary-subtle));
 		--yeti-color-secondary-20: color-mix(in oklch, oklch(from var(--yeti-grey-20) l none none), var(--_yeti-tint-secondary-soft));
@@ -75,9 +77,10 @@
 		--yeti-color-secondary-100: color-mix(in oklch, oklch(from var(--yeti-grey-100) l none none), var(--_yeti-tint-secondary-subtle));
 
 		/* Success: the grey of the same number under this role's hue. */
-		--_yeti-tint-success-subtle: oklch(from var(--_yeti-k-success) none calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-success) / 1);
-		--_yeti-tint-success-soft: oklch(from var(--_yeti-k-success) none calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-success) / 1);
-		--_yeti-tint-success: oklch(from var(--_yeti-k-success) none var(--_yeti-c-capped) var(--_yeti-h-success) / 1);
+		--_yeti-seed-success: var(--yeti-brand-success, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-success)));
+		--_yeti-tint-success-subtle: oklch(from var(--_yeti-seed-success) none calc(var(--_yeti-c-capped) * 0.4) h);
+		--_yeti-tint-success-soft: oklch(from var(--_yeti-seed-success) none calc(var(--_yeti-c-capped) * 0.7) h);
+		--_yeti-tint-success: oklch(from var(--_yeti-seed-success) none var(--_yeti-c-capped) h);
 		--yeti-color-success-0: color-mix(in oklch, oklch(from var(--yeti-grey-0) l none none), var(--_yeti-tint-success-subtle));
 		--yeti-color-success-10: color-mix(in oklch, oklch(from var(--yeti-grey-10) l none none), var(--_yeti-tint-success-subtle));
 		--yeti-color-success-20: color-mix(in oklch, oklch(from var(--yeti-grey-20) l none none), var(--_yeti-tint-success-soft));
@@ -91,9 +94,10 @@
 		--yeti-color-success-100: color-mix(in oklch, oklch(from var(--yeti-grey-100) l none none), var(--_yeti-tint-success-subtle));
 
 		/* Warning: the grey of the same number under this role's hue. */
-		--_yeti-tint-warning-subtle: oklch(from var(--_yeti-k-warning) none calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-warning) / 1);
-		--_yeti-tint-warning-soft: oklch(from var(--_yeti-k-warning) none calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-warning) / 1);
-		--_yeti-tint-warning: oklch(from var(--_yeti-k-warning) none var(--_yeti-c-capped) var(--_yeti-h-warning) / 1);
+		--_yeti-seed-warning: var(--yeti-brand-warning, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-warning)));
+		--_yeti-tint-warning-subtle: oklch(from var(--_yeti-seed-warning) none calc(var(--_yeti-c-capped) * 0.4) h);
+		--_yeti-tint-warning-soft: oklch(from var(--_yeti-seed-warning) none calc(var(--_yeti-c-capped) * 0.7) h);
+		--_yeti-tint-warning: oklch(from var(--_yeti-seed-warning) none var(--_yeti-c-capped) h);
 		--yeti-color-warning-0: color-mix(in oklch, oklch(from var(--yeti-grey-0) l none none), var(--_yeti-tint-warning-subtle));
 		--yeti-color-warning-10: color-mix(in oklch, oklch(from var(--yeti-grey-10) l none none), var(--_yeti-tint-warning-subtle));
 		--yeti-color-warning-20: color-mix(in oklch, oklch(from var(--yeti-grey-20) l none none), var(--_yeti-tint-warning-soft));
@@ -107,9 +111,10 @@
 		--yeti-color-warning-100: color-mix(in oklch, oklch(from var(--yeti-grey-100) l none none), var(--_yeti-tint-warning-subtle));
 
 		/* Alert: the grey of the same number under this role's hue. */
-		--_yeti-tint-alert-subtle: oklch(from var(--_yeti-k-alert) none calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-alert) / 1);
-		--_yeti-tint-alert-soft: oklch(from var(--_yeti-k-alert) none calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-alert) / 1);
-		--_yeti-tint-alert: oklch(from var(--_yeti-k-alert) none var(--_yeti-c-capped) var(--_yeti-h-alert) / 1);
+		--_yeti-seed-alert: var(--yeti-brand-alert, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-alert)));
+		--_yeti-tint-alert-subtle: oklch(from var(--_yeti-seed-alert) none calc(var(--_yeti-c-capped) * 0.4) h);
+		--_yeti-tint-alert-soft: oklch(from var(--_yeti-seed-alert) none calc(var(--_yeti-c-capped) * 0.7) h);
+		--_yeti-tint-alert: oklch(from var(--_yeti-seed-alert) none var(--_yeti-c-capped) h);
 		--yeti-color-alert-0: color-mix(in oklch, oklch(from var(--yeti-grey-0) l none none), var(--_yeti-tint-alert-subtle));
 		--yeti-color-alert-10: color-mix(in oklch, oklch(from var(--yeti-grey-10) l none none), var(--_yeti-tint-alert-subtle));
 		--yeti-color-alert-20: color-mix(in oklch, oklch(from var(--yeti-grey-20) l none none), var(--_yeti-tint-alert-soft));

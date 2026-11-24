@@ -92,7 +92,7 @@
 		box-shadow: var(--yeti-shadow-sm);
 	}
 	.card[data-variant] {
-		border-color: var(--_yeti-variant);
+		border-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		border-block-start-width: calc(var(--yeti-border-width) * 4);
 	}
 
