@@ -1,9 +1,33 @@
-/* Color. Inputs are hues and one chroma. Every role derives from them
-   through a fixed lightness ladder, declared once per role with light-dark()
-   so the two schemes are mirror images. Forcing a scheme on any ancestor
-   (color-scheme: light) flips everything below it.
+/* Color. Each accent role (primary, secondary, success, warning, alert) takes
+   one of two inputs: a hue angle with the shared --yeti-chroma, or a brand
+   color (--yeti-brand-primary: #ff6a00). Without a brand color the role is
+   built from its hue through a fixed lightness ladder, exactly as before the
+   brand input existed. With one, the base step is the brand color itself, the
+   text on it is pure black or pure white by the brand's luminance, the hover
+   step moves away from that text, and the other steps keep the ladder's
+   lightness under the brand's hue. A brand color must be opaque: its alpha is
+   how Yeti tells that it is set.
+
+   How one declaration serves both inputs. A relative color can read only one
+   origin, so each role has a private carrier, --_yeti-k-{role}: the brand
+   color re-encoded in xyz-d65, where y is the luminance, with two facts
+   written into its alpha. Alpha 0 means no brand color (the input's initial
+   value is transparent, and a value that is not a color falls back to it);
+   0.25 means set, with black text; 0.75 means set, with white text. Every
+   step is one oklch(from carrier …), and the private macros below are pieces
+   of calc substituted into it, so their l, c, h and alpha are the carrier's
+   channels. Each channel is set × brand value + (1 − set) × the hue's value,
+   so with no brand color the result is the hue's number exactly. The / 1 on
+   every step is needed because the carrier's alpha is not the color's.
+
+   Every step is declared once per role with light-dark() so the two schemes
+   are mirror images. Forcing a scheme on any ancestor (color-scheme: light)
+   flips everything below it.
    Ladder (lightness light / dark): subtle 0.95/0.25, soft 0.85/0.35,
-   base 0.52/0.70, strong 0.42/0.80, text 0.35/0.85. */
+   base 0.52/0.70, strong 0.42/0.80, text 0.35/0.85, on 0.99/0.15.
+   The line step (links, rules, borders, focus rings) is the base on the hue
+   path; on the brand path it is the brand's hue held to at most the base's
+   lightness in light and at least it in dark, so it reads on the page. */
 
 /* Registered so a bad override (say, a color name where a hue angle belongs)
    falls back to the initial value instead of invalidating every derived color.
@@ -15,6 +39,13 @@
 @property --yeti-hue-alert { syntax: "<number>"; inherits: true; initial-value: 25; }
 @property --yeti-chroma { syntax: "<number>"; inherits: true; initial-value: 0.15; }
 @property --yeti-chroma-neutral { syntax: "<number>"; inherits: true; initial-value: 0.02; }
+/* The brand inputs are never declared in :root: their initial value,
+   transparent, is the "not set" that every step reads. */
+@property --yeti-brand-primary { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --yeti-brand-secondary { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --yeti-brand-success { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --yeti-brand-warning { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --yeti-brand-alert { syntax: "<color>"; inherits: true; initial-value: transparent; }
 
 @layer yeti.base {
 	:root {
@@ -39,58 +70,97 @@
 		--_yeti-l-base-light: 0.52;   --_yeti-l-base-dark: 0.70;
 		--_yeti-l-strong-light: 0.42; --_yeti-l-strong-dark: 0.80;
 		--_yeti-l-text-light: 0.35;   --_yeti-l-text-dark: 0.85;
-		--_yeti-c-subtle: calc(var(--yeti-chroma) * 0.4);
-		--_yeti-c-soft: calc(var(--yeti-chroma) * 0.7);
-		--_yeti-c-text: calc(var(--yeti-chroma) * 0.8);
-		--_yeti-on-light: oklch(0.99 0 0);
-		--_yeti-on-dark: oklch(0.15 0 0);
+		--_yeti-l-on-light: 0.99;     --_yeti-l-on-dark: 0.15;
+		--_yeti-on-light: oklch(var(--_yeti-l-on-light) 0 0);
+		--_yeti-on-dark: oklch(var(--_yeti-l-on-dark) 0 0);
 
+		/* Macros. Each is read only inside oklch(from var(--_yeti-k-{role}) …),
+		   where l, c, h and alpha are the carrier's channels.
+		   set: 1 when a brand color is set, 0 when not.
+		   white-text: 1 when the brand takes white text, 0 for black.
+		   c-capped: the brand's chroma, no more than --yeti-chroma; the
+		   tints and the text and line steps use it so they stay readable.
+		   c-own: the brand's own chroma, for the base and strong fills.
+		   room: how far the brand's lightness is from the text on it.
+		   flip: 1 when that room is under 0.25, where a hover that moves
+		   away from the text would not show, so it moves toward it instead.
+		   l-hover: the strong step's lightness, 0.1 away from the text, or
+		   0.1 toward it when flipped; a flipped fill under white text goes
+		   to at least 0.25, so a hover on black is seen. */
+		--_yeti-set: min(1, alpha * 1000);
+		--_yeti-white-text: clamp(0, (alpha - 0.5) * 1000, 1);
+		--_yeti-c-capped: calc(var(--_yeti-set) * min(c, var(--yeti-chroma)) + (1 - var(--_yeti-set)) * var(--yeti-chroma));
+		--_yeti-c-own: calc(var(--_yeti-set) * c + (1 - var(--_yeti-set)) * var(--yeti-chroma));
+		--_yeti-room: (var(--_yeti-white-text) * l + (1 - var(--_yeti-white-text)) * (1 - l));
+		--_yeti-flip: clamp(0, (0.25 - var(--_yeti-room)) * 1000000000, 1);
+		--_yeti-l-hover: max(l + 0.1 * (1 - 2 * var(--_yeti-white-text)) * (1 - 2 * var(--_yeti-flip)), var(--_yeti-flip) * var(--_yeti-white-text) * 0.25);
+
+		/* Per role: the carrier, then the hue (the brand's when set, the input
+		   angle when not), then the steps. 0.179 is the luminance at which
+		   black and white text have equal contrast on the fill. */
 		/* Primary */
-		--yeti-color-primary-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--_yeti-c-subtle) var(--yeti-hue-primary)), oklch(var(--_yeti-l-subtle-dark) var(--_yeti-c-subtle) var(--yeti-hue-primary))); /* #d1f3ff */
-		--yeti-color-primary-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--_yeti-c-soft) var(--yeti-hue-primary)), oklch(var(--_yeti-l-soft-dark) var(--_yeti-c-soft) var(--yeti-hue-primary))); /* #98d3ff */
-		--yeti-color-primary: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma) var(--yeti-hue-primary)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma) var(--yeti-hue-primary))); /* #006bbb */
-		--yeti-color-primary-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma) var(--yeti-hue-primary)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma) var(--yeti-hue-primary))); /* #004d9a */
-		--yeti-color-primary-text: light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-primary)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-primary))); /* #003b75 */
-		--yeti-on-primary: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark)); /* #fcfcfc */
+		--_yeti-k-primary: color(from var(--yeti-brand-primary) xyz-d65 x y z / calc(alpha * (0.25 + 0.5 * clamp(0, (0.179 - y) * 1000000000, 1))));
+		--_yeti-h-primary: calc(var(--_yeti-set) * h + (1 - var(--_yeti-set)) * var(--yeti-hue-primary));
+		--yeti-color-primary-subtle: light-dark(oklch(from var(--_yeti-k-primary) var(--_yeti-l-subtle-light) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) var(--_yeti-l-subtle-dark) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-primary) / 1)); /* #d1f3ff */
+		--yeti-color-primary-soft: light-dark(oklch(from var(--_yeti-k-primary) var(--_yeti-l-soft-light) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) var(--_yeti-l-soft-dark) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-primary) / 1)); /* #98d3ff */
+		--yeti-color-primary: light-dark(oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-own) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-own) var(--_yeti-h-primary) / 1)); /* #006bbb */
+		--yeti-color-primary-strong: light-dark(oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-light)) var(--_yeti-c-own) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-dark)) var(--_yeti-c-own) var(--_yeti-h-primary) / 1)); /* #004d9a */
+		--yeti-color-primary-text: light-dark(oklch(from var(--_yeti-k-primary) var(--_yeti-l-text-light) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) var(--_yeti-l-text-dark) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-primary) / 1)); /* #003b75 */
+		--yeti-color-primary-line: light-dark(oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * min(l, var(--_yeti-l-base-light)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-capped) var(--_yeti-h-primary) / 1), oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * max(l, var(--_yeti-l-base-dark)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-capped) var(--_yeti-h-primary) / 1)); /* #006bbb */
+		--yeti-on-primary: light-dark(oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-light)) 0 0 / 1), oklch(from var(--_yeti-k-primary) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-dark)) 0 0 / 1)); /* #fcfcfc */
 
 		/* Secondary */
-		--yeti-color-secondary-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--_yeti-c-subtle) var(--yeti-hue-secondary)), oklch(var(--_yeti-l-subtle-dark) var(--_yeti-c-subtle) var(--yeti-hue-secondary))); /* #f4e6ff */
-		--yeti-color-secondary-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--_yeti-c-soft) var(--yeti-hue-secondary)), oklch(var(--_yeti-l-soft-dark) var(--_yeti-c-soft) var(--yeti-hue-secondary))); /* #d8beff */
-		--yeti-color-secondary: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma) var(--yeti-hue-secondary)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma) var(--yeti-hue-secondary))); /* #7750b1 */
-		--yeti-color-secondary-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma) var(--yeti-hue-secondary)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma) var(--yeti-hue-secondary))); /* #5b3291 */
-		--yeti-color-secondary-text: light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-secondary)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-secondary))); /* #45266e */
-		--yeti-on-secondary: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark)); /* #fcfcfc */
+		--_yeti-k-secondary: color(from var(--yeti-brand-secondary) xyz-d65 x y z / calc(alpha * (0.25 + 0.5 * clamp(0, (0.179 - y) * 1000000000, 1))));
+		--_yeti-h-secondary: calc(var(--_yeti-set) * h + (1 - var(--_yeti-set)) * var(--yeti-hue-secondary));
+		--yeti-color-secondary-subtle: light-dark(oklch(from var(--_yeti-k-secondary) var(--_yeti-l-subtle-light) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) var(--_yeti-l-subtle-dark) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-secondary) / 1)); /* #f4e6ff */
+		--yeti-color-secondary-soft: light-dark(oklch(from var(--_yeti-k-secondary) var(--_yeti-l-soft-light) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) var(--_yeti-l-soft-dark) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-secondary) / 1)); /* #d8beff */
+		--yeti-color-secondary: light-dark(oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-own) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-own) var(--_yeti-h-secondary) / 1)); /* #7750b1 */
+		--yeti-color-secondary-strong: light-dark(oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-light)) var(--_yeti-c-own) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-dark)) var(--_yeti-c-own) var(--_yeti-h-secondary) / 1)); /* #5b3291 */
+		--yeti-color-secondary-text: light-dark(oklch(from var(--_yeti-k-secondary) var(--_yeti-l-text-light) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) var(--_yeti-l-text-dark) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-secondary) / 1)); /* #45266e */
+		--yeti-color-secondary-line: light-dark(oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * min(l, var(--_yeti-l-base-light)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-capped) var(--_yeti-h-secondary) / 1), oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * max(l, var(--_yeti-l-base-dark)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-capped) var(--_yeti-h-secondary) / 1)); /* #7750b1 */
+		--yeti-on-secondary: light-dark(oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-light)) 0 0 / 1), oklch(from var(--_yeti-k-secondary) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-dark)) 0 0 / 1)); /* #fcfcfc */
 
 		/* Success */
-		--yeti-color-success-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--_yeti-c-subtle) var(--yeti-hue-success)), oklch(var(--_yeti-l-subtle-dark) var(--_yeti-c-subtle) var(--yeti-hue-success))); /* #d6fad6 */
-		--yeti-color-success-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--_yeti-c-soft) var(--yeti-hue-success)), oklch(var(--_yeti-l-soft-dark) var(--_yeti-c-soft) var(--yeti-hue-success))); /* #a2e0a3 */
-		--yeti-color-success: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma) var(--yeti-hue-success)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma) var(--yeti-hue-success))); /* #1b7e2a */
-		--yeti-color-success-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma) var(--yeti-hue-success)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma) var(--yeti-hue-success))); /* #006002 */
-		--yeti-color-success-text: light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-success)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-success))); /* #004906 */
-		--yeti-on-success: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark)); /* #fcfcfc */
+		--_yeti-k-success: color(from var(--yeti-brand-success) xyz-d65 x y z / calc(alpha * (0.25 + 0.5 * clamp(0, (0.179 - y) * 1000000000, 1))));
+		--_yeti-h-success: calc(var(--_yeti-set) * h + (1 - var(--_yeti-set)) * var(--yeti-hue-success));
+		--yeti-color-success-subtle: light-dark(oklch(from var(--_yeti-k-success) var(--_yeti-l-subtle-light) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) var(--_yeti-l-subtle-dark) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-success) / 1)); /* #d6fad6 */
+		--yeti-color-success-soft: light-dark(oklch(from var(--_yeti-k-success) var(--_yeti-l-soft-light) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) var(--_yeti-l-soft-dark) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-success) / 1)); /* #a2e0a3 */
+		--yeti-color-success: light-dark(oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-own) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-own) var(--_yeti-h-success) / 1)); /* #1b7e2a */
+		--yeti-color-success-strong: light-dark(oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-light)) var(--_yeti-c-own) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-dark)) var(--_yeti-c-own) var(--_yeti-h-success) / 1)); /* #006002 */
+		--yeti-color-success-text: light-dark(oklch(from var(--_yeti-k-success) var(--_yeti-l-text-light) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) var(--_yeti-l-text-dark) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-success) / 1)); /* #004906 */
+		--yeti-color-success-line: light-dark(oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * min(l, var(--_yeti-l-base-light)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-capped) var(--_yeti-h-success) / 1), oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * max(l, var(--_yeti-l-base-dark)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-capped) var(--_yeti-h-success) / 1)); /* #1b7e2a */
+		--yeti-on-success: light-dark(oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-light)) 0 0 / 1), oklch(from var(--_yeti-k-success) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-dark)) 0 0 / 1)); /* #fcfcfc */
 
 		/* Warning */
-		--yeti-color-warning-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--_yeti-c-subtle) var(--yeti-hue-warning)), oklch(var(--_yeti-l-subtle-dark) var(--_yeti-c-subtle) var(--yeti-hue-warning))); /* #ffebc2 */
-		--yeti-color-warning-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--_yeti-c-soft) var(--yeti-hue-warning)), oklch(var(--_yeti-l-soft-dark) var(--_yeti-c-soft) var(--yeti-hue-warning))); /* #f2c67c */
-		--yeti-color-warning: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma) var(--yeti-hue-warning)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma) var(--yeti-hue-warning))); /* #955b00 */
-		--yeti-color-warning-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma) var(--yeti-hue-warning)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma) var(--yeti-hue-warning))); /* #763e00 */
-		--yeti-color-warning-text: light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-warning)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-warning))); /* #5a2f00 */
-		--yeti-on-warning: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark)); /* #fcfcfc */
+		--_yeti-k-warning: color(from var(--yeti-brand-warning) xyz-d65 x y z / calc(alpha * (0.25 + 0.5 * clamp(0, (0.179 - y) * 1000000000, 1))));
+		--_yeti-h-warning: calc(var(--_yeti-set) * h + (1 - var(--_yeti-set)) * var(--yeti-hue-warning));
+		--yeti-color-warning-subtle: light-dark(oklch(from var(--_yeti-k-warning) var(--_yeti-l-subtle-light) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) var(--_yeti-l-subtle-dark) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-warning) / 1)); /* #ffebc2 */
+		--yeti-color-warning-soft: light-dark(oklch(from var(--_yeti-k-warning) var(--_yeti-l-soft-light) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) var(--_yeti-l-soft-dark) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-warning) / 1)); /* #f2c67c */
+		--yeti-color-warning: light-dark(oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-own) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-own) var(--_yeti-h-warning) / 1)); /* #955b00 */
+		--yeti-color-warning-strong: light-dark(oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-light)) var(--_yeti-c-own) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-dark)) var(--_yeti-c-own) var(--_yeti-h-warning) / 1)); /* #763e00 */
+		--yeti-color-warning-text: light-dark(oklch(from var(--_yeti-k-warning) var(--_yeti-l-text-light) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) var(--_yeti-l-text-dark) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-warning) / 1)); /* #5a2f00 */
+		--yeti-color-warning-line: light-dark(oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * min(l, var(--_yeti-l-base-light)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-capped) var(--_yeti-h-warning) / 1), oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * max(l, var(--_yeti-l-base-dark)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-capped) var(--_yeti-h-warning) / 1)); /* #955b00 */
+		--yeti-on-warning: light-dark(oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-light)) 0 0 / 1), oklch(from var(--_yeti-k-warning) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-dark)) 0 0 / 1)); /* #fcfcfc */
 
 		/* Alert */
-		--yeti-color-alert-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--_yeti-c-subtle) var(--yeti-hue-alert)), oklch(var(--_yeti-l-subtle-dark) var(--_yeti-c-subtle) var(--yeti-hue-alert))); /* #ffe0da */
-		--yeti-color-alert-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--_yeti-c-soft) var(--yeti-hue-alert)), oklch(var(--_yeti-l-soft-dark) var(--_yeti-c-soft) var(--yeti-hue-alert))); /* #ffb3ab */
-		--yeti-color-alert: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma) var(--yeti-hue-alert)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma) var(--yeti-hue-alert))); /* #af3c3a */
-		--yeti-color-alert-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma) var(--yeti-hue-alert)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma) var(--yeti-hue-alert))); /* #8d1a1e */
-		--yeti-color-alert-text: light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-alert)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-alert))); /* #6c1517 */
-		--yeti-on-alert: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark)); /* #fcfcfc */
+		--_yeti-k-alert: color(from var(--yeti-brand-alert) xyz-d65 x y z / calc(alpha * (0.25 + 0.5 * clamp(0, (0.179 - y) * 1000000000, 1))));
+		--_yeti-h-alert: calc(var(--_yeti-set) * h + (1 - var(--_yeti-set)) * var(--yeti-hue-alert));
+		--yeti-color-alert-subtle: light-dark(oklch(from var(--_yeti-k-alert) var(--_yeti-l-subtle-light) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) var(--_yeti-l-subtle-dark) calc(var(--_yeti-c-capped) * 0.4) var(--_yeti-h-alert) / 1)); /* #ffe0da */
+		--yeti-color-alert-soft: light-dark(oklch(from var(--_yeti-k-alert) var(--_yeti-l-soft-light) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) var(--_yeti-l-soft-dark) calc(var(--_yeti-c-capped) * 0.7) var(--_yeti-h-alert) / 1)); /* #ffb3ab */
+		--yeti-color-alert: light-dark(oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-own) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * l + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-own) var(--_yeti-h-alert) / 1)); /* #af3c3a */
+		--yeti-color-alert-strong: light-dark(oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-light)) var(--_yeti-c-own) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * var(--_yeti-l-hover) + (1 - var(--_yeti-set)) * var(--_yeti-l-strong-dark)) var(--_yeti-c-own) var(--_yeti-h-alert) / 1)); /* #8d1a1e */
+		--yeti-color-alert-text: light-dark(oklch(from var(--_yeti-k-alert) var(--_yeti-l-text-light) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) var(--_yeti-l-text-dark) calc(var(--_yeti-c-capped) * 0.8) var(--_yeti-h-alert) / 1)); /* #6c1517 */
+		--yeti-color-alert-line: light-dark(oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * min(l, var(--_yeti-l-base-light)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-light)) var(--_yeti-c-capped) var(--_yeti-h-alert) / 1), oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * max(l, var(--_yeti-l-base-dark)) + (1 - var(--_yeti-set)) * var(--_yeti-l-base-dark)) var(--_yeti-c-capped) var(--_yeti-h-alert) / 1)); /* #af3c3a */
+		--yeti-on-alert: light-dark(oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-light)) 0 0 / 1), oklch(from var(--_yeti-k-alert) calc(var(--_yeti-set) * var(--_yeti-white-text) + (1 - var(--_yeti-set)) * var(--_yeti-l-on-dark)) 0 0 / 1)); /* #fcfcfc */
 
-		/* Neutral: the same ladder at the neutral hue and chroma, for data-variant="neutral" */
+		/* Neutral: the same ladder at the neutral hue and chroma, for data-variant="neutral".
+		   It takes no brand color. */
 		--yeti-color-neutral-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-subtle-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-color-neutral-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-soft-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-color-neutral: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-color-neutral-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-color-neutral-text: light-dark(oklch(var(--_yeti-l-text-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-text-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-color-neutral-line: var(--yeti-color-neutral);
 		--yeti-on-neutral: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark));
 
 		/* Page roles from the neutral hue at low chroma */
@@ -105,6 +175,8 @@
 		   a caption over a picture, a veil over a form. The surface, thinned,
 		   so it takes the theme with it and dims rather than tints. */
 		--yeti-color-scrim: color-mix(in oklch, var(--yeti-color-surface) 85%, transparent);
-		--yeti-color-focus: var(--yeti-color-primary); /* #006bbb */
+		/* The line step, so a brand color too light or too dark to read on the
+		   page still gets a ring that shows. */
+		--yeti-color-focus: var(--yeti-color-primary-line); /* #006bbb */
 	}
 }
