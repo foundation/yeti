@@ -24,7 +24,7 @@
 		/* Not the divider color. A text field, an unchecked box and an off
 		   switch are identified by this border alone, so it has to clear 3:1
 		   against the surface; the divider sits at 1.4:1 and is meant to. */
-		--yeti-control-border: light-dark(oklch(0.58 var(--_yeti-c-neutral) var(--yeti-hue-neutral)), oklch(0.55 var(--_yeti-c-neutral) var(--yeti-hue-neutral)));
+		--yeti-control-border: light-dark(oklch(0.58 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.55 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-control-surface: var(--yeti-color-surface);
 		--yeti-control-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23808080' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
 		--yeti-opacity-muted: 0.6;

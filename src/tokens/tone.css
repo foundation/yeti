@@ -108,16 +108,16 @@
 		/* Neutral: the grey of the same number at this hue. Chroma eases off
 		   toward the poles the way the ladder's subtle and soft steps do, so the
 		   extremes stay close to gamut. */
-		--yeti-color-neutral-0: oklch(from var(--yeti-grey-0) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-10: oklch(from var(--yeti-grey-10) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-20: oklch(from var(--yeti-grey-20) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-30: oklch(from var(--yeti-grey-30) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-40: oklch(from var(--yeti-grey-40) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-50: oklch(from var(--yeti-grey-50) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-60: oklch(from var(--yeti-grey-60) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-70: oklch(from var(--yeti-grey-70) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-80: oklch(from var(--yeti-grey-80) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-90: oklch(from var(--yeti-grey-90) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-100: oklch(from var(--yeti-grey-100) l var(--_yeti-c-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-0: oklch(from var(--yeti-grey-0) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-10: oklch(from var(--yeti-grey-10) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-20: oklch(from var(--yeti-grey-20) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-30: oklch(from var(--yeti-grey-30) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-40: oklch(from var(--yeti-grey-40) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-50: oklch(from var(--yeti-grey-50) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-60: oklch(from var(--yeti-grey-60) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-70: oklch(from var(--yeti-grey-70) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-80: oklch(from var(--yeti-grey-80) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-90: oklch(from var(--yeti-grey-90) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-100: oklch(from var(--yeti-grey-100) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
 	}
 }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Tabnav fixture</title>
+	<link rel="stylesheet" href="../../../../src/yeti.css">
+	<style>#stage { inline-size: 100%; }</style>
+</head>
+<body>
+	<main>
+		<h1>Tabnav component</h1>
+		<div id="stage">
+			<nav class="tabnav" aria-label="Repository" id="tn">
+				<ul role="list">
+					<li><a href="/code/" id="tn-code">Code</a></li>
+					<li><a href="/issues/" aria-current="page" id="tn-issues">Issues</a></li>
+					<li><a href="/pulls/" id="tn-pulls">Pull requests</a></li>
+				</ul>
+			</nav>
+			<nav class="tabnav" aria-label="Project" id="tn-long">
+				<ul role="list">
+					<li><a href="/overview/" id="tn-long-first">Overview</a></li>
+					<li><a href="/activity/">Activity</a></li>
+					<li><a href="/roadmap/">Roadmap</a></li>
+					<li><a href="/releases/">Releases</a></li>
+					<li><a href="/milestones/">Milestones</a></li>
+					<li><a href="/discussions/">Discussions</a></li>
+					<li><a href="/members/">Members</a></li>
+					<li><a href="/security/">Security</a></li>
+					<li><a href="/insights/">Insights</a></li>
+					<li><a href="/wiki/">Wiki</a></li>
+					<li><a href="/settings/" aria-current="page" id="tn-long-current">Settings</a></li>
+					<li><a href="/billing/">Billing</a></li>
+				</ul>
+			</nav>
+			<nav class="tabnav" aria-label="Team" id="tn-middle">
+				<ul role="list">
+					<li><a href="/team/overview/">Overview</a></li>
+					<li><a href="/team/activity/">Activity</a></li>
+					<li><a href="/team/roadmap/">Roadmap</a></li>
+					<li><a href="/team/releases/">Releases</a></li>
+					<li><a href="/team/milestones/">Milestones</a></li>
+					<li><a href="/team/discussions/" aria-current="page" id="tn-middle-current">Discussions</a></li>
+					<li><a href="/team/members/">Members</a></li>
+					<li><a href="/team/security/">Security</a></li>
+					<li><a href="/team/insights/">Insights</a></li>
+					<li><a href="/team/wiki/">Wiki</a></li>
+					<li><a href="/team/settings/">Settings</a></li>
+					<li><a href="/team/billing/">Billing</a></li>
+				</ul>
+			</nav>
+			<nav class="tabnav" aria-label="Account" data-emphasis="high" id="tn-high">
+				<ul role="list">
+					<li><a href="/profile/" aria-current="page" id="tn-high-current">Profile</a></li>
+					<li><a href="/keys/" id="tn-high-other">Keys</a></li>
+				</ul>
+			</nav>
+		</div>
+	</main>
+</body>
+</html>

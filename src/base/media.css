@@ -74,14 +74,16 @@
 	details > summary::-webkit-details-marker { display: none; }
 
 	/* The chevron: a square with two borders, turned. It points down when
-	   the panel is shut and up when it is open. */
+	   the panel is shut and up when it is open. The borders are physical on
+	   purpose: logical ones change sides in a right-to-left page, and the
+	   same turn would then point the corner sideways. */
 	details > summary::after {
 		content: "";
 		inline-size: 0.5em;
 		block-size: 0.5em;
 		margin-inline-start: auto;
-		border-block-end: 2px solid currentColor;
-		border-inline-end: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		border-right: 2px solid currentColor;
 		rotate: 45deg;
 		translate: 0 -0.15em;
 		transition: rotate var(--yeti-duration-fast) var(--yeti-ease);

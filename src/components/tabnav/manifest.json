@@ -1,0 +1,178 @@
+{
+  "$schema": "../../../schema/manifest.schema.json",
+  "name": "tabnav",
+  "kind": "component",
+  "group": "Navigation",
+  "description": "A row of links to sibling pages, styled as tabs with the current page marked, that scrolls sideways when it is too narrow.",
+  "class": "tabnav",
+  "attributes": [
+    {
+      "name": "data-variant",
+      "type": "enum",
+      "vocabulary": "variant",
+      "default": "primary",
+      "description": "The hue of the current link, its edge, and the hover fill."
+    },
+    {
+      "name": "data-emphasis",
+      "type": "enum",
+      "values": ["high"],
+      "description": "The current link is filled with the variant; without it the current link is underlined."
+    }
+  ],
+  "classes": [],
+  "children": [
+    {
+      "selector": "> ul",
+      "min": 1,
+      "max": 1,
+      "description": "The links, one per li, with role=\"list\", which keeps WebKit announcing it as a list once the markers are gone."
+    },
+    {
+      "selector": "li",
+      "min": 1,
+      "max": null,
+      "description": "One tab, holding one link."
+    },
+    {
+      "selector": "a",
+      "min": 1,
+      "max": null,
+      "description": "A page. The current one carries aria-current=\"page\"; a tab for a section that holds the current page may carry aria-current=\"true\"."
+    }
+  ],
+  "tokens": [
+    {
+      "name": "--yeti-tabs-border",
+      "public": true,
+      "description": "The rule along the bottom of the row."
+    },
+    {
+      "name": "--yeti-tabs-padding",
+      "public": true,
+      "description": "Padding of one link."
+    },
+    {
+      "name": "--yeti-border-width",
+      "public": true,
+      "description": "Width of the rule; the current link's edge is twice it."
+    },
+    {
+      "name": "--yeti-weight-strong",
+      "public": true,
+      "description": "Weight of a link's label."
+    },
+    {
+      "name": "--yeti-radius-sm",
+      "public": true,
+      "description": "Corner radius of the current link with data-emphasis=\"high\"."
+    },
+    {
+      "name": "--yeti-space-xs",
+      "public": true,
+      "description": "Gap between links."
+    },
+    {
+      "name": "--yeti-duration-fast",
+      "public": true,
+      "description": "How long a link takes to change color."
+    },
+    {
+      "name": "--yeti-ease",
+      "public": true,
+      "description": "The curve of that transition."
+    },
+    {
+      "name": "--yeti-space-xl",
+      "public": true,
+      "description": "How wide the fade is at an edge with more links beyond it, and the scroll padding that keeps the marked link clear of it."
+    },
+    {
+      "name": "--yeti-color-primary",
+      "public": true,
+      "description": "The default variant's color, when data-variant is absent."
+    },
+    {
+      "name": "--yeti-color-primary-subtle",
+      "public": true,
+      "description": "The default variant's tint."
+    },
+    {
+      "name": "--yeti-color-primary-soft",
+      "public": true,
+      "description": "The default variant's soft stop."
+    },
+    {
+      "name": "--yeti-color-primary-strong",
+      "public": true,
+      "description": "The default variant's strong stop."
+    },
+    {
+      "name": "--yeti-color-primary-text",
+      "public": true,
+      "description": "The default variant's text color."
+    },
+    {
+      "name": "--yeti-on-primary",
+      "public": true,
+      "description": "Text on the default variant's color."
+    },
+    {
+      "name": "--_yeti-variant",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-subtle",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-soft",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-strong",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-text",
+      "public": false
+    },
+    {
+      "name": "--_yeti-on-variant",
+      "public": false
+    },
+    {
+      "name": "--_yeti-tabnav-fade-start",
+      "public": false
+    },
+    {
+      "name": "--_yeti-tabnav-fade-end",
+      "public": false
+    }
+  ],
+  "a11y": {
+    "requiredAttributes": [
+      "aria-label | aria-labelledby"
+    ],
+    "keyboard": [
+      { "key": "Tab", "action": "Moves through the links in order, scrolling the row to bring each one into view." },
+      { "key": "Enter", "action": "Follows the focused link." }
+    ],
+    "notes": "Give the nav an aria-label such as \"Repository\", since the page has at least one other nav. Put role=\"list\" on the ul, which keeps WebKit announcing it as a list once its markers are gone. The current page's link carries aria-current=\"page\"; a tab for a section that holds the current page may carry aria-current=\"true\". These are links, not tabs: there is no tablist role, no arrow keys and no script. For panels that switch on one page, use tabs."
+  },
+  "js": null,
+  "support": {
+    "unguarded": [
+      "logical properties",
+      ":dir()",
+      "overscroll-behavior-inline",
+      "scrollbar-width",
+      "scroll-initial-target (where missing, the row starts at its start)"
+    ],
+    "guarded": [
+      "animation-timeline: scroll() (fallback: no fade; the browser's own scrollbar, which is always there, is the only signal)"
+    ]
+  },
+  "since": "7.0.0",
+  "example": "example.html"
+}

@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, style, axe, painted } from '../lib/layout.js';
+import { stage, rect, style, axe, painted, withoutModule, token } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/nav.html');
@@ -14,9 +14,196 @@ const isOpen = (page, id) => page.evaluate((i) => document.getElementById(i).mat
 // getAnimations() reports it. Waiting on an empty list resolves at once.
 const settle = (page, selector) => page.evaluate((s) => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 	.then(() => Promise.all(document.querySelector(s).getAnimations().map((a) => a.finished.catch(() => {})))), selector);
+// WebKit does not tab to links with plain Tab; Alt+Tab is its link-reaching key.
+const tab = (page, browserName) => page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
 const anchored = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a'));
+// The room left between a trigger's chevron and the end of its content box, in
+// a left-to-right page. A pseudo-element has no box to measure, so its end is
+// the label's end plus the flex gap, the chevron's used margin and its width.
+const chevronRoom = (page, selector) => page.evaluate((s) => {
+	const el = document.querySelector(s);
+	const cs = getComputedStyle(el);
+	const after = getComputedStyle(el, '::after');
+	const range = document.createRange();
+	range.selectNodeContents(el);
+	const end = range.getBoundingClientRect().right + (parseFloat(cs.columnGap) || 0) + parseFloat(after.marginInlineStart) + parseFloat(after.width);
+	return el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - end;
+}, selector);
+// The variant's own color for a private variant property, resolved inside an element.
+const variant = (page, inside, name) => page.evaluate(([s, n]) => {
+	const probe = document.createElement('span');
+	probe.style.color = `var(${n})`;
+	document.querySelector(s).append(probe);
+	const value = getComputedStyle(probe).color;
+	probe.remove();
+	return value;
+}, [inside, name]);
 
 test.describe('nav', () => {
+	test('a label trigger in the bar draws a chevron with a space before it', async ({ page }) => {
+		await open(page);
+		const after = await page.evaluate(() => {
+			const cs = getComputedStyle(document.querySelector('#nav-li-trigger'), '::after');
+			return { content: cs.content, margin: parseFloat(cs.marginInlineStart) };
+		});
+		expect(after.content).not.toBe('none');
+		expect(Math.abs(after.margin - await token(page, '--yeti-space-xs'))).toBeLessThan(1);
+		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
+	});
+
+	test('in the bar, a dropdown panel takes the dropdown tokens, not the nav link color', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-link: rgb(250, 250, 250); --yeti-dropdown-text: rgb(1, 2, 3); --yeti-dropdown-hover: rgb(4, 5, 6); }' });
+		await page.click('#nav-more-trigger');
+		await settle(page, '#nav-more');
+		const item = page.locator('#nav-more a').first();
+		expect(await item.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(1, 2, 3)');
+		await item.hover();
+		expect(await item.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(4, 5, 6)');
+		expect(await style(page, '#nav-more-trigger', 'color')).toBe('rgb(250, 250, 250)');
+	});
+
+	test('the bar reads --yeti-nav-hover and --yeti-nav-current', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-hover: rgb(7, 8, 9); --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
+	test.describe('data-justify', () => {
+		const justify = (page, value) => page.evaluate((v) => document.querySelector('#nav').setAttribute('data-justify', v), value);
+		const gap = (page) => page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#nav')).columnGap));
+
+		test('by default the links sit beside the brand', async ({ page }) => {
+			await open(page, 1000);
+			const [brand, menu] = await Promise.all(['#brand', '#menu'].map((s) => rect(page, s)));
+			expect(menu.left - brand.right).toBeCloseTo(await gap(page), 0);
+		});
+		test('end puts the links at the end of the bar, with the actions straight after them', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'end');
+			const [brand, menu, actions] = await Promise.all(['#brand', '#menu', '#actions'].map((s) => rect(page, s)));
+			expect(actions.left - menu.right).toBeCloseTo(await gap(page), 0);
+			expect(menu.left - brand.right).toBeGreaterThan(100);
+		});
+		test('end with no actions puts the links against the bar\'s end', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'end');
+			await page.evaluate(() => document.querySelector('#actions').remove());
+			const [nav, menu] = await Promise.all(['#nav', '#menu'].map((s) => rect(page, s)));
+			const pad = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#nav')).paddingRight));
+			expect(nav.right - pad - menu.right).toBeLessThan(1);
+		});
+		test('center puts the links in the middle of the room between the brand and the actions', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'center');
+			const [brand, menu, actions] = await Promise.all(['#brand', '#menu', '#actions'].map((s) => rect(page, s)));
+			expect(Math.abs((menu.left - brand.right) - (actions.left - menu.right))).toBeLessThan(1);
+			expect(menu.left - brand.right).toBeGreaterThan(50);
+		});
+		for (const value of ['end', 'center']) {
+			test(`below the threshold the toggle sits at the end with ${value}`, async ({ page }) => {
+				await open(page, 400);
+				await justify(page, value);
+				const [brand, toggle, actions] = await Promise.all(['#brand', '#toggle', '#actions'].map((s) => rect(page, s)));
+				expect(actions.left - toggle.right).toBeCloseTo(await gap(page), 0);
+				expect(toggle.left - brand.right).toBeGreaterThan(20);
+			});
+		}
+		test('the open panel is not moved by it', async ({ page }) => {
+			await open(page, 400);
+			await page.click('#toggle'); await settle(page, '#menu');
+			const before = await rect(page, '#menu');
+			await page.keyboard.press('Escape');
+			await justify(page, 'end');
+			await page.click('#toggle'); await settle(page, '#menu');
+			const after = await rect(page, '#menu');
+			expect(after.left).toBeCloseTo(before.left, 0);
+			expect(after.width).toBeCloseTo(before.width, 0);
+		});
+	});
+
+	test('--yeti-nav-current-surface fills the current page in the bar, and the parent that holds it', async ({ page }) => {
+		await open(page, 1000);
+		// Off by default, so the pointer still shows on the current link.
+		expect(await style(page, '#current', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.addStyleTag({ content: '#nav, #nt { --yeti-nav-current-surface: rgb(13, 14, 15); --yeti-nav-hover: rgb(7, 8, 9); }' });
+		expect(await style(page, '#current', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		expect(await style(page, '#nt-about-link', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#nt-about-toggle', 'background-color')).toBe('rgb(13, 14, 15)');
+		expect(await style(page, '#nt-home', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		expect(await style(page, '#nt-lab-trigger', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+		await page.hover('#current');
+		expect(await style(page, '#current', 'background-color')).toBe('rgb(7, 8, 9)');
+	});
+
+	test('a split parent\'s link and toggle meet with square corners, so a fill reads as one piece', async ({ page }) => {
+		await open(page, 1000);
+		const radius = (sel, corner) => style(page, sel, `border-${corner}-radius`).then(parseFloat);
+		expect(await radius('#nt-about-link', 'start-end')).toBe(0);
+		expect(await radius('#nt-about-link', 'end-end')).toBe(0);
+		expect(await radius('#nt-about-toggle', 'start-start')).toBe(0);
+		expect(await radius('#nt-about-toggle', 'end-start')).toBe(0);
+		// The outer corners, and a trigger that is not split, keep the nav's radius.
+		expect(await radius('#nt-about-link', 'start-start')).toBeGreaterThan(0);
+		expect(await radius('#nt-about-toggle', 'end-end')).toBeGreaterThan(0);
+		expect(await radius('#nt-lab-trigger', 'start-end')).toBeGreaterThan(0);
+	});
+
+	test('the open panel does not take the bar\'s current fill', async ({ page }) => {
+		await open(page, 400);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-current-surface: rgb(13, 14, 15); }' });
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#current', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+	});
+
+	test('the open panel keeps the variant\'s tints, not the bar\'s hover and current tokens', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-hover: rgb(7, 8, 9); --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#current', 'color')).toBe('rgb(10, 11, 12)');
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
+		await page.mouse.move(5, 5);
+		await stage(page, 400);
+		await page.click('#toggle');
+		await settle(page, '#menu');
+		expect(await style(page, '#current', 'color')).toBe(await variant(page, '#nav', '--_yeti-variant-text'));
+		await page.hover('#plain');
+		expect(await style(page, '#plain', 'background-color')).toBe(await variant(page, '#nav', '--_yeti-variant-subtle'));
+	});
+
+	test('a label trigger inside a dropdown panel in the nav fills its row and keeps its chevron at the row end', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => {
+			const row = document.createElement('div');
+			row.className = 'dropdown';
+			row.id = 'deep-row';
+			row.innerHTML = '<button type="button" id="deep-trigger">Deep</button>';
+			document.querySelector('#nav-li-menu').append(row);
+		});
+		await page.click('#nav-li-trigger');
+		await settle(page, '#nav-li-menu');
+		const [trigger, row] = await Promise.all([rect(page, '#deep-trigger'), rect(page, '#deep-row')]);
+		expect(Math.abs(trigger.right - row.right)).toBeLessThanOrEqual(2);
+		expect(Math.abs(trigger.width - row.width)).toBeLessThanOrEqual(2);
+		expect(await chevronRoom(page, '#deep-trigger')).toBeLessThan(2);
+	});
+
+	test('in the bar, a dropdown whose class is on the li is styled like a link', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nav { --yeti-nav-link: rgb(250, 250, 250); --yeti-nav-hover: rgb(7, 8, 9); --yeti-dropdown-text: rgb(1, 2, 3); }' });
+		expect(await style(page, '#nav-li-trigger', 'color')).toBe('rgb(250, 250, 250)');
+		expect((await rect(page, '#nav-li-trigger')).height).toBe((await rect(page, '#plain')).height);
+		await page.hover('#nav-li-trigger');
+		expect(await style(page, '#nav-li-trigger', 'background-color')).toBe('rgb(7, 8, 9)');
+		await page.click('#nav-li-trigger');
+		await settle(page, '#nav-li-menu');
+		expect(await style(page, '#nav-li-first', 'color')).toBe('rgb(1, 2, 3)');
+	});
+
 	test('a painted panel sets its own text, and the links and the close button follow it', async ({ page }) => {
 		await open(page, 300);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-panel: rgb(30, 40, 50); --yeti-nav-panel-text: rgb(250, 240, 230); --yeti-nav-link: rgb(1, 2, 3); }' });
@@ -333,6 +520,7 @@ test.describe('nav', () => {
 	});
 
 	test('a dropdown in the open panel is a full-width block docked under its trigger', async ({ page }) => {
+		await withoutModule(page, 'nav');
 		await open(page, 400);
 		await page.click('#toggle');
 		await settle(page, '#menu');
@@ -357,6 +545,7 @@ test.describe('nav', () => {
 	});
 
 	test('a submenu taller than the room below its trigger scrolls instead of running off', async ({ page }) => {
+		await withoutModule(page, 'nav');
 		await open(page, 400);
 		await page.evaluate(() => {
 			const panel = document.getElementById('nav-more');
@@ -376,6 +565,7 @@ test.describe('nav', () => {
 	});
 
 	test('a submenu inside a drawer stops at the drawer\u2019s edge', async ({ page }) => {
+		await withoutModule(page, 'nav');
 		await open(page, 400);
 		await page.click('#drawer-toggle');
 		await settle(page, '#drawer-menu');
@@ -392,6 +582,7 @@ test.describe('nav', () => {
 	});
 
 	test('Escape closes the submenu before the panel', async ({ page }) => {
+		await withoutModule(page, 'nav');
 		await open(page, 400);
 		await page.click('#toggle');
 		await page.click('#nav-more-trigger');
@@ -427,5 +618,440 @@ test.describe('nav', () => {
 			return panel === hit || panel.contains(hit);
 		});
 		expect(painted).toBe(true);
+	});
+	test('in the bar a split parent is its link and a compact toggle on one row', async ({ page }) => {
+		await open(page, 1000);
+		const [link, toggle, home] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-home'].map((s) => rect(page, s)));
+		expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+		expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
+		expect(toggle.left - link.right).toBeLessThan(2);
+		expect(Math.abs(toggle.height - home.height)).toBeLessThan(2);
+		expect(toggle.width).toBeLessThan(link.width);
+		expect(toggle.width).toBeLessThanOrEqual(home.height + 1);
+	});
+
+	test('each ancestor of the current page is marked, more quietly than the page itself', async ({ page }) => {
+		await open(page, 1000);
+		await page.addStyleTag({ content: '#nt { --yeti-nav-current: rgb(10, 11, 12); }' });
+		expect(await style(page, '#nt-about-link', 'color')).toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-about-toggle', 'color')).toBe('rgb(10, 11, 12)');
+		expect(Number(await style(page, '#nt-about-link', 'font-weight'))).toBeLessThan(600);
+		expect(await style(page, '#nt-home', 'color')).not.toBe('rgb(10, 11, 12)');
+		expect(await style(page, '#nt-lab-trigger', 'color')).not.toBe('rgb(10, 11, 12)');
+	});
+
+	test('inside the panels, the parents of the current page are marked and their siblings are not', async ({ page }) => {
+		await open(page, 1000);
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		await page.click('#nt-team-toggle');
+		await settle(page, '#nt-team-menu');
+		const leaf = await style(page, '#nt-leaf', 'color');
+		expect(await style(page, '#nt-team-link', 'color')).toBe(leaf);
+		expect(await style(page, '#nt-team-toggle', 'color')).toBe(leaf);
+		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(Number(await style(page, '#nt-leaf', 'font-weight')));
+		expect(await style(page, '#nt-history', 'color')).not.toBe(leaf);
+	});
+
+	test('with no current page, nothing is marked', async ({ page }) => {
+		await open(page, 1000);
+		await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
+		expect(await style(page, '#nt-about-link', 'color')).toBe(await style(page, '#nt-home', 'color'));
+	});
+
+	test('a parent whose own link is the current page is styled as the current page, in the bar, in its panel and in place', async ({ page }) => {
+		await open(page, 1000);
+		const move = (id) => page.evaluate((i) => {
+			document.querySelector('#nt [aria-current]').removeAttribute('aria-current');
+			document.getElementById(i).setAttribute('aria-current', 'page');
+		}, id);
+		const weight = async (s) => Number(await style(page, s, 'font-weight'));
+		await move('nt-about-link');
+		expect(await weight('#nt-about-link')).toBeGreaterThan(await weight('#nt-home'));
+		expect(await style(page, '#nt-about-link', 'color')).not.toBe(await style(page, '#nt-home', 'color'));
+		await move('nt-team-link');
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		expect(await weight('#nt-team-link')).toBeGreaterThan(await weight('#nt-history'));
+		expect(await style(page, '#nt-team-link', 'color')).not.toBe(await style(page, '#nt-history', 'color'));
+		await page.keyboard.press('Escape');
+		await stage(page, 400);
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		expect(await weight('#nt-team-link')).toBeGreaterThan(await weight('#nt-history'));
+		expect(await style(page, '#nt-team-link', 'color')).not.toBe(await style(page, '#nt-history', 'color'));
+	});
+	for (const shape of ['sheet', 'drawer', 'screen']) {
+		test(`in the open ${shape} every level is shown in place, indented, with no toggle`, async ({ page }) => {
+			await withoutModule(page, 'nav');
+			await open(page, 400);
+			await page.evaluate((v) => document.querySelector('#nt').setAttribute('data-panel', v), shape);
+			await page.click('#nt-toggle');
+			await settle(page, '#nt-menu');
+			const [panel, about, history, leaf, lab] = await Promise.all(['#nt-menu', '#nt-about-link', '#nt-history', '#nt-leaf', '#nt-lab-trigger'].map((s) => rect(page, s)));
+			expect(history.top).toBeGreaterThanOrEqual(about.bottom - 1);
+			expect(leaf.top).toBeGreaterThanOrEqual(history.bottom - 1);
+			expect(lab.top).toBeGreaterThanOrEqual(leaf.bottom - 1);
+			if (shape !== 'screen') {
+				expect(history.left).toBeGreaterThan(about.left);
+				expect(leaf.left).toBeGreaterThan(history.left);
+			}
+			expect(leaf.right).toBeLessThanOrEqual(panel.right);
+			await expect(page.locator('#nt-about-toggle')).toBeHidden();
+			await expect(page.locator('#nt-team-toggle')).toBeHidden();
+			expect(await isOpen(page, 'nt-about-menu')).toBe(false);
+			expect(await isOpen(page, 'nt-team-menu')).toBe(false);
+		});
+	}
+
+	test('a grouped dropdown in the open panel is the same in-place list as any other', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt-about').setAttribute('data-grouped', ''));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const [about, history, team, leaf] = await Promise.all(['#nt-about-link', '#nt-history', '#nt-team-link', '#nt-leaf'].map((s) => rect(page, s)));
+		expect(history.top).toBeGreaterThanOrEqual(about.bottom - 1);
+		expect(history.left).toBeGreaterThan(about.left);
+		expect(leaf.top).toBeGreaterThanOrEqual(team.bottom - 1);
+		expect(leaf.left).toBeGreaterThan(team.left);
+		expect(await isOpen(page, 'nt-about-menu')).toBe(false);
+	});
+
+	test('a grouped label-only dropdown in the open panel still docks as a full-width block', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt-lab').setAttribute('data-grouped', ''));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		await page.click('#nt-lab-trigger');
+		await settle(page, '#nt-lab-menu');
+		expect(await isOpen(page, 'nt-lab-menu')).toBe(true);
+		const [panel, menu] = await Promise.all(['#nt-menu', '#nt-lab-menu'].map((s) => rect(page, s)));
+		expect(Math.abs(menu.width - panel.width)).toBeLessThan(2);
+		expect(await style(page, '#nt-lab-menu', 'flex-direction')).toBe('column');
+	});
+
+	test('a label-only dropdown in the panel still opens as a docked block without the module', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+		await page.click('#nt-lab-trigger'); await settle(page, '#nt-lab-menu');
+		expect(await isOpen(page, 'nt-lab-menu')).toBe(true);
+		expect(await isOpen(page, 'nt-menu')).toBe(true);
+	});
+
+	test('links shown in place in the panel read the panel text and the variant tints, not the bar or dropdown tokens', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.addStyleTag({ content: '#nt { --yeti-nav-panel-text: rgb(1, 2, 3); --yeti-nav-hover: rgb(4, 5, 6); --yeti-nav-current: rgb(7, 8, 9); --yeti-dropdown-text: rgb(200, 0, 0); --yeti-dropdown-hover: rgb(0, 200, 0); --yeti-dropdown-current: rgb(0, 0, 200); }' });
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const current = await variant(page, '#nt', '--_yeti-variant-text');
+		for (const color of ['rgb(7, 8, 9)', 'rgb(200, 0, 0)', 'rgb(0, 0, 200)']) expect(current).not.toBe(color);
+		expect(await style(page, '#nt-history', 'color')).toBe('rgb(1, 2, 3)');
+		expect(await style(page, '#nt-leaf', 'color')).toBe(current);
+		expect(Number(await style(page, '#nt-leaf', 'font-weight'))).toBeGreaterThanOrEqual(600);
+		expect(await style(page, '#nt-team-link', 'color')).toBe(current);
+		expect(Number(await style(page, '#nt-team-link', 'font-weight'))).toBeLessThan(600);
+		expect(await style(page, '#nt-lab-trigger', 'color')).toBe('rgb(1, 2, 3)');
+		// The hover is the variant's tint, the same as a top-level link's in the panel.
+		await page.hover('#nt-home');
+		const tint = await style(page, '#nt-home', 'background-color');
+		for (const color of ['rgb(4, 5, 6)', 'rgb(0, 200, 0)', 'rgba(0, 0, 0, 0)']) expect(tint).not.toBe(color);
+		await page.hover('#nt-history');
+		expect(await style(page, '#nt-history', 'background-color')).toBe(tint);
+		await page.hover('#nt-leaf');
+		expect(await style(page, '#nt-leaf', 'background-color')).toBe(tint);
+		// The same size and radius as a link at the top of the panel.
+		const [home, history] = await Promise.all(['#nt-home', '#nt-history'].map((s) => rect(page, s)));
+		expect(Math.abs(home.height - history.height)).toBeLessThan(2);
+		expect(await style(page, '#nt-history', 'border-top-left-radius')).toBe(await style(page, '#nt-home', 'border-top-left-radius'));
+	});
+
+	test('Tab walks the links in visual order, skipping the hidden toggles', async ({ page, browserName }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		await page.focus('#nt-home');
+		const order = ['nt-home'];
+		for (let i = 0; i < 5; i++) {
+			await tab(page, browserName);
+			order.push(await page.evaluate(() => document.activeElement.id));
+		}
+		expect(order).toEqual(['nt-home', 'nt-about-link', 'nt-history', 'nt-team-link', 'nt-leaf', 'nt-lab-trigger']);
+	});
+	test('in a screen panel every level is centred on one axis and steps down in size', async ({ page }) => {
+		await withoutModule(page, 'nav');
+		await open(page, 400);
+		await page.evaluate(() => document.querySelector('#nt').setAttribute('data-panel', 'screen'));
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const ids = ['#nt-home', '#nt-about-link', '#nt-history', '#nt-team-link', '#nt-leaf', '#nt-lab-trigger'];
+		const rects = await Promise.all(ids.map((s) => rect(page, s)));
+		const mid = (r) => (r.left + r.right) / 2;
+		for (const r of rects) expect(Math.abs(mid(r) - mid(rects[0]))).toBeLessThan(2);
+		for (let i = 1; i < rects.length; i++) expect(rects[i].top).toBeGreaterThanOrEqual(rects[i - 1].bottom - 1);
+		const size = async (s) => parseFloat(await style(page, s, 'font-size'));
+		expect(await size('#nt-history')).toBeLessThan(await size('#nt-about-link'));
+		expect(await size('#nt-leaf')).toBeLessThan(await size('#nt-history'));
+	});
+
+	test('in the bar a split dropdown still opens as a floating card under its parent', async ({ page }) => {
+		await open(page, 1000);
+		await expect(page.locator('#nt-about-menu')).toBeHidden();
+		await page.click('#nt-about-toggle');
+		await settle(page, '#nt-about-menu');
+		expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		const [link, menu] = await Promise.all(['#nt-about-link', '#nt-about-menu'].map((s) => rect(page, s)));
+		expect(menu.top).toBeGreaterThanOrEqual(link.bottom - 1);
+		// The first level opens under its item, the link, not under the small toggle.
+		if (await anchored(page)) expect(Math.abs(menu.left - link.left)).toBeLessThanOrEqual(2);
+		expect(await style(page, '#nt-about-menu', 'position')).not.toBe('static');
+	});
+
+	test.describe('with the module', () => {
+		const openPanel = async (page) => { await open(page, 400); await page.click('#nt-toggle'); await settle(page, '#nt-menu'); };
+		const expanded = (page, id) => page.getAttribute(`#${id}`, 'aria-expanded');
+
+		test('the panel opens on the current branch, and other groups start collapsed', async ({ page }) => {
+			await openPanel(page);
+			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
+			expect(await expanded(page, 'nt-team-toggle')).toBe('true');
+			expect(await expanded(page, 'nt-lab-trigger')).toBe('false');
+			await expect(page.locator('#nt-leaf')).toBeVisible();
+			await expect(page.locator('#nt-lab-leaf')).toBeHidden();
+		});
+		test('a toggle opens and closes its group in place, without opening a popover', async ({ page }) => {
+			await openPanel(page);
+			const before = await rect(page, '#nt-lab-trigger');
+			await page.click('#nt-about-toggle');
+			await settle(page, '#nt-about-menu');
+			await expect(page.locator('#nt-history')).toBeHidden();
+			expect(await isOpen(page, 'nt-about-menu')).toBe(false);
+			expect((await rect(page, '#nt-lab-trigger')).top).toBeLessThan(before.top);
+			await page.click('#nt-lab-trigger');
+			await settle(page, '#nt-lab-menu');
+			await expect(page.locator('#nt-lab-leaf')).toBeVisible();
+			expect(await isOpen(page, 'nt-lab-menu')).toBe(false);
+		});
+		test('in the panel a toggle sits at the end of its link\'s row', async ({ page }) => {
+			await openPanel(page);
+			const [link, toggle, panel] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-menu'].map((s) => rect(page, s)));
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThan(2);
+			expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
+			expect(toggle.right).toBeLessThanOrEqual(panel.right);
+			expect(Math.abs(toggle.width - toggle.height)).toBeLessThan(2);
+		});
+		test('in a screen panel a toggle follows its centred link and the pair is centred', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => document.querySelector('#nt').setAttribute('data-panel', 'screen'));
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			const [link, toggle, home] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-home'].map((s) => rect(page, s)));
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThan(2);
+			expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
+			expect(toggle.left - link.right).toBeLessThan(2);
+			const mid = (r) => (r.left + r.right) / 2;
+			expect(Math.abs((link.left + toggle.right) / 2 - mid(home))).toBeLessThan(2);
+			await page.click('#nt-lab-trigger');
+			await expect(page.locator('#nt-lab-leaf')).toBeVisible();
+			expect(Math.abs(mid(await rect(page, '#nt-lab-trigger')) - mid(home))).toBeLessThan(2);
+		});
+		test('each toggle reports its state to assistive technology', async ({ page }) => {
+			await openPanel(page);
+			await expect(page.getByRole('button', { name: 'About pages', expanded: true })).toHaveCount(1);
+			await page.click('#nt-about-toggle');
+			await expect(page.getByRole('button', { name: 'About pages', expanded: false })).toHaveCount(1);
+		});
+		test('Tab never lands inside a collapsed group', async ({ page, browserName }) => {
+			await openPanel(page);
+			await page.click('#nt-about-toggle');
+			await expect(page.locator('#nt-leaf')).toBeHidden();
+			await page.focus('#nt-about-toggle');
+			await tab(page, browserName);
+			expect(await page.evaluate(() => document.activeElement.id)).toBe('nt-lab-trigger');
+		});
+		test('what was opened is remembered until the page is left', async ({ page }) => {
+			await openPanel(page);
+			await page.click('#nt-lab-trigger');
+			await page.keyboard.press('Escape');
+			expect(await expanded(page, 'nt-lab-trigger')).toBe(null);
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			expect(await expanded(page, 'nt-lab-trigger')).toBe('true');
+		});
+		test('after the panel closes and the window widens, a toggle in the bar opens its popover', async ({ page }) => {
+			await openPanel(page);
+			await page.keyboard.press('Escape');
+			await stage(page, 1000);
+			expect(await expanded(page, 'nt-about-toggle')).toBe(null);
+			await page.click('#nt-about-toggle');
+			expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		});
+		test('after the window widens while the panel is open, Escape leaves no aria-expanded and a bar toggle opens its popover', async ({ page }) => {
+			await openPanel(page);
+			await page.click('#nt-lab-trigger');
+			expect(await expanded(page, 'nt-lab-trigger')).toBe('true');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
+			await stage(page, 1000);
+			expect(await isOpen(page, 'nt-menu')).toBe(true);
+			await page.keyboard.press('Escape');
+			expect(await isOpen(page, 'nt-menu')).toBe(false);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBe(0);
+			await page.click('#nt-about-toggle');
+			expect(await isOpen(page, 'nt-about-menu')).toBe(true);
+		});
+		test('with the current page at the top level every group starts collapsed and no parent is marked', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => {
+				document.querySelector('#nt-leaf').removeAttribute('aria-current');
+				document.querySelector('#nt-home').setAttribute('aria-current', 'page');
+			});
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			for (const id of ['nt-about-toggle', 'nt-team-toggle', 'nt-lab-trigger']) expect(await expanded(page, id), id).toBe('false');
+			const plain = await style(page, '#nt-lab-trigger', 'color');
+			expect(await style(page, '#nt-about-link', 'color')).toBe(plain);
+			expect(await style(page, '#nt-about-toggle', 'color')).toBe(plain);
+			expect(await style(page, '#nt-team-link', 'color')).toBe(await style(page, '#nt-history', 'color'));
+			expect(await style(page, '#nt-home', 'color')).not.toBe(plain);
+		});
+		test('a label trigger that is a group toggle puts its chevron at the row end, like the other toggles', async ({ page }) => {
+			await openPanel(page);
+			const [trigger, row, toggle] = await Promise.all(['#nt-lab-trigger', '#nt-lab', '#nt-about-toggle'].map((s) => rect(page, s)));
+			expect(Math.abs(trigger.right - row.right)).toBeLessThanOrEqual(2);
+			expect(Math.abs(toggle.right - row.right)).toBeLessThanOrEqual(2);
+			expect(await chevronRoom(page, '#nt-lab-trigger')).toBeLessThan(2);
+		});
+		test('a group toggle is centred on its link, not hung from the top of the row', async ({ page }) => {
+			await openPanel(page);
+			const [link, toggle] = await Promise.all(['#nt-about-link', '#nt-about-toggle'].map((s) => rect(page, s)));
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThanOrEqual(0.5);
+		});
+		// The close button sits over the end of the first row. A link keeps its
+		// label at the start, so the two share the row; a group's toggle and a
+		// label's chevron are at the end, exactly under it.
+		const withClose = (page, first) => page.evaluate((id) => {
+			const li = document.createElement('li');
+			li.setAttribute('data-close', '');
+			li.id = 'nt-close';
+			li.innerHTML = '<button type="button" popovertarget="nt-menu" popovertargetaction="hide" aria-label="Close">×</button>';
+			document.querySelector('#nt-menu').prepend(li);
+			li.after(document.getElementById(id));
+		}, first);
+		for (const [first, control] of [['nt-about', '#nt-about-toggle'], ['nt-lab', '#nt-lab-trigger']]) {
+			test(`the close button and a first item that is a group do not overlap (${first})`, async ({ page }) => {
+				await open(page, 400);
+				await withClose(page, first);
+				await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+				const [close, group] = await Promise.all(['#nt-close button', control].map((s) => rect(page, s)));
+				expect(group.top).toBeGreaterThanOrEqual(close.bottom - 0.5);
+				const before = await expanded(page, control.slice(1));
+				await page.click(control);
+				expect(await expanded(page, control.slice(1))).not.toBe(before);
+				await page.click('#nt-close button');
+				expect(await isOpen(page, 'nt-menu')).toBe(false);
+			});
+		}
+		test('a first item that is a plain link still shares its row with the close button', async ({ page }) => {
+			await open(page, 400);
+			await withClose(page, 'nt-home');
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			const [close, home] = await Promise.all(['#nt-close button', '#nt-home'].map((s) => rect(page, s)));
+			expect(home.top).toBeLessThan(close.bottom);
+		});
+		test('a label long enough to wrap still keeps a space before its chevron', async ({ page }) => {
+			await openPanel(page);
+			await page.evaluate(() => { document.querySelector('#nt-lab-trigger').textContent = 'Everything else we could not find a better heading for anywhere on this site'; });
+			// Lines set against the end of the label's box, so the label's end is
+			// the box's end and a short last word cannot pass for the space.
+			await page.addStyleTag({ content: '#nt-lab-trigger { text-align: end; }' });
+			// The chevron sits at the end of the content box at its full width,
+			// so the space is what is left between the label's end and its start.
+			const { gap, chevron, lines } = await page.evaluate(() => {
+				const el = document.querySelector('#nt-lab-trigger');
+				const cs = getComputedStyle(el);
+				const after = getComputedStyle(el, '::after');
+				const range = document.createRange();
+				range.selectNodeContents(el);
+				const label = range.getBoundingClientRect();
+				const width = parseFloat(after.width) + (after.boxSizing === 'border-box' ? 0 : parseFloat(after.borderRightWidth));
+				const start = el.getBoundingClientRect().right - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth) - width;
+				return { gap: start - label.right, chevron: parseFloat(after.width), lines: range.getClientRects().length };
+			});
+			expect(lines).toBeGreaterThan(1);
+			expect(gap).toBeGreaterThanOrEqual((await token(page, '--yeti-space-xs')) - 0.5);
+			// It is not squeezed to make room, either.
+			expect(chevron).toBeCloseTo(0.5 * parseFloat(await style(page, '#nt-lab-trigger', 'font-size')), 0);
+		});
+		test('with no current page every group starts collapsed', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => document.querySelector('#nt-leaf').removeAttribute('aria-current'));
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('false');
+		});
+		test('a nav added after load gets the same behaviour', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => { const c = document.querySelector('#nt').cloneNode(true); c.querySelectorAll('[id]').forEach((e) => { e.id = `c-${e.id}`; }); c.querySelectorAll('[popovertarget]').forEach((e) => e.setAttribute('popovertarget', `c-${e.getAttribute('popovertarget')}`)); c.id = 'c-nt'; document.querySelector('#stage').append(c); });
+			await page.click('#c-nt-toggle'); await settle(page, '#c-nt-menu');
+			expect(await expanded(page, 'c-nt-about-toggle')).toBe('true');
+		});
+		test('a nav whose list is in the bar carries no aria-expanded', async ({ page }) => {
+			await openPanel(page);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBeGreaterThan(0);
+			await page.keyboard.press('Escape');
+			await stage(page, 1000);
+			expect(await page.locator('#nt [aria-expanded]').count()).toBe(0);
+		});
+		test('an open group draws its links\' focus rings whole', async ({ page, browserName }) => {
+			await openPanel(page);
+			await page.focus('#nt-about-toggle');
+			const seen = [];
+			for (let i = 0; i < 4; i++) {
+				await tab(page, browserName);
+				const ring = await page.evaluate(() => {
+					const el = document.activeElement;
+					const cs = getComputedStyle(el);
+					const grow = parseFloat(cs.outlineOffset) + parseFloat(cs.outlineWidth);
+					const r = el.getBoundingClientRect();
+					let clip = el.parentElement;
+					while (clip && clip.id !== 'nt-menu' && ['overflow-x', 'overflow-y'].every((p) => getComputedStyle(clip)[p] === 'visible')) clip = clip.parentElement;
+					const c = clip.getBoundingClientRect();
+					return { id: el.id, visible: el.matches(':focus-visible'), width: parseFloat(cs.outlineWidth), box: [r.top - grow, r.right + grow, r.bottom + grow, r.left - grow], clip: [c.top, c.right, c.bottom, c.left] };
+				});
+				seen.push(ring.id);
+				if (ring.id !== 'nt-history' && ring.id !== 'nt-leaf') continue;
+				expect(ring.visible).toBe(true);
+				expect(ring.width).toBeGreaterThan(0);
+				expect(ring.box[0]).toBeGreaterThanOrEqual(ring.clip[0] - 0.5);
+				expect(ring.box[1]).toBeLessThanOrEqual(ring.clip[1] + 0.5);
+				expect(ring.box[2]).toBeLessThanOrEqual(ring.clip[2] + 0.5);
+				expect(ring.box[3]).toBeGreaterThanOrEqual(ring.clip[3] - 0.5);
+			}
+			expect(seen).toEqual(['nt-history', 'nt-team-link', 'nt-team-toggle', 'nt-leaf']);
+		});
+		test('a button the author put in the panel keeps its own click and state', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => {
+				const li = document.createElement('li');
+				li.innerHTML = '<button type="button" aria-expanded="false" popovertarget="own-pop" id="own">Search</button><div popover id="own-pop">Hi</div>';
+				document.querySelector('#nt-menu').append(li);
+				window.addEventListener('click', (e) => { if (e.target.id === 'own') document.querySelector('#own').dataset.prevented = String(e.defaultPrevented); });
+			});
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			await page.click('#own');
+			expect(await page.getAttribute('#own', 'data-prevented')).toBe('false');
+			expect(await expanded(page, 'own')).toBe('false');
+		});
+		test('the keyboard folds and unfolds a group with Enter and Space', async ({ page }) => {
+			await openPanel(page);
+			await page.focus('#nt-about-toggle');
+			await page.keyboard.press('Enter');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('false');
+			await expect(page.locator('#nt-history')).toBeHidden();
+			await page.keyboard.press('Space');
+			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
+			await expect(page.locator('#nt-history')).toBeVisible();
+			await expect.poll(() => style(page, '#nt-about-menu', 'overflow')).toBe('visible');
+		});
 	});
 });

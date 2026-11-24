@@ -37,24 +37,56 @@ const schedule = (wrapper, ms, run) => {
 	timers.set(wrapper, setTimeout(run, ms));
 };
 
-// A move that stays inside the wrapper is not a crossing. The panel is a DOM
-// child of the wrapper even while it paints in the top layer, so hovering the
-// panel itself keeps the menu open with no special handling.
-const crossing = (event) => {
-	const wrapper = event.target?.closest?.('[data-trigger="hover"]');
-	if (!wrapper || wrapper.contains(event.relatedTarget)) return null;
-	return wrapper;
+// A wrapper is any element that owns a trigger for a panel, inside an element
+// that opted in. data-trigger="hover" is written once, on the outermost
+// dropdown, and every level nested inside it follows. A nested level must own
+// the panel its trigger names, as a submenu's wrapper holds its panel. A panel
+// that holds a button for some other popover on the page is not a submenu, or
+// resting on any of its items would open that popover and close the menu.
+// Nor is the panel itself ever a level, even when the popover its button names
+// is its own child: the pointer is over a panel the whole time it is in the
+// menu, so that popover would open under any item.
+const isWrapper = (el) => {
+	const trigger = el.querySelector(':scope > [popovertarget]');
+	if (!trigger || !el.closest('[data-trigger="hover"]')) return false;
+	if (el.matches('[data-trigger="hover"]')) return true;
+	if (el.matches('[popover]')) return false;
+	return document.getElementById(trigger.getAttribute('popovertarget'))?.parentElement === el;
 };
+
+// Every wrapper that holds the node, innermost first. The panel is a DOM child
+// of its wrapper even while it paints in the top layer, so the pointer on a
+// submenu's leaf is inside the submenu's wrapper and each wrapper above it.
+const wrappersOf = (node) => {
+	const found = [];
+	// Pages and regions that do not use hover pay for one lookup, as before.
+	if (!node?.closest?.('[data-trigger="hover"]')) return found;
+	for (let el = node?.closest?.('*'); el; el = el.parentElement) {
+		if (isWrapper(el)) found.push(el);
+	}
+	return found;
+};
+
+// A closed panel that is already rendered is a group shown in flow, such as a
+// section of a nav panel. Opening it would lift it into the top layer.
+const shownInFlow = (panel) => !panel.matches(':popover-open') && getComputedStyle(panel).display !== 'none';
 
 document.addEventListener('pointerover', (event) => {
 	// Read at event time, not at load: a tablet that gains a mouse is handled.
 	if (!fine.matches) return;
-	const wrapper = crossing(event);
+	// Only the innermost wrapper opens. The ones above it are already open,
+	// because the pointer had to cross them to get here.
+	const wrappers = wrappersOf(event.target);
+	// Being back over a level cancels the close it, and every level above it,
+	// scheduled when the pointer crossed a gap on the way here. Without this
+	// the parent's close fires later and takes the submenu down with it.
+	for (const outer of wrappers) clearTimeout(timers.get(outer));
+	const wrapper = wrappers[0];
 	const parts = wrapper && partsOf(wrapper);
 	if (!parts) return;
 	schedule(wrapper, delay(wrapper, '--yeti-dropdown-open-delay'), () => {
 		// showPopover throws when the popover is already open.
-		if (parts.panel.matches(':popover-open')) return;
+		if (parts.panel.matches(':popover-open') || shownInFlow(parts.panel)) return;
 		parts.panel.showPopover();
 		opened.add(parts.panel);
 		// However it closes next, from here, Escape, or a click outside, it
@@ -76,18 +108,24 @@ document.addEventListener('pointerover', (event) => {
 // the panel is still up; without this the press that follows closes the panel
 // and the stale timer springs it open again a moment later.
 document.addEventListener('pointerdown', (event) => {
-	const wrapper = event.target?.closest?.('[data-trigger="hover"]');
-	if (wrapper) clearTimeout(timers.get(wrapper));
+	// Every level that holds the press, since the attribute sits only on the
+	// outermost one and a nested level has its own pending open.
+	for (const wrapper of wrappersOf(event.target)) clearTimeout(timers.get(wrapper));
 }, { capture: true });
 
 document.addEventListener('pointerout', (event) => {
 	if (!fine.matches) return;
-	const wrapper = crossing(event);
-	const parts = wrapper && partsOf(wrapper);
-	if (!parts) return;
-	schedule(wrapper, delay(wrapper, '--yeti-dropdown-close-delay'), () => {
-		// hidePopover throws when the popover is already closed.
-		if (!opened.has(parts.panel) || !parts.panel.matches(':popover-open')) return;
-		parts.panel.hidePopover();
-	});
+	// A move that stays inside a wrapper is not a crossing for it. Leaving the
+	// page from a leaf crosses every level, so every level schedules its close;
+	// moving between two rows of one panel crosses only the row's own level.
+	for (const wrapper of wrappersOf(event.target)) {
+		if (wrapper.contains(event.relatedTarget)) continue;
+		const parts = partsOf(wrapper);
+		if (!parts) continue;
+		schedule(wrapper, delay(wrapper, '--yeti-dropdown-close-delay'), () => {
+			// hidePopover throws when the popover is already closed.
+			if (!opened.has(parts.panel) || !parts.panel.matches(':popover-open')) return;
+			parts.panel.hidePopover();
+		});
+	}
 });

@@ -34,6 +34,90 @@
 					<button type="button">Contact</button>
 				</div>
 			</div>
+			<ul role="list" id="tree-list">
+				<li class="dropdown" id="tree">
+					<a href="#" id="tree-link">Tree</a>
+					<button type="button" popovertarget="tree-menu" id="tree-toggle" aria-label="Tree pages"></button>
+					<ul id="tree-menu" popover role="list">
+						<li><a href="#" id="tree-plain">Plain page</a></li>
+						<li class="dropdown" id="sub">
+							<a href="#" id="sub-link">Sub</a>
+							<button type="button" popovertarget="sub-menu" id="sub-toggle" aria-label="Sub pages"></button>
+							<ul id="sub-menu" popover role="list">
+								<li><a href="#" id="leaf">Leaf</a></li>
+							</ul>
+						</li>
+						<li class="dropdown" id="lab">
+							<button type="button" popovertarget="lab-menu" id="lab-trigger">Label</button>
+							<ul id="lab-menu" popover role="list">
+								<li><a href="#" id="lab-leaf">Label leaf</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<ul role="list" id="h-tree-list" style="margin-inline-start: 120px; margin-block-start: 80px;">
+				<li class="dropdown" id="h-tree" data-trigger="hover">
+					<a href="#" id="h-tree-link">Tree</a>
+					<button type="button" popovertarget="h-tree-menu" id="h-tree-toggle" aria-label="Hover top toggle"></button>
+					<ul id="h-tree-menu" popover role="list">
+						<li><a href="#" id="h-tree-plain">Plain page</a></li>
+						<li class="dropdown" id="h-sub">
+							<a href="#" id="h-sub-link">Sub</a>
+							<button type="button" popovertarget="h-sub-menu" id="h-sub-toggle" aria-label="Hover inner toggle"></button>
+							<ul id="h-sub-menu" popover role="list">
+								<li><a href="#" id="h-leaf">Leaf</a></li>
+							</ul>
+						</li>
+						<li class="dropdown" id="h-lab">
+							<button type="button" popovertarget="h-lab-menu" id="h-lab-trigger">Label</button>
+							<ul id="h-lab-menu" popover role="list">
+								<li><a href="#" id="h-lab-leaf">Label leaf</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<ul role="list" id="g-tree-list" style="margin-block-start: 80px;">
+				<li class="dropdown" id="g-tree" data-grouped>
+					<a href="#" id="g-tree-link">Grouped</a>
+					<button type="button" popovertarget="g-tree-menu" id="g-tree-toggle" aria-label="Grouped menu"></button>
+					<ul id="g-tree-menu" popover role="list">
+						<li class="dropdown" id="g-a">
+							<a href="#" id="g-a-link">Section A</a>
+							<button type="button" popovertarget="g-a-menu" id="g-a-toggle" aria-label="Section A pages"></button>
+							<ul id="g-a-menu" popover role="list">
+								<li><a href="#" id="g-a-1">A one</a></li>
+								<li><a href="#" id="g-a-2">A two</a></li>
+							</ul>
+						</li>
+						<li class="dropdown" id="g-b">
+							<a href="#" id="g-b-link">Section B</a>
+							<button type="button" popovertarget="g-b-menu" id="g-b-toggle" aria-label="Section B pages"></button>
+							<ul id="g-b-menu" popover role="list">
+								<li><a href="#" id="g-b-1">B one</a></li>
+								<li><a href="#" id="g-b-2">B two</a></li>
+							</ul>
+						</li>
+						<li><a href="#" id="g-plain">Plain entry</a></li>
+						<li class="dropdown" id="g-lab">
+							<button type="button" popovertarget="g-lab-menu" id="g-lab-trigger">More</button>
+							<ul id="g-lab-menu" popover role="list">
+								<li><a href="#" id="g-lab-leaf">More leaf</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<div class="dropdown" id="h-share" data-trigger="hover">
+				<button class="button" type="button" popovertarget="h-share-menu" id="h-share-trigger" data-emphasis="medium">Share</button>
+				<div id="h-share-menu" popover>
+					<a href="#" id="h-share-link">Copy link</a>
+					<a href="#">Email</a>
+					<button type="button" popovertarget="h-other" id="h-other-button">Elsewhere</button>
+				</div>
+			</div>
+			<div id="h-other" popover>Somewhere else</div>
 		</div>
 	</main>
 </body>

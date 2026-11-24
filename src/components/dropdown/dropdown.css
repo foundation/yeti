@@ -5,6 +5,11 @@
 @layer yeti.components {
 	.dropdown { display: inline-block; }
 	.dropdown > [popover] {
+		/* An item's corners sit inside the panel's, so its radius is the
+		   panel's less the padding between them. With the default tokens that
+		   is nothing, so the fill falls back to the small radius, though never
+		   to more than the panel's own: a square panel keeps square items. */
+		--_yeti-dropdown-item-radius: max(calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding)), min(var(--yeti-dropdown-radius), var(--yeti-radius-sm)));
 		margin: 0;
 		padding: var(--yeti-dropdown-padding);
 		border: 0;
@@ -16,7 +21,7 @@
 		min-inline-size: var(--yeti-dropdown-min);
 		border-radius: var(--yeti-dropdown-radius);
 		background-color: var(--yeti-dropdown-surface);
-		color: var(--yeti-color-text);
+		color: var(--yeti-dropdown-text);
 		box-shadow: var(--yeti-shadow-md);
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease);
 	}
@@ -28,7 +33,7 @@
 		min-block-size: var(--yeti-control-size);
 		padding-inline: var(--yeti-space-sm);
 		border: 0;
-		border-radius: calc(var(--yeti-dropdown-radius) - var(--yeti-dropdown-padding));
+		border-radius: var(--_yeti-dropdown-item-radius);
 		background-color: transparent;
 		color: inherit;
 		font: inherit;
@@ -37,7 +42,185 @@
 		cursor: pointer;
 	}
 	.dropdown > [popover] a:hover,
-	.dropdown > [popover] button:hover { background-color: var(--yeti-color-surface-sunken); }
+	.dropdown > [popover] button:hover { background-color: var(--yeti-dropdown-hover); }
+	/* A button does not fill its row the way a link does: with an automatic
+	   width it shrinks to its label, so a label-only submenu row or a plain
+	   action such as Sign out would be a short pill, with its chevron beside
+	   the text and only the text clickable. A button that starts its row
+	   fills it instead. The split toggle comes after its link, so it is never
+	   matched and keeps its square. */
+	.dropdown > [popover] :is(li, .dropdown) > button:first-child { inline-size: 100%; }
+
+	/* A panel may be a list. The list's own bullets and the items' margins go,
+	   so a ul of li reads the same as a div of bare links. */
+	.dropdown > ul[popover] { list-style: none; }
+	.dropdown > [popover] li { margin: 0; }
+
+	/* A split parent: the label is a real link and a small button beside it
+	   opens the panel. The button is a control-sized square so it is easy to
+	   hit, and it always carries the chevron, because it has no text to say
+	   what it does. */
+	.dropdown:has(> a + button) {
+		display: inline-flex;
+		align-items: flex-start;
+	}
+	.dropdown > a + button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		inline-size: var(--yeti-control-size);
+		block-size: var(--yeti-control-size);
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	/* The chevron is a two-border square. Its borders are physical, not
+	   logical, so a rotation means the same direction in either page direction
+	   and the turns below do the mirroring. It points down. A
+	   label trigger draws it only where it marks a submenu: inside another
+	   dropdown's panel, or inside the nav's list, which is both the bar and
+	   its open panel. A standalone dropdown button is left as it was. */
+	.dropdown > a + button::after,
+	:is(.dropdown > [popover], .nav > ul[popover]) .dropdown > button:first-child::after {
+		content: "";
+		/* A label long enough to wrap takes the whole row, and would squeeze
+		   the chevron to make room. */
+		flex: none;
+		inline-size: 0.5em;
+		block-size: 0.5em;
+		border-bottom: 2px solid currentColor;
+		border-right: 2px solid currentColor;
+		rotate: var(--_yeti-turn, 45deg);
+		translate: var(--_yeti-nudge, 0 -0.15em);
+	}
+	/* Two cases that never overlap, so neither depends on source order. The
+	   nav's bar trigger has no flex gap of its own, so its chevron keeps a
+	   space from the text; it is a direct child of the nav's list items. A
+	   trigger inside a dropdown panel, even a panel in a nav, fills its row
+	   (the rule above), so the auto margin takes the free space and puts its
+	   chevron at the row's inline end. */
+	.nav > ul[popover] > li.dropdown > button:first-child::after,
+	.nav > ul[popover] > li > .dropdown > button:first-child::after { margin-inline-start: var(--yeti-space-xs); }
+	.dropdown > [popover] .dropdown > button:first-child::after { margin-inline-start: auto; }
+
+	/* Direction. A first-level chevron points down and turns up while its own
+	   panel is open. Inside a panel it points to the inline end, so a
+	   right-to-left page mirrors it, and turns back toward the inline start
+	   while its own panel is open. The turn is set on the button as a private
+	   property, which the chevron above reads, so no rule here has to outrank
+	   the chevron's own selector. The nudge puts the rotated corner back in
+	   the middle of the box. */
+	.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: 225deg;
+		--_yeti-nudge: 0 0.15em;
+	}
+	.dropdown > [popover] .dropdown > :is(a + button, button:first-child) {
+		--_yeti-turn: -45deg;
+		--_yeti-nudge: -0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: 135deg;
+		--_yeti-nudge: 0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:dir(rtl) > :is(a + button, button:first-child) {
+		--_yeti-turn: 135deg;
+		--_yeti-nudge: 0.15em 0;
+	}
+	.dropdown > [popover] .dropdown:dir(rtl):has(> [popover]:popover-open) > :is(a + button, button:first-child) {
+		--_yeti-turn: -45deg;
+		--_yeti-nudge: -0.15em 0;
+	}
+
+	/* In a panel the row is the whole panel width. The link takes what the
+	   toggle leaves and wraps when the label is long; the toggle keeps to the
+	   first line at the inline end. */
+	.dropdown > [popover] .dropdown:has(> a + button) {
+		display: flex;
+		align-items: flex-start;
+	}
+	.dropdown > [popover] .dropdown > a:has(+ button) {
+		flex: 1;
+		min-inline-size: 0;
+	}
+	.dropdown > [popover] .dropdown > a + button {
+		padding-inline: 0;
+		border-radius: var(--_yeti-dropdown-item-radius);
+	}
+	.dropdown > [popover] .dropdown > a + button:hover { background-color: var(--yeti-dropdown-hover); }
+
+	/* Grouped. Each second-level item that is a page with children becomes a
+	   heading with its pages listed under it, in columns, instead of a flyout.
+	   The panel is a row of columns that wraps to further rows where they do
+	   not fit, so a narrow screen stacks them; it never grows past the
+	   viewport less a margin each side. Each such section's own panel is still
+	   a closed popover, shown in flow the way the nav shows a group in its open
+	   panel: that keeps its links in the tab order, in visual order, and out of
+	   the top layer. Only a section with a link can be a heading, because a
+	   button would open its popover over the list. A section that is only a
+	   label is left as it is in any panel: its button and its flyout card,
+	   one more entry in the columns. The rules apply to the grouped panel only
+	   while it is open as a popover, and never inside an open nav panel, where
+	   a group is an in-place list and the nav's own rules shape it. */
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: var(--yeti-space-md);
+		max-inline-size: calc(100vw - 2 * var(--yeti-space-md));
+		overflow: auto;
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > li {
+		flex: 0 1 auto;
+		min-inline-size: var(--yeti-dropdown-min);
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown { display: block; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] {
+		display: block;
+		position: static;
+		inset: auto;
+		inline-size: auto;
+		min-inline-size: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		box-shadow: none;
+		overflow: visible;
+		opacity: 1;
+	}
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > a + button { display: none; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > a {
+		font-size: var(--yeti-text-sm);
+		font-weight: var(--yeti-weight-strong);
+	}
+	/* A page's own children would be a fourth level: its link stays, and its
+	   toggle and panel go. A label with only children has nothing to show. */
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] .dropdown > :is([popover], a + button) { display: none; }
+	.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) > .dropdown:has(> a) > [popover] .dropdown:not(:has(> a)) { display: none; }
+
+	/* The current page. A link in a panel that is marked current takes
+	   --yeti-dropdown-current, the variant's text color unless a theme sets
+	   it, and the strong weight. Each parent above the page, link and toggle,
+	   takes the same color at the normal weight, so the way down to the page
+	   is traced without a second page looking current. A parent is matched
+	   only when it contains the page, not when it sits beside it. A dropdown
+	   outside the nav has no variant scope of its own, so the color falls
+	   back to the default variant's. A trigger that is a .button keeps its
+	   own text, which is drawn for its own fill. The nav colors its own
+	   top-level parents in the bar. */
+	.dropdown > [popover] a[aria-current] {
+		color: var(--yeti-dropdown-current, var(--_yeti-variant-text, var(--yeti-color-primary-text)));
+		font-weight: var(--yeti-weight-strong);
+	}
+	.dropdown:has([aria-current="page"]) > :is(a, button):not(.button),
+	.dropdown > [popover] .dropdown:has([aria-current="page"]) > :is(a, button):not(.button) {
+		color: var(--yeti-dropdown-current, var(--_yeti-variant-text, var(--yeti-color-primary-text)));
+	}
 
 	/* Anchored under its own trigger. The name is scoped to this dropdown, so
 	   a page of them does not hang every panel off the last one. Without
@@ -46,6 +229,12 @@
 	@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
 		.dropdown { anchor-scope: --yeti-dropdown; }
 		.dropdown > button[popovertarget] { anchor-name: --yeti-dropdown; }
+		/* A split parent's panel opens under the whole row, its link and its
+		   toggle, not under the small toggle alone: the first level reads as
+		   the item's own, and a pointer that moves straight down from the link
+		   lands in the panel instead of leaving the dropdown. */
+		.dropdown:has(> a + button) { anchor-name: --yeti-dropdown; }
+		.dropdown:has(> a + button) > button[popovertarget] { anchor-name: none; }
 		.dropdown > [popover]:popover-open {
 			position: fixed;
 			position-anchor: --yeti-dropdown;
@@ -53,6 +242,43 @@
 			margin-block-start: var(--yeti-space-xs);
 		}
 		.dropdown[data-side="end"] > [popover]:popover-open { position-area: block-end span-inline-start; }
+		/* A grouped panel is as wide as its columns, not as wide as the room
+		   left beside its trigger, so it lines up with the trigger's inline
+		   start and overflows that area on purpose. Where the columns would pass
+		   the far edge, the fallback gives it the whole line and sets it against
+		   the viewport margin instead. */
+		@supports (position-try-fallbacks: flip-inline) {
+			.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+				inline-size: max-content;
+				justify-self: start;
+				position-try-fallbacks: --yeti-dropdown-edge;
+			}
+			.dropdown[data-grouped][data-side="end"] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
+				justify-self: end;
+				position-try-fallbacks: --yeti-dropdown-edge-start;
+			}
+		}
+		/* A nested panel flies out beside its own row and flips to the other
+		   side where it would leave the screen. The row is the anchor, because
+		   a split row's toggle is too small to align a panel against. */
+		.dropdown > [popover] .dropdown { anchor-name: --yeti-dropdown; }
+		.dropdown > [popover] .dropdown > button[popovertarget] { anchor-name: none; }
+		.dropdown > [popover] .dropdown > [popover]:popover-open {
+			position-area: inline-end span-block-end;
+			position-try-fallbacks: flip-inline;
+			margin-block: 0;
+			margin-inline: var(--yeti-space-xs);
+		}
+	}
+	@position-try --yeti-dropdown-edge {
+		position-area: block-end span-all;
+		justify-self: end;
+		margin-inline: 0 var(--yeti-space-md);
+	}
+	@position-try --yeti-dropdown-edge-start {
+		position-area: block-end span-all;
+		justify-self: start;
+		margin-inline: var(--yeti-space-md) 0;
 	}
 	@starting-style {
 		.dropdown > [popover]:popover-open { opacity: 0; }

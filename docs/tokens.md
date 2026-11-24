@@ -154,6 +154,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-hue-alert` | `25` | Alert hue; 25 is red. |
 | `--yeti-hue-neutral` | `var(--yeti-hue-primary)` | Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set. |
 | `--yeti-chroma` | `0.15` | Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues. |
+| `--yeti-chroma-neutral` | `0.02` | How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted. |
 
 </div>
 
@@ -459,7 +460,10 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-nav-brand-size` | `1em` | Size of the nav's brand; 1em is the bar's own size. |
 | `--yeti-nav-logo-size` | `var(--yeti-control-size)` | Height of a logo in the nav's brand; its width follows the image. |
 | `--yeti-nav-panel-text` | `var(--yeti-color-text)` | Text of the open panel, its links and its close button. Set it with --yeti-nav-panel. |
-| `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar; the bar's own color unless set. The current link and a hovered link keep the variant's tints, and the open panel resets it to its own text color. |
+| `--yeti-nav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-nav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color. |
+| `--yeti-nav-current-surface` | transparent (override only) | Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. A link under the pointer still takes --yeti-nav-hover. It does not reach a dropdown's floating panel or the open panel. |
+| `--yeti-nav-link` | `currentColor` | Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color. |
 
 </div>
 
@@ -492,6 +496,19 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-toc-scroll` | `smooth, and auto under reduced motion` | How the page scrolls when a link in a toc, or an in-page link in a nav, is followed. A components-layer declaration outranks the reset, so the preference reaches the page through this token. The name keeps the toc it started with. |
 | `--yeti-toc-padding` | `var(--yeti-space-xs)` | The rows' block padding: a control's density by default, a book's contents page sets it smaller. |
 | `--yeti-toc-hover` | var(--_yeti-variant-subtle) (override only) | Background of a toc link under the pointer. Read with a fallback to the variant's subtle tint; set transparent for an underline-only list. |
+
+</div>
+
+## Subnav
+
+<div class="scroller" role="region" aria-label="Subnav tokens" tabindex="0" markdown="1">
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `--yeti-subnav-indent` | `var(--yeti-space-md)` | How far each level of a subnav steps in from the one above it. |
+| `--yeti-subnav-hover` | var(--_yeti-variant-subtle) (override only) | Background of a subnav link or toggle under the pointer. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off. |
+| `--yeti-subnav-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link, and of the row of each parent that holds it. Read with a fallback to the variant's text color. |
+| `--yeti-subnav-current-surface` | transparent (override only) | Background of the current page's link in a subnav; off unless set. The parents above it are not filled, and a link under the pointer still takes --yeti-subnav-hover. |
 
 </div>
 
@@ -561,9 +578,12 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | Token | Default | Description |
 | --- | --- | --- |
 | `--yeti-dropdown-surface` | `var(--yeti-color-surface-raised)` | Background of the open panel. |
+| `--yeti-dropdown-text` | `var(--yeti-color-text)` | Text color of the open panel and its items. |
+| `--yeti-dropdown-hover` | `var(--yeti-color-surface-sunken)` | Background of a panel item under the pointer. |
+| `--yeti-dropdown-current` | var(--_yeti-variant-text) (override only) | Color of the current page's link inside a dropdown's panel, and of each parent there that holds it. Read with a fallback to the variant's text color. |
 | `--yeti-dropdown-radius` | `var(--yeti-radius-md)` | Corner of the panel. |
 | `--yeti-dropdown-padding` | `var(--yeti-space-xs)` | Padding around the items. |
-| `--yeti-dropdown-min` | `12rem` | Least width of the panel. |
+| `--yeti-dropdown-min` | `12rem` | Least width of the panel, and of each column in a grouped panel. |
 | `--yeti-dropdown-open-delay` | `100ms` | How long the pointer must rest on a data-trigger="hover" dropdown before its panel opens. Read by hover.js, so it has no effect without that module. |
 | `--yeti-dropdown-close-delay` | `200ms` | How long a hover-triggered panel waits after the pointer leaves before it closes, so the gap between trigger and panel is forgiving. Read by hover.js. |
 
@@ -669,4 +689,4 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 </div>
 
-Yeti also defines 48 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.
+Yeti also defines 47 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.

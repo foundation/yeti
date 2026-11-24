@@ -35,6 +35,13 @@
       "description": "Space between the bar's parts and between the links."
     },
     {
+      "name": "data-justify",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "start",
+      "description": "Where the links sit in the bar's free room: beside the brand, in the middle between the brand and the actions, or at the end with the actions straight after them. With center or end the toggle sits at the end below the threshold."
+    },
+    {
       "name": "data-sticky",
       "type": "boolean",
       "description": "Keep the bar at the top of the scrollport as the page scrolls, flush with the edge."
@@ -64,7 +71,7 @@
       "selector": "li",
       "min": 1,
       "max": null,
-      "description": "An entry in the list; each holds one link."
+      "description": "An entry in the list; each holds one link, or a dropdown: a split parent's link, toggle and panel, or a label button and its panel."
     },
     {
       "selector": "[data-close]",
@@ -76,7 +83,7 @@
       "selector": ".dropdown",
       "min": 0,
       "max": null,
-      "description": "A nav item may hold a dropdown for its own children; the panel is in the top layer, so the bar never clips it. In the bar it is the usual card; behind the toggle it becomes a full-width block docked under its trigger and squared off against the open panel's edges."
+      "description": "A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, every level open and its toggle hidden. With nav.js each group, a label-only one included, folds in place behind its button, and the branch holding the current page starts open. Without the module a label-only dropdown opens as a full-width block docked under its trigger and squared off against the open panel's edges."
     },
     {
       "selector": "> [data-actions]",
@@ -154,7 +161,23 @@
     {
       "name": "--yeti-nav-link",
       "public": true,
-      "description": "Color of a plain link in the bar; the bar's own color unless set. Current and hover keep the variant's tints, and the open panel resets it to its own text color."
+      "description": "Color of a plain link in the bar and of each top-level dropdown's own link and button; the bar's own color unless set. The current link takes --yeti-nav-current and a hovered one --yeti-nav-hover. It does not reach a dropdown's panel, and the open panel resets it to its own text color."
+    },
+    {
+      "name": "--yeti-nav-hover",
+      "public": true,
+      "description": "Background of a link or top-level dropdown trigger in the bar under the pointer; not the nav's toggle, and not items in a dropdown's floating panel, which take --yeti-dropdown-hover. The open panel keeps the variant's subtle tint on its own surface. Read with a fallback to the variant's subtle tint; set transparent to turn the fill off."
+    },
+    {
+      "name": "--yeti-nav-current-surface",
+      "public": true,
+      "description": "Background of the current page's link in the bar and of the top-level parent that holds it; off unless set. It does not reach a dropdown's floating panel or the open panel."
+    },
+    { "name": "--_yeti-nav-current-surface", "public": false },
+    {
+      "name": "--yeti-nav-current",
+      "public": true,
+      "description": "Color of the current page's link in the bar and of the top-level parent that holds it; a dropdown's floating panel takes --yeti-dropdown-current, and the open panel keeps the variant's text color on its own surface. Read with a fallback to the variant's text color."
     },
     {
       "name": "--yeti-stretch-small",
@@ -227,6 +250,11 @@
       "description": "Weight of the brand, and of the current page's link."
     },
     {
+      "name": "--yeti-space-md",
+      "public": true,
+      "description": "How far each level of a submenu shown in place in the open panel is indented."
+    },
+    {
       "name": "--yeti-space-xs",
       "public": true,
       "description": "Block padding of a link, and of the close button."
@@ -235,6 +263,11 @@
       "name": "--yeti-duration-fast",
       "public": true,
       "description": "How long the panel takes to open."
+    },
+    {
+      "name": "--yeti-duration-base",
+      "public": true,
+      "description": "How long a group in the open panel takes to fold or unfold."
     },
     {
       "name": "--yeti-ease",
@@ -286,6 +319,22 @@
     {
       "name": "--_yeti-nav-link",
       "public": false
+    },
+    {
+      "name": "--_yeti-nav-hover",
+      "public": false
+    },
+    {
+      "name": "--_yeti-nav-current",
+      "public": false
+    },
+    {
+      "name": "--_yeti-turn",
+      "public": false
+    },
+    {
+      "name": "--_yeti-nudge",
+      "public": false
     }
   ],
   "a11y": {
@@ -295,7 +344,7 @@
     "keyboard": [
       {
         "key": "Enter / Space",
-        "action": "On the toggle, opens or closes the list."
+        "action": "On the toggle, opens or closes the list. With nav.js, on a group's button in the open panel, opens or closes that group in place."
       },
       {
         "key": "Tab",
@@ -306,9 +355,9 @@
         "action": "Closes the open list and returns focus to the toggle."
       }
     ],
-    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item."
+    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it."
   },
-  "js": null,
+  "js": [{ "module": "nav.js", "optional": true }],
   "support": {
     "unguarded": [
       "popover",
@@ -316,7 +365,7 @@
       "@starting-style"
     ],
     "guarded": [
-      "anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, and a submenu in the open panel docks to the foot of it)"
+      "anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, and a label-only submenu in the open panel, without the module, docks to the foot of it)"
     ]
   },
   "since": "7.0.0",

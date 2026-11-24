@@ -1,6 +1,6 @@
 ## When to use it
 
-Alternative views of one thing: a profile and its billing, a chart and its table. Not for steps in a sequence, which want a form, and not for hiding content a reader needs to compare against something else.
+Alternative views of one thing: a profile and its billing, a chart and its table. Not for steps in a sequence, which want a form, and not for hiding content a reader needs to compare against something else. For a row of links to other pages that looks like tabs, use `tabnav`.
 
 ## How it works
 

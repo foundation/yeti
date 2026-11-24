@@ -1,0 +1,114 @@
+/* Subnav: a vertical navigation for a sidebar, whose sections open in place.
+   A parent page is its link with a details beside it; the summary is only the
+   toggle, so the link still goes to its page. The browser does the opening,
+   the keyboard and the announcing, and the template marks the way to the
+   current page by writing open on each details above it, because CSS cannot
+   open one. No ids and no script. */
+@layer yeti.components {
+	.subnav:not([data-variant]) {
+		--_yeti-variant-subtle: var(--yeti-color-primary-subtle);
+		--_yeti-variant-text: var(--yeti-color-primary-text);
+	}
+	.subnav ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	/* The prose layer spaces list items; the rows here carry their own room. */
+	.subnav li { margin: 0; }
+	/* Every level steps in by one indent, so a third level is simply the same
+	   list inside the same details again. */
+	.subnav details > ul { padding-inline-start: var(--yeti-subnav-indent); }
+
+	/* Each link is a full-width row, a control tall, so a short title and the
+	   toggle beside it line up and both are easy to hit. */
+	.subnav a {
+		display: flex;
+		align-items: center;
+		min-block-size: var(--yeti-control-size);
+		padding: var(--yeti-space-xs) var(--yeti-space-sm);
+		color: var(--yeti-color-text);
+		text-decoration: none;
+	}
+	/* A parent that is not a page keeps the base disclosure, its name and the
+	   chevron in one row, padded like the links so its text lines up with
+	   theirs. Its end padding puts the chevron's centre half a control from
+	   the edge, where a toggle's chevron sits, so every chevron in the column
+	   lines up; the quarter em is half the base layer's chevron. */
+	.subnav details > summary {
+		min-block-size: var(--yeti-control-size);
+		padding: var(--yeti-space-xs) var(--yeti-space-sm);
+		padding-inline-end: calc(var(--yeti-control-size) / 2 - 0.25em);
+	}
+	/* The current page's fill, off unless a theme sets it. Only the page's own
+	   link takes it: its parents are all in view above it, and a column of
+	   filled rows would hide which one the reader is on. It comes before the
+	   hover rule, which weighs the same, so the pointer still shows on it. */
+	.subnav a[aria-current] { background-color: var(--yeti-subnav-current-surface, transparent); }
+	/* Read with a fallback, so a per-element --yeti-subnav-hover still wins over
+	   whichever variant is set here, and transparent turns the fill off. */
+	.subnav :is(a, summary):hover { background-color: var(--yeti-subnav-hover, var(--_yeti-variant-subtle)); }
+	/* The ring is drawn inside the row. An open section clips its content to
+	   reveal it as it grows, and a sidebar often scrolls, so a ring outside
+	   the row would lose its edges to one or the other. */
+	.subnav :is(a, summary):focus-visible { outline-offset: -2px; }
+
+	/* An item that holds the current page shows its own row in the current
+	   color at the normal weight, so the reader sees which section they are
+	   in. The page itself adds the strong weight. The page's own item matches
+	   the first rule too, since it holds the page, but that rule sets only the
+	   color, so the page keeps its weight. */
+	.subnav li:has([aria-current="page"]) > a,
+	.subnav li:has([aria-current="page"]) > details > summary { color: var(--yeti-subnav-current, var(--_yeti-variant-text)); }
+	.subnav a[aria-current] {
+		color: var(--yeti-subnav-current, var(--_yeti-variant-text));
+		font-weight: var(--yeti-weight-strong);
+	}
+
+	/* A parent page: its link and its toggle share the first row, and its
+	   pages open in the second. The item is the grid, and the details spans
+	   both rows and both columns as a subgrid, so the summary can sit in the
+	   first row beside the link while it stays inside its details, and the
+	   panel takes the second row below both. The first row is as tall as the
+	   taller of the two, so a title that wraps keeps the toggle on its first
+	   line. The base layer opens a details by moving its second row from 0fr
+	   to 1fr; here the details borrows its rows from the item, so the same
+	   transition runs on the item instead. */
+	.subnav li:has(> a + details) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto 0fr;
+		align-content: start;
+		transition: grid-template-rows var(--yeti-duration-base) var(--yeti-ease);
+	}
+	.subnav li:has(> a + details[open]) { grid-template-rows: auto 1fr; }
+	/* The details covers the link's cell too, so the link is lifted above it
+	   or the details would take its clicks and its hover. */
+	.subnav li > a:has(+ details) {
+		grid-area: 1 / 1;
+		z-index: 1;
+	}
+	.subnav li > a + details {
+		grid-column: 1 / -1;
+		grid-row: 1 / span 2;
+		grid-template-columns: subgrid;
+		grid-template-rows: subgrid;
+	}
+	.subnav li > a + details::details-content {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		min-block-size: 0;
+	}
+	/* The toggle is a control-sized square showing only the chevron. Its name
+	   is the summary's aria-label, since it has no text of its own. */
+	.subnav li > a + details > summary {
+		grid-area: 1 / 2;
+		align-self: start;
+		justify-content: center;
+		inline-size: var(--yeti-control-size);
+		block-size: var(--yeti-control-size);
+		min-block-size: 0;
+		padding: 0;
+	}
+	.subnav li > a + details > summary::after { margin-inline: 0; }
+}

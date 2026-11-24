@@ -184,13 +184,13 @@ A caption under a quotation is an attribution, and the dash is what says so. It 
 ## Code
 
 <section class="box" data-border>
-	<p>Inline <code>--yeti-space-md</code>, a key like <kbd>Esc</kbd>, and a program's output like <samp>validate: ok (49 components)</samp> all share one face.</p>
+	<p>Inline <code>--yeti-space-md</code>, a key like <kbd>Esc</kbd>, and a program's output like <samp>validate: ok (53 components)</samp> all share one face.</p>
 	<pre><code>@layer yeti.reset, yeti.base, yeti.theme, yeti.layouts, yeti.components, yeti.utilities;</code></pre>
 </section>
 
 ```html
 <section class="box" data-border>
-	<p>Inline <code>--yeti-space-md</code>, a key like <kbd>Esc</kbd>, and a program's output like <samp>validate: ok (49 components)</samp> all share one face.</p>
+	<p>Inline <code>--yeti-space-md</code>, a key like <kbd>Esc</kbd>, and a program's output like <samp>validate: ok (53 components)</samp> all share one face.</p>
 	<pre><code>@layer yeti.reset, yeti.base, yeti.theme, yeti.layouts, yeti.components, yeti.utilities;</code></pre>
 </section>
 ```

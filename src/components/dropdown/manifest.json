@@ -14,6 +14,11 @@
       "description": "Which edge of the trigger the panel lines up with."
     },
     {
+      "name": "data-grouped",
+      "type": "boolean",
+      "description": "List each second-level item as a heading with its pages under it, in columns, instead of flying out beside the row."
+    },
+    {
       "name": "data-trigger",
       "type": "enum",
       "vocabulary": "trigger",
@@ -23,6 +28,12 @@
   ],
   "classes": [],
   "children": [
+    {
+      "selector": "> a",
+      "min": 0,
+      "max": 1,
+      "description": "The parent page's link, before the button. With it the button is a small toggle beside the link."
+    },
     {
       "selector": "> button[popovertarget]",
       "min": 1,
@@ -37,10 +48,38 @@
     }
   ],
   "tokens": [
+    { "name": "--_yeti-turn", "public": false },
+    { "name": "--_yeti-nudge", "public": false },
+    { "name": "--_yeti-dropdown-item-radius", "public": false },
+    {
+      "name": "--yeti-color-primary-text",
+      "public": true,
+      "description": "The color of the current page's link and of each parent above it, when no variant scope is set."
+    },
+    {
+      "name": "--yeti-weight-strong",
+      "public": true,
+      "description": "The weight of the current page's link in a panel, and of a grouped panel's headings."
+    },
     {
       "name": "--yeti-dropdown-surface",
       "public": true,
       "description": "Background of the panel."
+    },
+    {
+      "name": "--yeti-dropdown-text",
+      "public": true,
+      "description": "Text color of the open panel and its items."
+    },
+    {
+      "name": "--yeti-dropdown-hover",
+      "public": true,
+      "description": "Background of a panel item under the pointer."
+    },
+    {
+      "name": "--yeti-dropdown-current",
+      "public": true,
+      "description": "Color of the current page's link inside a panel, and of each parent there that holds it; the variant's text color unless set."
     },
     {
       "name": "--yeti-dropdown-radius",
@@ -55,7 +94,12 @@
     {
       "name": "--yeti-dropdown-min",
       "public": true,
-      "description": "Least width of the panel."
+      "description": "Least width of the panel, and of each column in a grouped panel."
+    },
+    {
+      "name": "--yeti-radius-sm",
+      "public": true,
+      "description": "The corners of an item's fill, where the panel's radius less its padding leaves nothing. Never more than the panel's own radius."
     },
     {
       "name": "--yeti-shadow-md",
@@ -78,11 +122,6 @@
       "description": "How long a hover-triggered panel waits after the pointer leaves before closing."
     },
     {
-      "name": "--yeti-color-text",
-      "public": true,
-      "description": "The panel's text."
-    },
-    {
       "name": "--yeti-duration-fast",
       "public": true,
       "description": "How long the panel takes to open."
@@ -103,9 +142,14 @@
       "description": "Inline padding of an item."
     },
     {
-      "name": "--yeti-color-surface-sunken",
+      "name": "--yeti-space-md",
       "public": true,
-      "description": "Background of an item under the pointer."
+      "description": "The margin kept between a grouped panel and the viewport's edges, and the gap between its columns."
+    },
+    {
+      "name": "--yeti-text-sm",
+      "public": true,
+      "description": "The size of a grouped panel's headings."
     }
   ],
   "a11y": {
@@ -121,10 +165,10 @@
       },
       {
         "key": "Escape",
-        "action": "Closes the panel and returns focus to the trigger."
+        "action": "Closes the innermost open panel and returns focus to its trigger."
       }
     ],
-    "notes": "With data-trigger=\"hover\" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role=\"menu\" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, put the dropdown in the li beside the link it belongs to."
+    "notes": "With data-trigger=\"hover\" the module adds opening under the pointer and changes nothing else: the click, the keyboard, focus and the expanded state are all still the browser's, and a pointer that cannot hover never gets it. The trigger needs a name, and the browser sets its expanded state from popovertarget. The items are deliberately ordinary links and buttons with no menu roles: role=\"menu\" promises arrow-key semantics that belong to application menus, and on a website a disclosure panel is both simpler and better announced. Inside a nav, a section with its own page is a split parent: the link, then an empty toggle with an aria-label, then the panel, all inside the dropdown."
   },
   "js": [
     {
@@ -138,7 +182,7 @@
       "@starting-style"
     ],
     "guarded": [
-      "anchor positioning (fallback: the panel is centred by the user agent)"
+      "anchor positioning, position-try (fallback: the panel is centred by the user agent)"
     ]
   },
   "since": "7.0.0",
