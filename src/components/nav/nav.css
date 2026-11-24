@@ -168,6 +168,19 @@
 		inset-inline-end: var(--yeti-space-sm);
 	}
 
+	/* The close button sits over the end of the first row. A link keeps its
+	   label at the start, so the two share that row. A group's toggle, and a
+	   label's chevron, sit at the row's end, exactly under the close button,
+	   and one of the two could not be pressed. So when the first item is a
+	   group the close button takes a row of its own, at the top whatever its
+	   place in the markup. A screen panel centres its rows, clear of the
+	   corner. */
+	.nav:not([data-panel="screen"]) > ul[popover]:popover-open:has(> :nth-child(1 of :not([data-close])) > button[aria-expanded], > :nth-child(1 of :not([data-close])) > .dropdown > button[aria-expanded]) > [data-close] {
+		position: static;
+		order: -1;
+		align-self: flex-end;
+	}
+
 	/* Sheet, the default: under the bar, the full width. Anchored to the bar
 	   where anchor positioning exists; at the top of the viewport otherwise,
 	   which covers the bar, but Escape and a click outside still close it.
@@ -401,6 +414,9 @@
 	   for a chevron inside a panel do not have to be outranked one by one. */
 	.nav > ul[popover]:popover-open .dropdown > a + button[aria-expanded] {
 		grid-column: 2;
+		/* The link is the taller of the two, so the toggle is centred on it
+		   rather than hung from the top of the row. */
+		align-self: center;
 		inline-size: var(--yeti-control-size);
 		block-size: var(--yeti-control-size);
 		min-inline-size: 0;

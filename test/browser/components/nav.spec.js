@@ -750,7 +750,7 @@ test.describe('nav', () => {
 		test('in the panel a toggle sits at the end of its link\'s row', async ({ page }) => {
 			await openPanel(page);
 			const [link, toggle, panel] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-menu'].map((s) => rect(page, s)));
-			expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThan(2);
 			expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
 			expect(toggle.right).toBeLessThanOrEqual(panel.right);
 			expect(Math.abs(toggle.width - toggle.height)).toBeLessThan(2);
@@ -760,7 +760,7 @@ test.describe('nav', () => {
 			await page.evaluate(() => document.querySelector('#nt').setAttribute('data-panel', 'screen'));
 			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
 			const [link, toggle, home] = await Promise.all(['#nt-about-link', '#nt-about-toggle', '#nt-home'].map((s) => rect(page, s)));
-			expect(Math.abs(link.top - toggle.top)).toBeLessThan(2);
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThan(2);
 			expect(toggle.left).toBeGreaterThanOrEqual(link.right - 1);
 			expect(toggle.left - link.right).toBeLessThan(2);
 			const mid = (r) => (r.left + r.right) / 2;
@@ -832,6 +832,43 @@ test.describe('nav', () => {
 			expect(Math.abs(trigger.right - row.right)).toBeLessThanOrEqual(2);
 			expect(Math.abs(toggle.right - row.right)).toBeLessThanOrEqual(2);
 			expect(await chevronRoom(page, '#nt-lab-trigger')).toBeLessThan(2);
+		});
+		test('a group toggle is centred on its link, not hung from the top of the row', async ({ page }) => {
+			await openPanel(page);
+			const [link, toggle] = await Promise.all(['#nt-about-link', '#nt-about-toggle'].map((s) => rect(page, s)));
+			expect(Math.abs((link.top + link.bottom) / 2 - (toggle.top + toggle.bottom) / 2)).toBeLessThanOrEqual(0.5);
+		});
+		// The close button sits over the end of the first row. A link keeps its
+		// label at the start, so the two share the row; a group's toggle and a
+		// label's chevron are at the end, exactly under it.
+		const withClose = (page, first) => page.evaluate((id) => {
+			const li = document.createElement('li');
+			li.setAttribute('data-close', '');
+			li.id = 'nt-close';
+			li.innerHTML = '<button type="button" popovertarget="nt-menu" popovertargetaction="hide" aria-label="Close">×</button>';
+			document.querySelector('#nt-menu').prepend(li);
+			li.after(document.getElementById(id));
+		}, first);
+		for (const [first, control] of [['nt-about', '#nt-about-toggle'], ['nt-lab', '#nt-lab-trigger']]) {
+			test(`the close button and a first item that is a group do not overlap (${first})`, async ({ page }) => {
+				await open(page, 400);
+				await withClose(page, first);
+				await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+				const [close, group] = await Promise.all(['#nt-close button', control].map((s) => rect(page, s)));
+				expect(group.top).toBeGreaterThanOrEqual(close.bottom - 0.5);
+				const before = await expanded(page, control.slice(1));
+				await page.click(control);
+				expect(await expanded(page, control.slice(1))).not.toBe(before);
+				await page.click('#nt-close button');
+				expect(await isOpen(page, 'nt-menu')).toBe(false);
+			});
+		}
+		test('a first item that is a plain link still shares its row with the close button', async ({ page }) => {
+			await open(page, 400);
+			await withClose(page, 'nt-home');
+			await page.click('#nt-toggle'); await settle(page, '#nt-menu');
+			const [close, home] = await Promise.all(['#nt-close button', '#nt-home'].map((s) => rect(page, s)));
+			expect(home.top).toBeLessThan(close.bottom);
 		});
 		test('a label long enough to wrap still keeps a space before its chevron', async ({ page }) => {
 			await openPanel(page);
