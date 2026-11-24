@@ -116,6 +116,7 @@ Label the `nav` — `aria-label="On this page"` — because a page with a toc ha
 | `--yeti-color-primary` | The default variant's color, when data-variant is absent. |
 | `--yeti-color-primary-subtle` | The default variant's hover tint. |
 | `--yeti-color-primary-text` | The default variant's text color. |
+| `--yeti-color-primary-line` | The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color. |
 
 </div>
 
@@ -124,6 +125,7 @@ Label the `nav` — `aria-label="On this page"` — because a page with a toc ha
 - `--_yeti-variant`
 - `--_yeti-variant-subtle`
 - `--_yeti-variant-text`
+- `--_yeti-variant-line`
 - `--_yeti-size-text`
 - `--_yeti-size-space`
 

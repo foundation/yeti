@@ -160,6 +160,7 @@ Attributes that descendants carry, not the root.
 | `--yeti-control-surface` | Background of the control. |
 | `--yeti-control-chevron` | The select's chevron image. |
 | `--yeti-color-alert` | Border of an invalid control. |
+| `--yeti-color-alert-line` | Border of an invalid control. It has a value only when the alert role has a brand color; without one the border falls back to the alert's base step. |
 | `--yeti-color-primary` | The default variant's color, when data-variant is absent. |
 | `--yeti-color-primary-subtle` | The default variant's tint. |
 | `--yeti-color-primary-soft` | The default variant's soft stop. |

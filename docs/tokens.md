@@ -155,6 +155,11 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-hue-neutral` | `var(--yeti-hue-primary)` | Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set. |
 | `--yeti-chroma` | `0.15` | Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues. |
 | `--yeti-chroma-neutral` | `0.02` | How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted. |
+| `--yeti-brand-primary` | unset (override only) | Optional primary brand color, any color. When set, the primary base step is this color exactly and the other primary steps and tones are worked out from it; when not set, --yeti-hue-primary is used. |
+| `--yeti-brand-secondary` | unset (override only) | Optional secondary brand color, any color. When set, the secondary base step is this color exactly and the other secondary steps and tones are worked out from it; when not set, --yeti-hue-secondary is used. |
+| `--yeti-brand-success` | unset (override only) | Optional success brand color, any color. When set, the success base step is this color exactly and the other success steps and tones are worked out from it; when not set, --yeti-hue-success is used. |
+| `--yeti-brand-warning` | unset (override only) | Optional warning brand color, any color. When set, the warning base step is this color exactly and the other warning steps and tones are worked out from it; when not set, --yeti-hue-warning is used. |
+| `--yeti-brand-alert` | unset (override only) | Optional alert brand color, any color. When set, the alert base step is this color exactly and the other alert steps and tones are worked out from it; when not set, --yeti-hue-alert is used. |
 
 </div>
 
@@ -164,35 +169,40 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 | Token | Default | Description |
 | --- | --- | --- |
-| `--yeti-color-primary` | `ladder base of the primary hue` | The brand color: buttons, links, focus. |
+| `--yeti-color-primary` | `ladder base of the primary hue` | The brand color: buttons and other fills. Links and the focus ring use it too, unless the primary has a brand color, when they take the line step. |
 | `--yeti-color-primary-subtle` | `ladder subtle` | Tinted background; hover on surfaces, selection. |
 | `--yeti-color-primary-soft` | `ladder soft` | Borders and dividers in the primary hue. |
 | `--yeti-color-primary-strong` | `ladder strong` | Hover and active state of the primary color. |
 | `--yeti-color-primary-text` | `ladder text` | Primary-hued text on plain surfaces. |
+| `--yeti-color-primary-line` | `no value; with a brand color, the brand's hue held readable on the page` | Has a value only when the primary role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-primary. |
 | `--yeti-on-primary` | `near-white in light, near-black in dark` | Text placed on --yeti-color-primary. |
 | `--yeti-color-secondary` | `ladder base of the secondary hue` | Secondary accent. |
 | `--yeti-color-secondary-subtle` | `ladder subtle` | Tinted background in the secondary hue. |
 | `--yeti-color-secondary-soft` | `ladder soft` | Borders in the secondary hue. |
 | `--yeti-color-secondary-strong` | `ladder strong` | Hover and active state of the secondary color. |
 | `--yeti-color-secondary-text` | `ladder text` | Secondary-hued text on plain surfaces. |
+| `--yeti-color-secondary-line` | `no value; with a brand color, the brand's hue held readable on the page` | Has a value only when the secondary role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-secondary. |
 | `--yeti-on-secondary` | `near-white in light, near-black in dark` | Text placed on --yeti-color-secondary. |
 | `--yeti-color-success` | `ladder base of the success hue` | Positive state. |
 | `--yeti-color-success-subtle` | `ladder subtle` | Tinted background for success messages. |
 | `--yeti-color-success-soft` | `ladder soft` | Borders for success messages. |
 | `--yeti-color-success-strong` | `ladder strong` | Hover and active state of the success color. |
 | `--yeti-color-success-text` | `ladder text` | Success-hued text on plain surfaces. |
+| `--yeti-color-success-line` | `no value; with a brand color, the brand's hue held readable on the page` | Has a value only when the success role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-success. |
 | `--yeti-on-success` | `near-white in light, near-black in dark` | Text placed on --yeti-color-success. |
 | `--yeti-color-warning` | `ladder base of the warning hue` | Caution state. |
 | `--yeti-color-warning-subtle` | `ladder subtle` | Tinted background for warnings. |
 | `--yeti-color-warning-soft` | `ladder soft` | Borders for warnings. |
 | `--yeti-color-warning-strong` | `ladder strong` | Hover and active state of the warning color. |
 | `--yeti-color-warning-text` | `ladder text` | Warning-hued text on plain surfaces. |
+| `--yeti-color-warning-line` | `no value; with a brand color, the brand's hue held readable on the page` | Has a value only when the warning role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-warning. |
 | `--yeti-on-warning` | `near-white in light, near-black in dark` | Text placed on --yeti-color-warning. |
 | `--yeti-color-alert` | `ladder base of the alert hue` | Error and danger state. |
 | `--yeti-color-alert-subtle` | `ladder subtle` | Tinted background for errors. |
 | `--yeti-color-alert-soft` | `ladder soft` | Borders for errors. |
 | `--yeti-color-alert-strong` | `ladder strong` | Hover and active state of the alert color. |
 | `--yeti-color-alert-text` | `ladder text` | Alert-hued text on plain surfaces. |
+| `--yeti-color-alert-line` | `no value; with a brand color, the brand's hue held readable on the page` | Has a value only when the alert role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-alert. |
 | `--yeti-on-alert` | `near-white in light, near-black in dark` | Text placed on --yeti-color-alert. |
 | `--yeti-color-neutral-subtle` | `ladder subtle` | Neutral tint for badges and quiet fills. |
 | `--yeti-color-neutral-soft` | `ladder soft` | Neutral fill for hover states. |
@@ -208,9 +218,9 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-color-border` | `L 0.88 light, 0.30 dark` | Default border and divider. |
 | `--yeti-color-border-strong` | `L 0.75 light, 0.40 dark` | Emphasised border: focused inputs, blockquote rule. |
 | `--yeti-color-scrim` | `the surface at 85%` | A wash over content so something on top of it can be read: a caption over a picture, a veil over a form. Thinned surface, so it dims with the theme rather than tinting. |
-| `--yeti-color-focus` | `var(--yeti-color-primary)` | Focus ring color. |
-| `--yeti-link-color` | var(--yeti-color-primary) (override only) | Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. A theme whose primary is too light to read as text points this at the hue's text step, --yeti-color-primary-text. |
-| `--yeti-link-color-hover` | var(--yeti-color-primary-strong) (override only) | Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links. |
+| `--yeti-color-focus` | `var(--yeti-color-primary-line, var(--yeti-color-primary))` | Focus ring color. |
+| `--yeti-link-color` | var(--yeti-color-primary-line, var(--yeti-color-primary)) (override only) | Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. With a brand color the fallback is the line step, so a light brand color still gives links that read on the page. |
+| `--yeti-link-color-hover` | var(--yeti-color-primary-strong); with a brand color, the primary text step (override only) | Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links. With a brand color the fallback is the text step, since the strong step of a light brand color is a light fill. |
 | `--yeti-white` | `oklch(1 0 0)` | White, in both schemes and under every theme. One of the three colors that never move. |
 | `--yeti-black` | `oklch(0 0 0)` | Black, in both schemes and under every theme. |
 | `--yeti-grey` | `oklch(0.565 0 0)` | 18% reflectance, the photographic middle grey, in both schemes and under every theme. |
@@ -689,4 +699,4 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 </div>
 
-Yeti also defines 47 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.
+Yeti also defines 102 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.

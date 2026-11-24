@@ -113,6 +113,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 | `data-note` | boolean | breakout (> *) |
 | `data-over` | boolean | overlay (> *) |
 | `data-paint` | `primary`, `secondary`, `success`, `warning`, `alert`, `neutral`, `white`, `black`, `grey`, `grey-0`, `grey-10`, `grey-20`, `grey-30`, `grey-40`, `grey-50`, `grey-60`, `grey-70`, `grey-80`, `grey-90`, `grey-100` | box (*) |
+| `data-palette` | boolean | box (*) |
 | `data-ratio` | `1/1`, `4/3`, `3/2`, `16/9`, `21/9` | frame, hero, media |
 | `data-row` | boolean | leaders |
 | `data-rows` | `2`, `3`, `4`, `5`, `6` | grid |
@@ -138,7 +139,7 @@ Every layout is configured with a small set of `data-*` attributes, drawn from a
 
 A name in parentheses is the descendant that carries the attribute, not the layout itself: `layer (> *)` means a child of a `layer`. This table is generated from the manifests by `npm run docs`; the paragraphs around it are not.
 
-Three names in the table are not layout at all and work on any element: `data-paint` and `data-text`, which the [color guide](color.md) covers, and `data-border`, which draws the border width in the border color. They are listed under the layout that introduced them, with `(*)` for where they apply; two more, `data-numeric`, which lines up digits with tabular figures, and `data-nowrap`, which keeps text on one line, are in the [components guide](components.md)'s table. On a control the plain border color outranks the variant's, so `data-border` belongs on surfaces.
+Four names in the table are not layout at all and work on any element: `data-paint`, `data-text` and `data-palette`, which the [color guide](color.md) covers, and `data-border`, which draws the border width in the border color. They are listed under the layout that introduced them, with `(*)` for where they apply; two more, `data-numeric`, which lines up digits with tabular figures, and `data-nowrap`, which keeps text on one line, are in the [components guide](components.md)'s table. On a control the plain border color outranks the variant's, so `data-border` belongs on surfaces.
 
 For the sizing attributes the mapping rule is always the same: a value is a token suffix. `data-gap="lg"` reads `--yeti-space-lg`; `data-width="sm"` reads `--yeti-width-sm`. The attribute names the property to set; the value names the step on Yeti's scale to set it to. The rest — `data-align`, `data-justify`, `data-ratio`, `data-columns`, `data-side` — name a behaviour rather than a token; `attributes.css` maps each value to the CSS keyword it means.
 
