@@ -141,6 +141,15 @@
 		block-size: auto;
 		min-inline-size: 0;
 		padding-inline: var(--yeti-space-xs);
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
+	}
+	/* The two halves meet with square corners, so the current fill, which
+	   both take, reads as one piece and not as two with notches between. */
+	.nav > ul[popover] > li.dropdown > a:has(+ button),
+	.nav > ul[popover] > li > .dropdown > a:has(+ button) {
+		border-start-end-radius: 0;
+		border-end-end-radius: 0;
 	}
 	/* The panel sits on its own surface, so a link color, hover fill, current
 	   color or current fill chosen for the bar must not follow the links into it. A

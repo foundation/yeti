@@ -139,6 +139,19 @@ test.describe('nav', () => {
 		expect(await style(page, '#current', 'background-color')).toBe('rgb(7, 8, 9)');
 	});
 
+	test('a split parent\'s link and toggle meet with square corners, so a fill reads as one piece', async ({ page }) => {
+		await open(page, 1000);
+		const radius = (sel, corner) => style(page, sel, `border-${corner}-radius`).then(parseFloat);
+		expect(await radius('#nt-about-link', 'start-end')).toBe(0);
+		expect(await radius('#nt-about-link', 'end-end')).toBe(0);
+		expect(await radius('#nt-about-toggle', 'start-start')).toBe(0);
+		expect(await radius('#nt-about-toggle', 'end-start')).toBe(0);
+		// The outer corners, and a trigger that is not split, keep the nav's radius.
+		expect(await radius('#nt-about-link', 'start-start')).toBeGreaterThan(0);
+		expect(await radius('#nt-about-toggle', 'end-end')).toBeGreaterThan(0);
+		expect(await radius('#nt-lab-trigger', 'start-end')).toBeGreaterThan(0);
+	});
+
 	test('the open panel does not take the bar\'s current fill', async ({ page }) => {
 		await open(page, 400);
 		await page.addStyleTag({ content: '#nav { --yeti-nav-current-surface: rgb(13, 14, 15); }' });
