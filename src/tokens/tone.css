@@ -42,6 +42,27 @@
 		--yeti-grey-90: color-mix(in oklch, var(--yeti-color-surface), var(--yeti-color-text) 90%);
 		--yeti-grey-100: color-mix(in oklch, var(--yeti-color-surface), var(--yeti-color-text) 100%);
 
+		/* Neutral: the grey of the same number at this hue. Chroma eases off
+		   toward the poles the way the ladder's subtle and soft steps do, so the
+		   extremes stay close to gamut. */
+		--yeti-color-neutral-0: oklch(from var(--yeti-grey-0) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-10: oklch(from var(--yeti-grey-10) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-20: oklch(from var(--yeti-grey-20) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-30: oklch(from var(--yeti-grey-30) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-40: oklch(from var(--yeti-grey-40) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-50: oklch(from var(--yeti-grey-50) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-60: oklch(from var(--yeti-grey-60) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-70: oklch(from var(--yeti-grey-70) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-80: oklch(from var(--yeti-grey-80) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-90: oklch(from var(--yeti-grey-90) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+		--yeti-color-neutral-100: oklch(from var(--yeti-grey-100) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
+	}
+
+	/* The hued tones, on [data-palette] as well as the root, for the reason
+	   color.css gives: a region that sets a brand color, a hue or
+	   --yeti-chroma re-derives its five roles, and their tones with them.
+	   The greys and the neutral tones stay the page's. */
+	:root, [data-palette] {
 		/* Primary: the grey of the same number under this role's hue. */
 		--_yeti-seed-primary: var(--yeti-brand-primary, oklch(0.5 var(--yeti-chroma) var(--yeti-hue-primary)));
 		--_yeti-tint-primary-subtle: oklch(from var(--_yeti-seed-primary) none calc(var(--_yeti-c-capped) * 0.4) h);
@@ -126,20 +147,5 @@
 		--yeti-color-alert-80: color-mix(in oklch, oklch(from var(--yeti-grey-80) l none none), var(--_yeti-tint-alert-soft));
 		--yeti-color-alert-90: color-mix(in oklch, oklch(from var(--yeti-grey-90) l none none), var(--_yeti-tint-alert-subtle));
 		--yeti-color-alert-100: color-mix(in oklch, oklch(from var(--yeti-grey-100) l none none), var(--_yeti-tint-alert-subtle));
-
-		/* Neutral: the grey of the same number at this hue. Chroma eases off
-		   toward the poles the way the ladder's subtle and soft steps do, so the
-		   extremes stay close to gamut. */
-		--yeti-color-neutral-0: oklch(from var(--yeti-grey-0) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-10: oklch(from var(--yeti-grey-10) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-20: oklch(from var(--yeti-grey-20) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-30: oklch(from var(--yeti-grey-30) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-40: oklch(from var(--yeti-grey-40) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-50: oklch(from var(--yeti-grey-50) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-60: oklch(from var(--yeti-grey-60) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-70: oklch(from var(--yeti-grey-70) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-80: oklch(from var(--yeti-grey-80) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-90: oklch(from var(--yeti-grey-90) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
-		--yeti-color-neutral-100: oklch(from var(--yeti-grey-100) l var(--yeti-chroma-neutral) var(--yeti-hue-neutral));
 	}
 }

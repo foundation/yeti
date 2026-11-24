@@ -7,9 +7,9 @@ import { painted } from './lib/layout.js';
 // alone gave before the brand input existed, so the first test compares each
 // step with that literal formula, and the line step has no value at all.
 //
-// The derived tokens are declared on :root, and a custom property that holds
-// var() is resolved where it is declared, so every input here is set on the
-// root element. Colors are read through color(from … srgb r g b) on a probe,
+// The derived tokens are declared on :root (and on [data-palette], tested at
+// the end), and a custom property that holds var() is resolved where it is
+// declared, so every input before that is set on the root element. Colors are read through color(from … srgb r g b) on a probe,
 // which keeps them as unclamped floats instead of rounded 8-bit channels.
 
 const ROLES = ['primary', 'secondary', 'success', 'warning', 'alert'];
@@ -525,5 +525,154 @@ test.describe('lines and fills with a brand color', () => {
 		const neutral = await read(page, 'light', 'var(--yeti-color-neutral)');
 		expect(at, 'border resolves').not.toBeNull();
 		expect(worst(at, neutral)).toBeLessThanOrEqual(0.5);
+	});
+});
+
+// data-palette starts a new palette: the derived colors are declared on
+// :root and on [data-palette], so the color inputs set on a region are
+// resolved there, and everything inside it takes the region's colors. The
+// region is built in the page: a default button, a primary variant, a link,
+// a painted span and a probe for reading tokens where they are used.
+test.describe('data-palette', () => {
+	const RED = '#e4002b';
+
+	// One region, appended to `parent` (the body by default), with its own
+	// inputs as inline style. Every id inside it starts with `id`.
+	const region = (page, id, style = '', parent = null) => page.evaluate(([id, style, parent]) => {
+		const section = document.createElement('section');
+		section.id = id;
+		section.setAttribute('data-palette', '');
+		if (style) section.setAttribute('style', style);
+		section.innerHTML = `<a class="button" id="${id}-button" href="#">Shop the sale</a>`
+			+ ` <button class="button" type="button" data-variant="primary" id="${id}-variant">Primary</button>`
+			+ ` <a id="${id}-link" href="#">A link</a>`
+			+ ` <span data-paint="primary" id="${id}-paint">Painted</span>`
+			+ `<i id="${id}-probe"></i>`;
+		(parent ? document.getElementById(parent) : document.body).append(section);
+	}, [id, style, parent]);
+
+	// The same pieces outside any region, for comparison.
+	const outside = (page) => page.evaluate(() => {
+		const div = document.createElement('div');
+		div.innerHTML = '<a class="button" id="out-button" href="#">Outside</a> <a id="out-link" href="#">A link</a><i id="out-probe"></i>';
+		document.body.append(div);
+	});
+
+	// A token's color as sRGB floats, read on the probe given.
+	const at = (page, probe, expr) => page.evaluate(([p, e]) => {
+		const el = document.getElementById(p);
+		el.style.backgroundColor = '';
+		el.style.backgroundColor = `color(from ${e} srgb r g b)`;
+		const m = getComputedStyle(el).backgroundColor.match(/color\(srgb\s+([-\d.e]+)\s+([-\d.e]+)\s+([-\d.e]+)/);
+		return m ? m.slice(1, 4).map((v) => parseFloat(v) * 255) : null;
+	}, [probe, expr]);
+	// One property of an element as drawn, as sRGB floats.
+	const used = (page, selector, prop) => page.evaluate(([s, p]) => window.__brand.srgb('light', getComputedStyle(document.querySelector(s))[p]), [selector, prop]);
+	// A custom property's computed value on an element, as the engine writes it.
+	const raw = (page, selector, name) => page.evaluate(([s, n]) => getComputedStyle(document.querySelector(s)).getPropertyValue(n), [selector, name]);
+	const root = (page, expr) => read(page, 'light', expr);
+
+	test('3E: a brand color on a region changes the colors inside it only', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		await outside(page);
+		await painted(page);
+		const inside = await used(page, '#r-button', 'backgroundColor');
+		expect(inside, 'button inside resolves').not.toBeNull();
+		expect(worst(inside, hex(RED)), 'button inside is the region\'s brand').toBeLessThanOrEqual(1);
+		expect((await used(page, '#r-button', 'color')).map(Math.round), 'white text on it').toEqual([255, 255, 255]);
+		const page_ = await root(page, 'var(--yeti-color-primary)');
+		expect(worst(await used(page, '#out-button', 'backgroundColor'), page_), 'button outside keeps the page\'s primary').toBeLessThanOrEqual(0.5);
+	});
+
+	test('a hue on a region works too', async ({ page }) => {
+		await region(page, 'r', '--yeti-hue-primary: 25');
+		const inside = await at(page, 'r-probe', 'var(--yeti-color-primary)');
+		expect(worst(inside, await root(page, 'oklch(0.52 0.15 25)'))).toBeLessThanOrEqual(0.01);
+	});
+
+	test('the line step and the tones follow the region', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		await outside(page);
+		await painted(page);
+		const line = await at(page, 'r-probe', 'var(--yeti-color-primary-line)');
+		expect(line, 'the region has a line step').not.toBeNull();
+		expect(worst(await used(page, '#r-link', 'color'), line), 'link is the region\'s line').toBeLessThanOrEqual(0.5);
+		const tone = await at(page, 'r-probe', 'var(--yeti-color-primary-50)');
+		const toneOut = await at(page, 'out-probe', 'var(--yeti-color-primary-50)');
+		expect(worst(tone, toneOut), 'primary-50 differs inside').toBeGreaterThan(10);
+	});
+
+	test('data-variant needs nothing new', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		await painted(page);
+		expect(worst(await used(page, '#r-variant', 'backgroundColor'), hex(RED))).toBeLessThanOrEqual(1);
+		expect(worst(await used(page, '#r-paint', 'backgroundColor'), hex(RED)), 'data-paint too').toBeLessThanOrEqual(1);
+	});
+
+	test('every role re-derives, each on its own', async ({ page }) => {
+		await region(page, 'r', '--yeti-brand-success: #ffd400');
+		expect(worst(await at(page, 'r-probe', 'var(--yeti-color-success)'), hex('#ffd400')), 'success inside').toBeLessThanOrEqual(0.5);
+		expect(worst(await at(page, 'r-probe', 'var(--yeti-color-primary)'), await root(page, 'var(--yeti-color-primary)')), 'primary inside').toBeLessThanOrEqual(0.01);
+	});
+
+	test('a region with the marker and no inputs changes nothing', async ({ page }) => {
+		await region(page, 'r');
+		const names = STEPS.map((s) => token('primary', s)).concat('--yeti-color-primary-line');
+		expect(names).toHaveLength(7);
+		for (const name of names) {
+			expect(await raw(page, '#r-probe', name), name).toBe(await raw(page, 'html', name));
+		}
+		for (const s of STEPS) {
+			const name = token('primary', s);
+			expect(worst(await at(page, 'r-probe', `var(${name})`), await root(page, `var(${name})`)), name).toBeLessThanOrEqual(0.01);
+		}
+	});
+
+	test('regions nest, and the outer region\'s color returns after the inner one', async ({ page }) => {
+		await region(page, 'outer', `--yeti-brand-primary: ${RED}`);
+		await region(page, 'inner', '--yeti-brand-primary: #1d4ed8', 'outer');
+		await page.evaluate(() => {
+			const after = document.createElement('a');
+			Object.assign(after, { className: 'button', id: 'after-button', href: '#', textContent: 'After' });
+			document.getElementById('outer').append(after);
+		});
+		await painted(page);
+		expect(worst(await used(page, '#inner-button', 'backgroundColor'), hex('#1d4ed8')), 'inner').toBeLessThanOrEqual(1);
+		expect(worst(await used(page, '#outer-button', 'backgroundColor'), hex(RED)), 'outer before').toBeLessThanOrEqual(1);
+		expect(worst(await used(page, '#after-button', 'backgroundColor'), hex(RED)), 'outer after').toBeLessThanOrEqual(1);
+	});
+
+	test('the page\'s own inputs still reach a region', async ({ page }) => {
+		await setRoot(page, '--yeti-hue-primary', '145');
+		await region(page, 'r');
+		const inside = await at(page, 'r-probe', 'var(--yeti-color-primary)');
+		expect(worst(inside, await root(page, 'oklch(0.52 0.15 145)')), 'the root\'s green').toBeLessThanOrEqual(0.01);
+		expect(worst(inside, await root(page, 'oklch(0.52 0.15 250)')), 'not the default blue').toBeGreaterThan(10);
+	});
+
+	test('a region can go back to the hue', async ({ page }) => {
+		await setRoot(page, '--yeti-brand-primary', RED);
+		await region(page, 'r', '--yeti-brand-primary: initial');
+		expect(worst(await at(page, 'r-probe', 'var(--yeti-color-primary)'), await root(page, 'oklch(0.52 0.15 250)'))).toBeLessThanOrEqual(0.01);
+		expect(await raw(page, '#r-probe', '--yeti-color-primary-line'), 'no line step').toBe('');
+	});
+
+	test('a link inside a brand region is the region\'s line, and outside it the page\'s', async ({ page }) => {
+		await setRoot(page, '--yeti-brand-primary', '#ffd400');
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		await outside(page);
+		await painted(page);
+		const inside = await used(page, '#r-link', 'color');
+		const out = await used(page, '#out-link', 'color');
+		expect(worst(inside, await at(page, 'r-probe', 'var(--yeti-color-primary-line)')), 'inside').toBeLessThanOrEqual(0.5);
+		expect(worst(out, await root(page, 'var(--yeti-color-primary-line)')), 'outside').toBeLessThanOrEqual(0.5);
+		expect(worst(inside, out), 'the two differ').toBeGreaterThan(10);
+	});
+
+	test('the neutral and page roles are not re-derived', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		for (const name of ['--yeti-color-surface', '--yeti-color-text', '--yeti-color-border', '--yeti-color-neutral', '--yeti-grey-50']) {
+			expect(await raw(page, '#r-probe', name), name).toBe(await raw(page, 'html', name));
+		}
 	});
 });

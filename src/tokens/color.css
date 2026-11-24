@@ -72,11 +72,42 @@
 		--_yeti-l-base-light: 0.52;   --_yeti-l-base-dark: 0.70;
 		--_yeti-l-strong-light: 0.42; --_yeti-l-strong-dark: 0.80;
 		--_yeti-l-text-light: 0.35;   --_yeti-l-text-dark: 0.85;
+		--_yeti-on-light: oklch(0.99 0 0);
+		--_yeti-on-dark: oklch(0.15 0 0);
+
+		/* Neutral: the same ladder at the neutral hue and chroma, for data-variant="neutral" */
+		--yeti-color-neutral-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-subtle-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-color-neutral-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-soft-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-color-neutral: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-color-neutral-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-color-neutral-text: light-dark(oklch(var(--_yeti-l-text-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-text-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
+		--yeti-on-neutral: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark));
+
+		/* Page roles from the neutral hue at low chroma */
+		--yeti-color-surface: light-dark(oklch(0.99 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.13 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #f2fdff */
+		--yeti-color-surface-raised: light-dark(oklch(0.97 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.17 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ebf7ff */
+		--yeti-color-surface-sunken: light-dark(oklch(0.94 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.10 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #e1edf8 */
+		--yeti-color-text: light-dark(oklch(0.15 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.93 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #050c13 */
+		--yeti-color-text-muted: light-dark(oklch(0.45 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.70 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #4d5660 */
+		--yeti-color-border: light-dark(oklch(0.88 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.30 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ced9e5 */
+		--yeti-color-border-strong: light-dark(oklch(0.75 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.40 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #a5afba */
+		/* The wash that goes over content so something on top of it can be read:
+		   a caption over a picture, a veil over a form. The surface, thinned,
+		   so it takes the theme with it and dims rather than tints. */
+		--yeti-color-scrim: color-mix(in oklch, var(--yeti-color-surface) 85%, transparent);
+	}
+
+	/* The five hue roles, on [data-palette] as well as the root. A custom
+	   property that holds var() is worked out on the element that declares
+	   it, and its children inherit the result, so the color inputs set on a
+	   region change what is inside it only if the roles are declared there
+	   too. The inputs are declared on :root only, so a region inherits the
+	   page's and changes only what it sets. */
+	:root, [data-palette] {
+		/* The shares of --yeti-chroma the hue's steps read. */
 		--_yeti-c-subtle: calc(var(--yeti-chroma) * 0.4);
 		--_yeti-c-soft: calc(var(--yeti-chroma) * 0.7);
 		--_yeti-c-text: calc(var(--yeti-chroma) * 0.8);
-		--_yeti-on-light: oklch(0.99 0 0);
-		--_yeti-on-dark: oklch(0.15 0 0);
 
 		/* Macros for the brand path. Each is read only inside a relative color
 		   made from a brand color or its carrier, where l, c, h and alpha are
@@ -175,26 +206,7 @@
 		--yeti-color-alert-text: var(--_yeti-b-alert-text, light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-alert)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-alert)))); /* #6c1517 */
 		--yeti-on-alert: var(--_yeti-b-on-alert, light-dark(var(--_yeti-on-light), var(--_yeti-on-dark))); /* #fcfcfc */
 		--yeti-color-alert-line: light-dark(oklch(from var(--yeti-brand-alert) min(l, var(--_yeti-l-base-light)) var(--_yeti-c-capped) h), oklch(from var(--yeti-brand-alert) max(l, var(--_yeti-l-base-dark)) var(--_yeti-c-capped) h));
-		/* Neutral: the same ladder at the neutral hue and chroma, for data-variant="neutral" */
-		--yeti-color-neutral-subtle: light-dark(oklch(var(--_yeti-l-subtle-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-subtle-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
-		--yeti-color-neutral-soft: light-dark(oklch(var(--_yeti-l-soft-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-soft-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
-		--yeti-color-neutral: light-dark(oklch(var(--_yeti-l-base-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-base-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
-		--yeti-color-neutral-strong: light-dark(oklch(var(--_yeti-l-strong-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-strong-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
-		--yeti-color-neutral-text: light-dark(oklch(var(--_yeti-l-text-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-text-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
-		--yeti-on-neutral: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark));
 
-		/* Page roles from the neutral hue at low chroma */
-		--yeti-color-surface: light-dark(oklch(0.99 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.13 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #f2fdff */
-		--yeti-color-surface-raised: light-dark(oklch(0.97 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.17 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ebf7ff */
-		--yeti-color-surface-sunken: light-dark(oklch(0.94 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.10 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #e1edf8 */
-		--yeti-color-text: light-dark(oklch(0.15 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.93 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #050c13 */
-		--yeti-color-text-muted: light-dark(oklch(0.45 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.70 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #4d5660 */
-		--yeti-color-border: light-dark(oklch(0.88 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.30 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ced9e5 */
-		--yeti-color-border-strong: light-dark(oklch(0.75 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.40 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #a5afba */
-		/* The wash that goes over content so something on top of it can be read:
-		   a caption over a picture, a veil over a form. The surface, thinned,
-		   so it takes the theme with it and dims rather than tints. */
-		--yeti-color-scrim: color-mix(in oklch, var(--yeti-color-surface) 85%, transparent);
 		/* The line step when the primary has a brand color, so a brand color
 		   too light or too dark to read on the page still gets a ring that
 		   shows; the base step otherwise, as before. */
