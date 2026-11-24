@@ -41,9 +41,14 @@
 		/* Links: --yeti-link-color and --yeti-link-color-hover are read with a
 		   fallback and never declared, like --yeti-base, so the primary they
 		   fall back to is the one where the link is, and a section that sets
-		   its own primary colors its own links. A theme whose primary is a
-		   light brand color points them at the hue's text step instead, since
-		   a link is text and has to read on the page. */
+		   its own primary colors its own links. With a brand color the
+		   fallback is the primary's line step, so a light brand color given as
+		   --yeti-brand-primary still gives links that read on the page; the
+		   chain is in base/typography.css. On a page with a brand color, a
+		   section that sets its own primary sets the line step too, or the
+		   page's line step still colors its links. A theme that sets a light
+		   --yeti-color-primary directly has no line step, and points these at
+		   the hue's text step itself. */
 
 		/* The width axis of a variable font: narrow labels, a wide title, one
 		   family. normal until a theme with such a face says otherwise. */

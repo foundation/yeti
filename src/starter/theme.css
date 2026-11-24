@@ -13,7 +13,7 @@
 @layer yeti.reset, yeti.base, yeti.theme, yeti.layouts, yeti.components, yeti.utilities;
 
 :root {
-	/* Color. Every color in Yeti is worked out from these four. */
+	/* Color. Every color in Yeti is worked out from these. */
 
 	/* The brand hue, in oklch degrees: 25 red, 80 amber, 145 green, 250 blue. */
 	/* --yeti-hue-primary: 250; */
@@ -25,6 +25,11 @@
 	/* --yeti-chroma-neutral: 0.02; */
 	/* How saturated the accents are: 0 is grey, 0.15 clear, above 0.2 may clip. */
 	/* --yeti-chroma: 0.15; */
+	/* A brand color for the primary, any CSS color, in place of its hue. Not
+	   set by default; the greys keep following --yeti-hue-neutral. */
+	/* --yeti-brand-primary: #ff6a00; */
+	/* A brand color for the secondary, in place of its hue. */
+	/* --yeti-brand-secondary: #0b1f4b; */
 
 	/* Scale. Text and space share one scale up to lg, from a narrow screen to a
 	   wide one; above lg, space grows on a ratio of its own. */

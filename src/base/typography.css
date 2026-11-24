@@ -16,7 +16,8 @@
 
 	/* accent-color inherits as a color already worked out on html, so a
 	   data-palette region sets it again for its bare controls to take the
-	   region's primary. */
+	   region's primary. A site that sets accent-color on html sets it on
+	   [data-palette] too, since this rule replaces it inside a region. */
 	[data-palette] {
 		accent-color: var(--yeti-color-primary);
 	}
