@@ -20,7 +20,7 @@
     { "name": "--yeti-color-primary-soft", "public": true, "description": "The default variant's soft stop." },
     { "name": "--yeti-color-primary-strong", "public": true, "description": "The default variant's strong stop." },
     { "name": "--yeti-color-primary-text", "public": true, "description": "The default variant's text color." },
-    { "name": "--yeti-color-primary-line", "public": true, "description": "The default variant's line color for edges and underlines, when the primary has a brand color; the variant's color otherwise." },
+    { "name": "--yeti-color-primary-line", "public": true, "description": "The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color." },
     { "name": "--yeti-on-primary", "public": true, "description": "Text on the default variant's color." },
     { "name": "--yeti-text-md", "public": true, "description": "The text step when data-size is absent; the ring's diameter follows it." },
     { "name": "--yeti-space-sm", "public": true, "description": "The space step when data-size is absent." },

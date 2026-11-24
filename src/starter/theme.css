@@ -71,7 +71,8 @@
 	/* A link at rest. With a brand color it takes the line step, which stays
 	   readable even when the brand color is light. */
 	/* --yeti-link-color: var(--yeti-color-primary-line, var(--yeti-color-primary)); */
-	/* A link under the pointer: the strong step, or with a brand color the text step. */
+	/* A link under the pointer: the strong step, or with a brand color the
+	   text step. Setting this replaces both. */
 	/* --yeti-link-color-hover: var(--yeti-color-primary-strong); */
 
 	/* Shape. Each radius is a fraction of the body text size and grows with it;

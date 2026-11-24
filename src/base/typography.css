@@ -14,6 +14,13 @@
 		accent-color: var(--yeti-color-primary);
 	}
 
+	/* accent-color inherits as a color already worked out on html, so a
+	   data-palette region sets it again for its bare controls to take the
+	   region's primary. */
+	[data-palette] {
+		accent-color: var(--yeti-color-primary);
+	}
+
 	/* Type size lives on body, not html, so rem keeps the visitor's root
 	   default and every rem-based token resolves the same on every element. */
 	body {

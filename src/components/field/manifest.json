@@ -159,7 +159,7 @@
     {
       "name": "--yeti-color-alert-line",
       "public": true,
-      "description": "Border of an invalid control when the alert role has a brand color; the base step otherwise."
+      "description": "Border of an invalid control. It has a value only when the alert role has a brand color; without one the border falls back to the alert's base step."
     },
     {
       "name": "--yeti-color-primary",

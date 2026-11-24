@@ -12,9 +12,13 @@
    private property worked out from the brand color, and a custom property
    that reads a var() with no value and no fallback has no value either, so
    with no brand color the hue's declaration is used exactly as it always
-   was. A theme or a section that sets a step itself still wins over both.
-   A brand color is not checked: a value that is not a color breaks that
-   role's colors, visibly.
+   was. A theme or a section that sets a step itself still wins over both,
+   with one exception: a data-palette region works out every step of the
+   five roles again from the inputs, so a step a theme set directly on
+   :root is not carried into it. Give that color as an input instead (a
+   hue or a brand color reaches a region), or set the step on the region
+   too. A brand color is not checked: a value that is not a color breaks
+   that role's colors, visibly.
 
    The line step, --yeti-color-{role}-line, has a value only when its role
    has a brand color: the brand's hue held to at most the base's lightness in
@@ -95,6 +99,12 @@
 		   a caption over a picture, a veil over a form. The surface, thinned,
 		   so it takes the theme with it and dims rather than tints. */
 		--yeti-color-scrim: color-mix(in oklch, var(--yeti-color-surface) 85%, transparent);
+		/* The line step when the primary has a brand color, so a brand color
+		   too light or too dark to read on the page still gets a ring that
+		   shows; the base step otherwise, as before. Declared on :root only:
+		   one focus ring for the whole page, and a theme's own focus color
+		   reaches every data-palette region. */
+		--yeti-color-focus: var(--yeti-color-primary-line, var(--yeti-color-primary)); /* #006bbb */
 	}
 
 	/* The five hue roles, on [data-palette] as well as the root. A custom
@@ -102,7 +112,8 @@
 	   it, and its children inherit the result, so the color inputs set on a
 	   region change what is inside it only if the roles are declared there
 	   too. The inputs are declared on :root only, so a region inherits the
-	   page's and changes only what it sets. */
+	   page's and changes only what it sets. A step a theme sets directly on
+	   :root does not reach a region; it is worked out again here. */
 	:root, [data-palette] {
 		/* The shares of --yeti-chroma the hue's steps read. */
 		--_yeti-c-subtle: calc(var(--yeti-chroma) * 0.4);
@@ -206,10 +217,5 @@
 		--yeti-color-alert-text: var(--_yeti-b-alert-text, light-dark(oklch(var(--_yeti-l-text-light) var(--_yeti-c-text) var(--yeti-hue-alert)), oklch(var(--_yeti-l-text-dark) var(--_yeti-c-text) var(--yeti-hue-alert)))); /* #6c1517 */
 		--yeti-on-alert: var(--_yeti-b-on-alert, light-dark(var(--_yeti-on-light), var(--_yeti-on-dark))); /* #fcfcfc */
 		--yeti-color-alert-line: light-dark(oklch(from var(--yeti-brand-alert) min(l, var(--_yeti-l-base-light)) var(--_yeti-c-capped) h), oklch(from var(--yeti-brand-alert) max(l, var(--_yeti-l-base-dark)) var(--_yeti-c-capped) h));
-
-		/* The line step when the primary has a brand color, so a brand color
-		   too light or too dark to read on the page still gets a ring that
-		   shows; the base step otherwise, as before. */
-		--yeti-color-focus: var(--yeti-color-primary-line, var(--yeti-color-primary)); /* #006bbb */
 	}
 }

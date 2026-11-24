@@ -277,6 +277,17 @@ test('3E: a light-dark() brand color set on the root follows a section that pins
 	expect(worst(await read(page, 'light', 'var(--yeti-color-primary)'), hex('#0b1f4b')), 'light section').toBeLessThanOrEqual(0.5);
 });
 
+// The derived steps follow a light-dark() brand color too, not only the
+// base: the text on the fill and the line step are worked out per scheme.
+test('3E: a light-dark() brand color reaches the text on the fill and the line', async ({ page }) => {
+	await setRoot(page, '--yeti-brand-primary', 'light-dark(#0b1f4b, #ffd400)');
+	expect((await read(page, 'light', 'var(--yeti-on-primary)')).map(Math.round), 'light: white on navy').toEqual([255, 255, 255]);
+	expect((await read(page, 'dark', 'var(--yeti-on-primary)')).map(Math.round), 'dark: black on yellow').toEqual([0, 0, 0]);
+	const line = await read(page, 'dark', 'var(--yeti-color-primary-line)');
+	expect(line, 'dark line resolves').not.toBeNull();
+	expect(ratio(line, await read(page, 'dark', 'var(--yeti-color-surface)'))).toBeGreaterThanOrEqual(4.5);
+});
+
 test('the focus color is the line step with a brand color, and the base step without', async ({ page }) => {
 	for (const brand of [null, '#ffd400', '#0b1f4b']) {
 		await setRoot(page, '--yeti-brand-primary', brand);
@@ -526,6 +537,27 @@ test.describe('lines and fills with a brand color', () => {
 		expect(at, 'border resolves').not.toBeNull();
 		expect(worst(at, neutral)).toBeLessThanOrEqual(0.5);
 	});
+
+	// Black and white clear the line the same way, with initial.
+	for (const [variant, constant] of [['black', '--yeti-black'], ['white', '--yeti-white']]) {
+		test(`a ${variant} variant inside a brand-colored one does not take its line`, async ({ page }) => {
+			await visit(page, '/test/browser/fixtures/components/button.html');
+			await page.evaluate((v) => {
+				const wrap = document.createElement('div');
+				wrap.dataset.variant = 'primary';
+				const button = document.createElement('button');
+				Object.assign(button, { className: 'button', type: 'button', id: 'nested', textContent: v });
+				button.dataset.variant = v;
+				button.dataset.emphasis = 'medium';
+				wrap.append(button);
+				document.body.append(wrap);
+			}, variant);
+			await painted(page);
+			const at = await used(page, '#nested', 'borderTopColor');
+			expect(at, 'border resolves').not.toBeNull();
+			expect(worst(at, await read(page, 'light', `var(${constant})`))).toBeLessThanOrEqual(0.5);
+		});
+	}
 });
 
 // data-palette starts a new palette: the derived colors are declared on
@@ -669,10 +701,40 @@ test.describe('data-palette', () => {
 		expect(worst(inside, out), 'the two differ').toBeGreaterThan(10);
 	});
 
+	// The region sets the neutral inputs too, so a neutral or page role
+	// declared on [data-palette] would change inside it and fail here.
 	test('the neutral and page roles are not re-derived', async ({ page }) => {
-		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
-		for (const name of ['--yeti-color-surface', '--yeti-color-text', '--yeti-color-border', '--yeti-color-neutral', '--yeti-grey-50']) {
+		await region(page, 'r', `--yeti-hue-neutral: 30; --yeti-chroma-neutral: 0.1; --yeti-brand-primary: ${RED}`);
+		for (const name of ['--yeti-color-surface', '--yeti-color-text', '--yeti-color-neutral', '--yeti-grey-50']) {
 			expect(await raw(page, '#r-probe', name), name).toBe(await raw(page, 'html', name));
 		}
+	});
+
+	// One focus ring for the whole page: a theme sets it on :root, and a
+	// region must not work it out again.
+	test('the focus color is the page\'s inside a region', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		expect(worst(await at(page, 'r-probe', 'var(--yeti-color-focus)'), await root(page, 'var(--yeti-color-focus)')), 'the root\'s focus').toBeLessThanOrEqual(0.01);
+	});
+
+	test('a focus color set on the root reaches a region', async ({ page }) => {
+		await setRoot(page, '--yeti-color-focus', 'rgb(1, 2, 3)');
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		expect(await page.evaluate(() => {
+			const el = document.getElementById('r-probe');
+			el.style.color = 'var(--yeti-color-focus)';
+			return getComputedStyle(el).color;
+		})).toBe('rgb(1, 2, 3)');
+	});
+
+	test('a bare checkbox in a region takes the region\'s primary', async ({ page }) => {
+		await region(page, 'r', `--yeti-brand-primary: ${RED}`);
+		await page.evaluate(() => {
+			const box = (id) => Object.assign(document.createElement('input'), { type: 'checkbox', id });
+			document.getElementById('r').append(box('r-check'));
+			document.body.append(box('out-check'));
+		});
+		expect(worst(await used(page, '#r-check', 'accentColor'), hex(RED)), 'inside').toBeLessThanOrEqual(1);
+		expect(worst(await used(page, '#out-check', 'accentColor'), await root(page, 'var(--yeti-color-primary)')), 'outside').toBeLessThanOrEqual(0.5);
 	});
 });
