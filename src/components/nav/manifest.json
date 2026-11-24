@@ -35,6 +35,13 @@
       "description": "Space between the bar's parts and between the links."
     },
     {
+      "name": "data-justify",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "start",
+      "description": "Where the links sit in the bar's free room: beside the brand, in the middle between the brand and the actions, or at the end with the actions straight after them. With center or end the toggle sits at the end below the threshold."
+    },
+    {
       "name": "data-sticky",
       "type": "boolean",
       "description": "Keep the bar at the top of the scrollport as the page scrolls, flush with the edge."

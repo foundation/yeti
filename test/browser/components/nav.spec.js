@@ -71,6 +71,59 @@ test.describe('nav', () => {
 		expect(await style(page, '#plain', 'background-color')).toBe('rgb(7, 8, 9)');
 	});
 
+	test.describe('data-justify', () => {
+		const justify = (page, value) => page.evaluate((v) => document.querySelector('#nav').setAttribute('data-justify', v), value);
+		const gap = (page) => page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#nav')).columnGap));
+
+		test('by default the links sit beside the brand', async ({ page }) => {
+			await open(page, 1000);
+			const [brand, menu] = await Promise.all(['#brand', '#menu'].map((s) => rect(page, s)));
+			expect(menu.left - brand.right).toBeCloseTo(await gap(page), 0);
+		});
+		test('end puts the links at the end of the bar, with the actions straight after them', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'end');
+			const [brand, menu, actions] = await Promise.all(['#brand', '#menu', '#actions'].map((s) => rect(page, s)));
+			expect(actions.left - menu.right).toBeCloseTo(await gap(page), 0);
+			expect(menu.left - brand.right).toBeGreaterThan(100);
+		});
+		test('end with no actions puts the links against the bar\'s end', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'end');
+			await page.evaluate(() => document.querySelector('#actions').remove());
+			const [nav, menu] = await Promise.all(['#nav', '#menu'].map((s) => rect(page, s)));
+			const pad = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#nav')).paddingRight));
+			expect(nav.right - pad - menu.right).toBeLessThan(1);
+		});
+		test('center puts the links in the middle of the room between the brand and the actions', async ({ page }) => {
+			await open(page, 1000);
+			await justify(page, 'center');
+			const [brand, menu, actions] = await Promise.all(['#brand', '#menu', '#actions'].map((s) => rect(page, s)));
+			expect(Math.abs((menu.left - brand.right) - (actions.left - menu.right))).toBeLessThan(1);
+			expect(menu.left - brand.right).toBeGreaterThan(50);
+		});
+		for (const value of ['end', 'center']) {
+			test(`below the threshold the toggle sits at the end with ${value}`, async ({ page }) => {
+				await open(page, 400);
+				await justify(page, value);
+				const [brand, toggle, actions] = await Promise.all(['#brand', '#toggle', '#actions'].map((s) => rect(page, s)));
+				expect(actions.left - toggle.right).toBeCloseTo(await gap(page), 0);
+				expect(toggle.left - brand.right).toBeGreaterThan(20);
+			});
+		}
+		test('the open panel is not moved by it', async ({ page }) => {
+			await open(page, 400);
+			await page.click('#toggle'); await settle(page, '#menu');
+			const before = await rect(page, '#menu');
+			await page.keyboard.press('Escape');
+			await justify(page, 'end');
+			await page.click('#toggle'); await settle(page, '#menu');
+			const after = await rect(page, '#menu');
+			expect(after.left).toBeCloseTo(before.left, 0);
+			expect(after.width).toBeCloseTo(before.width, 0);
+		});
+	});
+
 	test('--yeti-nav-current-surface fills the current page in the bar, and the parent that holds it', async ({ page }) => {
 		await open(page, 1000);
 		// Off by default, so the pointer still shows on the current link.

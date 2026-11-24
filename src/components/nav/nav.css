@@ -532,4 +532,21 @@
 		.nav[data-threshold="2xl"]:not(:has(> ul[popover]:popover-open)) > ul[popover][popover] > [data-close],
 		.nav[data-threshold="2xl"]:not(:has(> ul[popover]:popover-open)) > button[popovertarget] { display: none; }
 	}
+
+	/* data-justify places the links in the bar's free room. By default they sit
+	   beside the brand and the actions take the end. With end the links go to
+	   the end and the actions follow straight after them; with center the
+	   links sit in the middle of the room between the brand and the actions.
+	   Below the threshold the toggle stands in for the links, and it goes to
+	   the end for either value: a menu button in the middle of a bar is not a
+	   place anyone looks for one. Auto margins do the placing, so the actions
+	   give theirs up or the room would be split between the two.
+
+	   These come after the inline blocks above on purpose. Those reset the
+	   list's margin and weigh the same as the two list rules here, so the
+	   later rule wins. The same guard keeps the margin off an open panel. */
+	.nav:is([data-justify="end"], [data-justify="center"]) > button[popovertarget] { margin-inline-start: auto; }
+	.nav:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: 0; }
+	.nav[data-justify="end"]:not(:has(> ul[popover]:popover-open)) > ul[popover][popover] { margin-inline-start: auto; }
+	.nav[data-justify="center"]:not(:has(> ul[popover]:popover-open)) > ul[popover][popover] { margin-inline: auto; }
 }

@@ -24,6 +24,8 @@ A panel that is open stays a panel until it is dismissed, whatever the nav's wid
 
 A nav item may hold a `dropdown` for a section with pages of its own; the Submenus section below shows how.
 
+`data-justify` says where the links sit in the bar. By default they sit beside the brand, and an element carrying `data-actions` takes the end. `data-justify="end"` moves the links to the end of the bar, with the actions straight after them: a brand on one side and everything else on the other. `data-justify="center"` puts the links in the middle of the room between the brand and the actions. That is the middle of the bar only when the brand and the actions are the same width. Below the threshold the toggle stands in for the links, and with either value it sits at the end of the bar. The open panel is not affected.
+
 `data-sticky` keeps the bar at the top of the scrollport as the page scrolls, flush with the edge. Everything else on the page that sticks stops at `--yeti-sticky-offset` and would slide under the bar, so set the token to the bar's own height plus the gap you want on whatever holds them — the shell's body row, say. The bar doesn't read the token; a bar that floats below the edge sets `inset-block-start` itself.
 
 Links that point down the same page (`href="#pricing"`) turn on smooth scrolling for the page, through `--yeti-toc-scroll`, the same switch a `toc` uses; a bare `href="#"` placeholder does not count, and under reduced motion the page goes back to the browser's jump.

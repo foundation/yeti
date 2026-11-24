@@ -49,6 +49,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-hint` | boolean | field (> *) |
 | `data-hover` | boolean | table |
 | `data-inline` | boolean | field |
+| `data-justify` | `start`, `center`, `end` | nav |
 | `data-justify` | `start`, `center`, `end`, `between`, `around`, `evenly` | pagination |
 | `data-lift` | `rise`, `scale` | lift |
 | `data-max` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog |
