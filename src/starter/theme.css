@@ -21,6 +21,8 @@
 	/* --yeti-hue-secondary: 300; */
 	/* The faint tint in surfaces, text and borders; follows the brand hue. */
 	/* --yeti-hue-neutral: var(--yeti-hue-primary); */
+	/* How much of that tint the greys carry: 0 is a true grey. */
+	/* --yeti-chroma-neutral: 0.02; */
 	/* How saturated the accents are: 0 is grey, 0.15 clear, above 0.2 may clip. */
 	/* --yeti-chroma: 0.15; */
 

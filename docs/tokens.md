@@ -154,6 +154,7 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-hue-alert` | `25` | Alert hue; 25 is red. |
 | `--yeti-hue-neutral` | `var(--yeti-hue-primary)` | Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set. |
 | `--yeti-chroma` | `0.15` | Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues. |
+| `--yeti-chroma-neutral` | `0.02` | How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted. |
 
 </div>
 
@@ -688,4 +689,4 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 </div>
 
-Yeti also defines 48 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.
+Yeti also defines 47 internal `--_yeti-*` tokens. They derive from the public ones and may change between minor versions; override the public token instead.

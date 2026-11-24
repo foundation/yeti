@@ -23,7 +23,7 @@ nav_order: 9
 
 ## Hues in, colors out
 
-Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus one `--yeti-chroma` for how saturated accents are. From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
+Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus `--yeti-chroma` for how saturated accents are and `--yeti-chroma-neutral` for how much of the neutral hue the greys carry (set it to `0` for true greys). From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
 
 How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue is something you set. A color is something Yeti works out, in both light and dark, from the hue.
 

@@ -30,7 +30,7 @@ Each hue gets five steps and a partner for text placed on it:
 
 </div>
 
-The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand: `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand. How much of a hint is `--yeti-chroma-neutral`, `0.02` by default; set it to `0` and every one of them is a true grey. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
 
 ## Text on color
 

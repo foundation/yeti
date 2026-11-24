@@ -3346,6 +3346,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-hue-alert (hue): 25 — Alert hue; 25 is red.
 - --yeti-hue-neutral (hue): var(--yeti-hue-primary) — Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set.
 - --yeti-chroma (hue): 0.15 — Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues.
+- --yeti-chroma-neutral (hue): 0.02 — How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted.
 - --yeti-color-primary (color): ladder base of the primary hue — The brand color: buttons, links, focus.
 - --yeti-color-primary-subtle (color): ladder subtle — Tinted background; hover on surfaces, selection.
 - --yeti-color-primary-soft (color): ladder soft — Borders and dividers in the primary hue.
@@ -3607,7 +3608,7 @@ Each hue gets five steps and a partner for text placed on it:
 
 </div>
 
-The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand: `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand. How much of a hint is `--yeti-chroma-neutral`, `0.02` by default; set it to `0` and every one of them is a true grey. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
 
 ### Text on color
 
@@ -3769,7 +3770,7 @@ That pair flips with the scheme, follows the brand hue, and keeps its contrast, 
 
 ### Hues in, colors out
 
-Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus one `--yeti-chroma` for how saturated accents are. From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
+Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus `--yeti-chroma` for how saturated accents are and `--yeti-chroma-neutral` for how much of the neutral hue the greys carry (set it to `0` for true greys). From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
 
 How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue is something you set. A color is something Yeti works out, in both light and dark, from the hue.
 
