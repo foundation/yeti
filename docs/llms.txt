@@ -657,6 +657,19 @@ Children:
 - > tbody: at least 1. The rows.
 - [data-numeric]: at least 0. A cell (or header cell) of numbers: end-aligned with tabular figures.
 
+## tabnav (component, class="tabnav")
+
+A row of links to sibling pages, styled as tabs with the current page marked, that scrolls sideways when it is too narrow.
+
+Attributes:
+- data-variant: primary (default) | secondary | success | warning | alert | danger | neutral | black | white — The hue of the current link, its edge, and the hover fill.
+- data-emphasis: high — The current link is filled with the variant; without it the current link is underlined.
+
+Children:
+- > ul: at least 1, at most 1. The links, one per li, with role="list", which keeps WebKit announcing it as a list once the markers are gone.
+- li: at least 1. One tab, holding one link.
+- a: at least 1. A page. The current one carries aria-current="page"; a tab for a section that holds the current page may carry aria-current="true".
+
 ## tabs (component, class="tabs")
 
 A row of tabs over their panels, showing one at a time when its module is loaded and all of them when it is not.

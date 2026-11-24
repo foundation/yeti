@@ -13,7 +13,7 @@ nav_order: 11
 
 ## Frozen
 
-- **Component class names.** `card` is `card`. The fifty-two names in the manifest.
+- **Component class names.** `card` is `card`. The fifty-three names in the manifest.
 - **Attribute names and their value lists.** `data-gap` takes the values it takes today; a value may be added, none will be removed or renamed.
 - **Vocabularies.** The named value lists attributes draw from, `gap`, `width`, `height` and the rest; a value may be added, none removed.
 - **Marker names and values.** `data-span` on a column, `data-numeric` on a cell, and the rest.
