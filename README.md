@@ -41,6 +41,8 @@ The tokens, reset, [base layer](docs/guides/base.md), nineteen layout primitives
 
 Or install the alpha with `npm install @foundation/yeti@next`, or copy the files into a project with no Node, and follow the [installation guide](docs/guides/install.md), which also covers editor completion and the `llms.txt` files for assistants.
 
+To begin a site, copy the two starter files: [`index.html`](src/starter/index.html), a complete page to delete from, and [`theme.css`](src/starter/theme.css), the essential settings with their defaults, every one commented out. Both ship in the package under `dist/starter/`.
+
 Or run the fixtures locally:
 
 ```bash
