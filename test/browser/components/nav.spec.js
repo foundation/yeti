@@ -811,6 +811,67 @@ test.describe('nav', () => {
 		expect(await style(page, '#nt-about-menu', 'position')).not.toBe('static');
 	});
 
+	test.describe('a .button in the open panel', () => {
+		const looks = ['background-color', 'color', 'border-top-left-radius', 'padding-inline-start', 'padding-inline-end', 'font-weight'];
+		const read = (page, selector) => page.evaluate(([s, props]) => {
+			const el = document.querySelector(s);
+			const cs = getComputedStyle(el);
+			return { ...Object.fromEntries(props.map((p) => [p, cs.getPropertyValue(p)])), width: Math.round(el.getBoundingClientRect().width) };
+		}, [selector, looks]);
+		// Below the threshold, with the dropdown's panel shown: in place when
+		// the module folds it, docked under its trigger when there is no module.
+		const showGroup = async (page, before = () => {}, load = true) => {
+			if (load) await open(page, 400);
+			await page.evaluate(before);
+			await page.click('#toggle');
+			await settle(page, '#menu');
+			if (await page.getAttribute('#nav-li-trigger', 'aria-expanded') !== 'true') await page.click('#nav-li-trigger');
+			await settle(page, '#nav-li-menu');
+			await settle(page, '#nav-li-cta');
+		};
+
+		test('inside a dropdown\'s group, with the module, it keeps its own look', async ({ page }) => {
+			await showGroup(page);
+			expect(await page.getAttribute('#nav-li-trigger', 'aria-expanded')).toBe('true');
+			expect(await read(page, '#nav-li-cta')).toEqual(await read(page, '#nav-ref-cta'));
+		});
+
+		test('inside a dropdown\'s group, with the module, it takes its own hover fill', async ({ page }) => {
+			// The reference first: the open panel covers it.
+			await open(page, 400);
+			await page.hover('#nav-ref-cta');
+			await settle(page, '#nav-ref-cta');
+			const hovered = await style(page, '#nav-ref-cta', 'background-color');
+			await page.mouse.move(5, 5);
+			await showGroup(page, () => {}, false);
+			await page.hover('#nav-li-cta');
+			await settle(page, '#nav-li-cta');
+			expect(await style(page, '#nav-li-cta', 'background-color')).toBe(hovered);
+		});
+
+		test('inside a dropdown\'s group, with the module, a current .button keeps its own color and weight', async ({ page }) => {
+			await showGroup(page, () => { for (const id of ['nav-li-cta', 'nav-ref-cta']) document.getElementById(id).setAttribute('aria-current', 'page'); });
+			const pick = ({ color, 'font-weight': weight }) => ({ color, weight });
+			expect(pick(await read(page, '#nav-li-cta'))).toEqual(pick(await read(page, '#nav-ref-cta')));
+		});
+
+		test('inside a dropdown\'s panel, without the module, it keeps its own look', async ({ page }) => {
+			await withoutModule(page, 'nav');
+			await showGroup(page);
+			expect(await isOpen(page, 'nav-li-menu')).toBe(true);
+			expect(await read(page, '#nav-li-cta')).toEqual(await read(page, '#nav-ref-cta'));
+		});
+
+		test('straight in the list, a .button fills its row like the links beside it', async ({ page }) => {
+			await open(page, 400);
+			await page.evaluate(() => document.querySelector('#menu').insertAdjacentHTML('beforeend', '<li><a class="button" href="#" id="list-cta">Sign up</a></li>'));
+			await page.click('#toggle');
+			await settle(page, '#menu');
+			const [link, cta] = await Promise.all([rect(page, '#plain'), rect(page, '#list-cta')]);
+			expect(Math.abs(cta.width - link.width)).toBeLessThan(1);
+		});
+	});
+
 	test.describe('with the module', () => {
 		const openPanel = async (page) => { await open(page, 400); await page.click('#nt-toggle'); await settle(page, '#nt-menu'); };
 		const expanded = (page, id) => page.getAttribute(`#${id}`, 'aria-expanded');

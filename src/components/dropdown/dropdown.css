@@ -265,6 +265,12 @@
 				justify-self: start;
 			}
 			.dropdown[data-grouped][data-side="end"] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) { justify-self: end; }
+			/* A grouped dropdown inside another panel is not a flyout: its
+			   columns are as wide as they need to be, so it keeps the same
+			   margin fallback rather than the flip the rule below gives a nested
+			   panel. These outrank that rule. */
+			.dropdown > [popover] .dropdown[data-grouped] > [popover]:popover-open:where(:not(.nav > ul[popover]:popover-open *)) { position-try-fallbacks: --yeti-dropdown-edge; }
+			.dropdown > [popover] .dropdown[data-grouped][data-side="end"] > [popover]:popover-open:where(:not(.nav > ul[popover]:popover-open *)) { position-try-fallbacks: --yeti-dropdown-edge-start; }
 		}
 		/* A nested panel flies out beside its own row and flips to the other
 		   side where it would leave the screen. The row is the anchor, because

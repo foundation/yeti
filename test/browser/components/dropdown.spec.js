@@ -701,13 +701,14 @@ test.describe('dropdown', () => {
 
 	test.describe('the screen edge', () => {
 		const supported = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a') && CSS.supports('position-area', 'block-end') && CSS.supports('position-try-fallbacks', 'flip-inline'));
-		const openWide = async (page, { dir = 'ltr', at = 'calc(100vw - 12rem)', narrow = false } = {}) => {
+		const openWide = async (page, { dir = 'ltr', at = 'calc(100vw - 12rem)', narrow = false, side } = {}) => {
 			await page.setViewportSize({ width: 1280, height: 720 });
 			await open(page, 1280);
 			test.skip(!(await supported(page)), 'anchor positioning or position-try is missing, so the user agent centres the panel');
 			await page.evaluate((d) => { document.documentElement.dir = d; }, dir);
 			await page.addStyleTag({ content: `#wide { margin-inline-start: ${at}; }` });
 			if (narrow) await page.evaluate(() => document.querySelector('#wide').style.removeProperty('--yeti-dropdown-min'));
+			if (side) await page.evaluate((v) => document.querySelector('#wide').setAttribute('data-side', v), side);
 			await page.click('#wide-trigger');
 			await settle(page, '#wide-menu');
 			return { md: await token(page, '--yeti-space-md'), end: await page.evaluate(() => document.documentElement.clientWidth) };
@@ -726,6 +727,26 @@ test.describe('dropdown', () => {
 			const menu = await rect(page, '#wide-menu');
 			expect(menu.left).toBeGreaterThanOrEqual(md - 0.5);
 			expect(menu.right).toBeLessThanOrEqual(end + 0.5);
+		});
+
+		test('with data-side="end" near the start of the page it keeps the margin from the start edge', async ({ page }) => {
+			const { md, end } = await openWide(page, { at: '2rem', side: 'end' });
+			const menu = await rect(page, '#wide-menu');
+			// Moved in toward the start, its side, and set against that margin.
+			expect(Math.abs(menu.left - md)).toBeLessThan(1);
+			expect(menu.right).toBeLessThanOrEqual(end + 0.5);
+		});
+
+		test('a grouped dropdown inside another panel keeps the margin fallback, and a plain flyout keeps its flip', async ({ page }) => {
+			await open(page);
+			test.skip(!(await supported(page)), 'anchor positioning or position-try is missing, so the user agent centres the panel');
+			await page.evaluate(() => document.querySelector('#sub').setAttribute('data-grouped', ''));
+			await openTree(page);
+			expect(await style(page, '#sub-menu', 'position-try-fallbacks')).toBe('--yeti-dropdown-edge');
+			await page.evaluate(() => document.querySelector('#sub').setAttribute('data-side', 'end'));
+			expect(await style(page, '#sub-menu', 'position-try-fallbacks')).toBe('--yeti-dropdown-edge-start');
+			await page.evaluate(() => document.querySelector('#sub').removeAttribute('data-grouped'));
+			expect(await style(page, '#sub-menu', 'position-try-fallbacks')).toBe('flip-inline');
 		});
 
 		test('a narrow panel that fits beside the same trigger still lines up with it', async ({ page }) => {

@@ -39,44 +39,44 @@ Many sites end with a footer of links in columns, each under a short heading, an
 			<div class="stack" data-gap="sm">
 				<h5>Product</h5>
 				<ul class="stack" data-gap="xs" role="list">
-					<li><a href="/features/">Features</a></li>
-					<li><a href="/pricing/">Pricing</a></li>
-					<li><a href="/changelog/">Changelog</a></li>
-					<li><a href="/roadmap/">Roadmap</a></li>
+					<li><a href="#">Features</a></li>
+					<li><a href="#">Pricing</a></li>
+					<li><a href="#">Changelog</a></li>
+					<li><a href="#">Roadmap</a></li>
 				</ul>
 			</div>
 			<div class="stack" data-gap="sm">
 				<h5>Company</h5>
 				<ul class="stack" data-gap="xs" role="list">
-					<li><a href="/about/">About</a></li>
-					<li><a href="/careers/">Careers</a></li>
-					<li><a href="/press/">Press</a></li>
-					<li><a href="/contact/">Contact</a></li>
+					<li><a href="#">About</a></li>
+					<li><a href="#">Careers</a></li>
+					<li><a href="#">Press</a></li>
+					<li><a href="#">Contact</a></li>
 				</ul>
 			</div>
 			<div class="stack" data-gap="sm">
 				<h5>Resources</h5>
 				<ul class="stack" data-gap="xs" role="list">
-					<li><a href="/docs/">Docs</a></li>
-					<li><a href="/guides/">Guides</a></li>
-					<li><a href="/blog/">Blog</a></li>
+					<li><a href="#">Docs</a></li>
+					<li><a href="#">Guides</a></li>
+					<li><a href="#">Blog</a></li>
 				</ul>
 			</div>
 			<div class="stack" data-gap="sm">
 				<h5>Legal</h5>
 				<ul class="stack" data-gap="xs" role="list">
-					<li><a href="/privacy/">Privacy</a></li>
-					<li><a href="/terms/">Terms</a></li>
-					<li><a href="/cookies/">Cookies</a></li>
+					<li><a href="#">Privacy</a></li>
+					<li><a href="#">Terms</a></li>
+					<li><a href="#">Cookies</a></li>
 				</ul>
 			</div>
 		</nav>
 		<div class="cluster" data-justify="between">
 			<p><small>© 2026 Acme Ltd.</small></p>
 			<ul class="cluster" data-gap="sm" role="list">
-				<li><a href="/status/"><small>Status</small></a></li>
-				<li><a href="/accessibility/"><small>Accessibility</small></a></li>
-				<li><a href="/sitemap/"><small>Sitemap</small></a></li>
+				<li><a href="#"><small>Status</small></a></li>
+				<li><a href="#"><small>Accessibility</small></a></li>
+				<li><a href="#"><small>Sitemap</small></a></li>
 			</ul>
 		</div>
 	</div>
@@ -87,7 +87,7 @@ The grid fits as many columns as its width allows, so the four columns sit in a 
 
 One `nav`, labelled "Footer", holds all four columns. A `nav` for each column would add four more landmarks, and for someone moving through the page by landmark with a screen reader, that is four more stops that say little.
 
-The column headings are real headings, so a screen reader can list them and jump between them. Yeti sizes a heading by its level and nothing else: `data-size` is for controls and does not change a heading. So the example uses `h5`, the level drawn at body size, the same size as the links under it. Each list carries `role="list"`, which keeps it a list for a screen reader after the reset removes the markers.
+The column headings are real headings, so a screen reader can list them and jump between them. Yeti sizes a heading by its level and nothing else: `data-size` is for controls and does not change a heading. So the example uses `h5`, the level drawn at body size, the same size as the links under it. On a page whose outline stops at `h2`, an `h5` skips two levels, and some checkers flag that. Use the level that follows your own page's outline, usually `h2` for a footer, and set its size in your own CSS. Each list carries `role="list"`, which keeps it a list for a screen reader after the reset removes the markers.
 
 The links keep the look every plain link has, the link color and an underline. For a quieter footer, give the footer a grey with `data-text`, such as `data-text="grey-70"`. The footer's words take that grey, and a plain link inside it takes the same grey instead of the link color, under the pointer too. The underline stays, so a link still looks like a link. A link with a class, such as a `.button`, keeps its own colors.
 
@@ -107,34 +107,34 @@ A mega menu is a wide panel under one item of the site's nav: columns of links, 
 			<div id="mega-products" popover>
 				<div class="grid" data-min="2xs" data-gap="md">
 					<div class="stack" data-gap="none">
-						<h5>Build</h5>
-						<a href="/editor/">Editor</a>
-						<a href="/components/">Components</a>
-						<a href="/themes/">Themes</a>
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Build</h5>
+						<a href="#">Editor</a>
+						<a href="#">Components</a>
+						<a href="#">Themes</a>
 					</div>
 					<div class="stack" data-gap="none">
-						<h5>Ship</h5>
-						<a href="/hosting/">Hosting</a>
-						<a href="/domains/">Domains</a>
-						<a href="/analytics/">Analytics</a>
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Ship</h5>
+						<a href="#">Hosting</a>
+						<a href="#">Domains</a>
+						<a href="#">Analytics</a>
 					</div>
 					<div class="stack" data-gap="none">
-						<h5>Learn</h5>
-						<a href="/guides/">Guides</a>
-						<a href="/templates/">Templates</a>
-						<a href="/community/">Community</a>
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Learn</h5>
+						<a href="#">Guides</a>
+						<a href="#">Templates</a>
+						<a href="#">Community</a>
 					</div>
 					<div class="card">
 						<h5>New this month</h5>
 						<p>Publish straight from the editor, with a preview link for every change.</p>
-						<footer><a class="button" href="/tour/">Take the tour</a></footer>
+						<footer><a class="button" href="#">Take the tour</a></footer>
 					</div>
 				</div>
 			</div>
 		</li>
-		<li><a href="/pricing/">Pricing</a></li>
-		<li><a href="/docs/">Docs</a></li>
-		<li><a href="/blog/">Blog</a></li>
+		<li><a href="#">Pricing</a></li>
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">Blog</a></li>
 	</ul>
 </nav>
 ```
@@ -142,6 +142,8 @@ A mega menu is a wide panel under one item of the site's nav: columns of links, 
 The panel's width comes from the dropdown's own token, `--yeti-dropdown-min`, set on the dropdown. Here it is `min(56rem, calc(100vw - 2rem))`: wide on a large screen, and never wider than the screen less a margin. Where the panel would pass the edge of the screen, it moves back in and keeps a margin from that edge.
 
 The links in the columns become menu rows, with the dropdown's padding and hover fill, as they would in any panel. The `.button` in the card keeps its own look, its fill and its corners, so the call to action still reads as one.
+
+A row's padding keeps its label in from the edge of its hover fill, so a plain heading above the links would sit further out than they do. Each column heading here is a `box` with `data-gap="none"` and `data-gap-inline="sm"`, which pads it in by the same step, so the heading and its links line up.
 
 Below the nav's threshold the same panel shows inside the nav's open panel, and the grid drops to one column, so the columns and the card read down the page in order.
 

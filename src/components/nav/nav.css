@@ -180,9 +180,10 @@
 		overflow: auto;
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease), translate var(--yeti-duration-fast) var(--yeti-ease);
 	}
-	/* Every link fills its row, except a .button, which keeps its own width
-	   here as it does in a dropdown's panel. */
-	.nav > ul[popover]:popover-open :is(a:where(:not(.button)), .dropdown > button) { inline-size: 100%; }
+	/* Every link fills its row, a .button in the list included. A .button
+	   inside a dropdown's panel is the exception: it keeps its own width, as
+	   the same panel's rules let it keep its own look. */
+	.nav > ul[popover]:popover-open :is(a:where(:not(.dropdown > [popover] .button)), .dropdown > button) { inline-size: 100%; }
 	.nav > ul[popover] > [data-close] {
 		position: absolute;
 		inset-block-start: var(--yeti-space-sm);
