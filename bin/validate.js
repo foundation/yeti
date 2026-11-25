@@ -98,6 +98,12 @@ export function validateElementTree(root, merged, file, lineOffset = 0, allowed 
 					else if (start + span - 1 > tracks) report(`data-start="${start}" data-span="${span}" on <${child.tagName}> runs to track ${start + span - 1} of ${tracks}`);
 				}
 			}
+			// The toggle is optional in the manifest only because a bottom bar has
+			// none. Every other nav opens its links with it, and one without it
+			// has no way to show them on a narrow screen.
+			if (m.name === 'nav' && attrs.get('data-panel') !== 'bar' && countMatches(el, '> button[popovertarget]') === 0) {
+				push('needs its toggle, a > button[popovertarget]; only data-panel="bar" may leave it out');
+			}
 			// A group whose parent is a fieldset with a legend is already a named
 			// group, so the role and the name the contract asks for would only
 			// announce the same set twice.

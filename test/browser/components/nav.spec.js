@@ -1134,8 +1134,6 @@ test.describe('nav', () => {
 		const viewport = (page) => page.evaluate(() => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }));
 		const items = '#bar-menu > li:not([data-close])';
 		// A link's label is a bare text node, so its box is read through a range.
-		// Its lines are counted by their tops: a line cut off with an ellipsis
-		// reports two boxes on one line.
 		// Its lines are counted by their tops: a cut-off line reports two boxes on
 		// one line, the text and the ellipsis.
 		const label = (page, selector) => page.evaluate((s) => {

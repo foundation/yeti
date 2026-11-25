@@ -92,7 +92,9 @@ The bar covers the bottom of the page, and the nav cannot make room for it from 
 
 The bar's height is worked out from the tokens it uses: two lines of the label, an icon being one line tall, plus its padding and its top edge. The safe area is only reported to a page whose viewport meta tag includes `viewport-fit=cover`.
 
-The threshold is the nav's own width, not the screen's, while the rule above follows the screen. The two agree only while the nav is as wide as the screen. That is the usual place for a site's nav, and it is where this mode belongs. Even then the nav measures the room inside its own padding, so it switches when the screen is a little wider than the threshold. That is why the rule's width is a little wider than md's 32rem: room the page does not need does no harm, but a bar over the last line does.
+The threshold is the nav's own width, not the screen's, while the rule above follows the screen. The two agree only while the nav is as wide as the screen. That is the usual place for a site's nav, and it is where this mode belongs. Even then the nav measures its own content box, the room inside its padding, so it switches when the screen is a little wider than the threshold. That is why the rule's width is a little wider than md's 32rem: room the page does not need does no harm, but a bar over the last line does. For another threshold, or a nav with more padding, take the threshold plus the nav's inline padding on both sides, and round up.
+
+A fixed bar is placed against the screen only while no ancestor of the nav has a `transform`, a `filter`, a `backdrop-filter`, or a `contain` that includes layout or paint. Such an ancestor traps it, and the bar then sits at the foot of that ancestor instead of the screen, so keep the nav outside a wrapper like that.
 
 ## Submenus
 

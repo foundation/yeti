@@ -90,6 +90,22 @@ test('validateHtmlString reports a value outside its attribute\'s list, with the
 	assert.match(errors[0].message, /data-gap="enormous"/);
 });
 
+test('a nav needs its toggle unless it is a bottom bar', () => {
+	const nav = validManifest({
+		name: 'nav',
+		class: 'nav',
+		attributes: [{ name: 'data-panel', type: 'enum', values: ['sheet', 'bar'], description: 'What the links become.' }],
+		children: [{ selector: '> button[popovertarget]', min: 0, max: 1, description: 'The toggle.' }],
+	});
+	const check = (html) => validateHtmlString(html, { nav }, 'page.html').map((e) => e.message);
+	const list = '<ul id="m" popover role="list"><li><a href="#">Docs</a></li></ul>';
+	assert.deepEqual(check(`<nav class="nav">${list}</nav>`), ['.nav <nav>: needs its toggle, a > button[popovertarget]; only data-panel="bar" may leave it out']);
+	assert.equal(check(`<nav class="nav" data-panel="sheet">${list}</nav>`).length, 1);
+	assert.deepEqual(check(`<nav class="nav" data-panel="bar">${list}</nav>`), []);
+	assert.deepEqual(check(`<nav class="nav" data-panel="bar"><button type="button" popovertarget="m">Menu</button>${list}</nav>`), []);
+	assert.deepEqual(check(`<nav class="nav"><button type="button" popovertarget="m">Menu</button>${list}</nav>`), []);
+});
+
 test('extractHtmlBlocks returns each fenced html block with its starting line', () => {
 	const md = '# Guide\n\n```html\n<div class="rail"><p>x</p></div>\n```\n\ntext\n\n```css\n.x{}\n```\n\n```html\n<b>y</b>\n```\n';
 	assert.deepEqual(extractHtmlBlocks(md), [

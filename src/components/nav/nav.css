@@ -548,7 +548,9 @@
 	   condition cannot read a token; md (32rem) is the default. While a
 	   panel is open the guard turns these rules off, so the nav stays in
 	   panel mode whatever its width: a resize cannot strip an open panel
-	   of its box before it is dismissed. */
+	   of its box before it is dismissed. The bottom bar's blocks at the end
+	   of the file are the complements of these six, below each width, so
+	   the two sets are edited together. */
 	@container (inline-size >= 16rem) {
 		/* xs (16rem) */
 		.nav[data-threshold="xs"]:not(:has(> ul[popover]:popover-open)) > ul[popover][popover] { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: var(--_yeti-gap); position: static; inset: auto; inline-size: auto; block-size: auto; max-block-size: none; margin: 0; padding: 0; border: 0; background-color: transparent; color: inherit; box-shadow: none; overflow: visible; font-size: inherit; opacity: 1; translate: none; }
@@ -612,7 +614,8 @@
 	/* The bar, below the threshold: what the inline blocks above do not
 	   reset, so it is set only while the nav is narrower than its threshold.
 	   Each block is the exact complement of the inline block for the same
-	   width.
+	   width, so the two sets of six are edited together: a threshold added,
+	   removed or moved in one set is changed in the other.
 	   - The bar sits over the page at the level data-sticky uses, above what
 	     scrolls under it and below the top layer, where dialogs and popovers
 	     open.
@@ -628,10 +631,10 @@
 	     toggle at its inline end, both the full height of the row.
 	   - A dropdown's panel opens above its item, so the chevron points up
 	     while it is closed and down while it is open. The panel is the
-	     dropdown's own card. Its trigger sits the bar's top edge and padding
-	     below the top of the bar, so the margin adds those to the gap the
-	     dropdown leaves under a trigger, and the card stands that gap clear
-	     of the bar. A panel that would pass the far edge of the screen takes
+	     dropdown's own card. Its trigger sits below the top of the bar by the
+	     bar's top edge and padding, so the margin adds those two to the gap
+	     the dropdown leaves under a trigger, and the card stands that gap
+	     clear of the bar. A panel that would pass the far edge of the screen takes
 	     the dropdown's own fallback, turned upward; the margin is the same on
 	     both sides, so the turn leaves it where it was.
 	   - With no toggle the actions keep the end of the bar for any
