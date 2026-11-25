@@ -1,0 +1,94 @@
+---
+raw: true
+title: "Navigation"
+description: "Which of Yeti's navigation parts to use when, from the site's bar to a page's own contents, and a footer of link columns built from the layouts."
+nav_group: "Guides"
+nav_order: 13
+---
+
+# Navigation
+
+<p class="lede">Yeti has seven parts for getting around a site, and each one does one job. This page says which part to reach for and which to leave alone. It also shows patterns that need no component of their own, built from the parts that already exist.</p>
+
+## Which part when
+
+<div class="scroller" role="region" aria-label="Which navigation part to use" tabindex="0" markdown="1">
+
+| Part | For | Not for |
+| --- | --- | --- |
+| [nav](../nav.md) | The site's main bar: the name, the main links, a button or two. As a rule there is one per page. When the bar is too narrow, the links fold behind a toggle and open as a panel. | A tree of pages down a sidebar, which is `subnav`, or a row of tabs, which is `tabnav`. |
+| [dropdown](../dropdown.md) | A short menu of links or actions on one button: the pages under a nav item, an account menu, a row's secondary actions. | A panel of other content beside a button, such as a quick form or a short explanation, which is [popover](../popover.md). Choosing a value in a form, which is a `select` in a field. |
+| [subnav](../subnav.md) | A sidebar: a column of a site's pages, whose sections open in place on `details`. It stays a column at every width. | The bar across the top of the site, which is `nav` with dropdowns. |
+| [tabnav](../tabnav.md) | Links to sibling pages, drawn as tabs, with the current one marked. Each tab is its own page with its own URL, so following one loads that page. | Switching panels inside one page, which is [tabs](../tabs.md). |
+| [breadcrumbs](../breadcrumbs.md) | Where this page sits in the hierarchy, with one click to each level above it. | A menu. It only goes up, one level at a time. |
+| [toc](../toc.md) | Links to the headings of the page being read, with the reader's current section marked. | Links to other pages. |
+| [pagination](../pagination.md) | Stepping through a list split into numbered pages: search results, an archive, a long table. | The sections of a site. |
+
+</div>
+
+Three of these get confused. On a phone, the nav's open panel looks like a subnav, but it is the same nav in its narrow mode: the same list of links, shown as a panel below the nav's threshold and back in the bar above it. A subnav is a column at every width. A tabnav looks like a nav, since both are a row of links, but it marks the sibling pages of one section. It usually sits under the page heading, below the site's nav, not in its place.
+
+## A footer of link columns
+
+Many sites end with a footer of links in columns, each under a short heading, and a line of small print below. Yeti has no footer component, because the layouts already make one: a sunken `box` for the band, a `container` so that what sits inside can answer to the footer's width, a `grid` for the columns, a `stack` for each column, and a `cluster` for the small print.
+
+```html demo lg sm
+<footer class="box" data-surface="sunken">
+	<div class="container stack" data-gap="xl">
+		<nav class="grid" data-min="2xs" data-gap="lg" aria-label="Footer">
+			<div class="stack" data-gap="sm">
+				<h5>Product</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="/features/">Features</a></li>
+					<li><a href="/pricing/">Pricing</a></li>
+					<li><a href="/changelog/">Changelog</a></li>
+					<li><a href="/roadmap/">Roadmap</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Company</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="/about/">About</a></li>
+					<li><a href="/careers/">Careers</a></li>
+					<li><a href="/press/">Press</a></li>
+					<li><a href="/contact/">Contact</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Resources</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="/docs/">Docs</a></li>
+					<li><a href="/guides/">Guides</a></li>
+					<li><a href="/blog/">Blog</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Legal</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="/privacy/">Privacy</a></li>
+					<li><a href="/terms/">Terms</a></li>
+					<li><a href="/cookies/">Cookies</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="cluster" data-justify="between">
+			<p><small>© 2026 Acme Ltd.</small></p>
+			<ul class="cluster" data-gap="sm" role="list">
+				<li><a href="/status/"><small>Status</small></a></li>
+				<li><a href="/accessibility/"><small>Accessibility</small></a></li>
+				<li><a href="/sitemap/"><small>Sitemap</small></a></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+```
+
+The grid fits as many columns as its width allows, so the four columns sit in a row on a wide screen and drop to fewer in each row as the footer narrows, down to one. The small print wraps the same way.
+
+One `nav`, labelled "Footer", holds all four columns. A `nav` for each column would add four more landmarks, and for someone moving through the page by landmark with a screen reader, that is four more stops that say little.
+
+The column headings are real headings, so a screen reader can list them and jump between them. Yeti sizes a heading by its level and nothing else: `data-size` is for controls and does not change a heading. So the example uses `h5`, the level drawn at body size, the same size as the links under it. Each list carries `role="list"`, which keeps it a list for a screen reader after the reset removes the markers.
+
+The links keep the look every plain link has, the link color and an underline. For a quieter footer, give the footer a grey with `data-text`, such as `data-text="grey-70"`. The footer's words take that grey, and a plain link inside it takes the same grey instead of the link color, under the pointer too. The underline stays, so a link still looks like a link. A link with a class, such as a `.button`, keeps its own colors.
+
+This is an example, not a recipe. It adds no CSS: every rule it uses belongs to a part with its own page. Change the columns, the headings and the small print to suit the site.

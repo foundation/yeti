@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderCompact, renderFull } from '../../bin/gen-llms.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { renderCompact, renderFull, GUIDES } from '../../bin/gen-llms.js';
+import { REPO_ROOT } from './helpers.js';
 
 const pkg = { name: '@foundation/yeti', version: '7.0.0-beta.0', homepage: 'https://foundationcss.com/yeti/' };
 const merged = {
@@ -99,4 +102,11 @@ test('the compact file links the guides and the full file carries them', () => {
 
 test('the compact file gives the address of the full file at its own version', () => {
 	assert.ok(renderCompact(merged, pkg).includes('https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-beta.0/dist/llms-full.txt'));
+});
+
+// writeLlms skips a listed guide whose source is missing without a word, so a
+// misspelt name would drop that guide from llms-full.txt and nothing would say.
+test('every guide the llms files carry has a source, and the navigation guide is one of them', () => {
+	for (const [name] of GUIDES) assert.ok(fs.existsSync(path.join(REPO_ROOT, 'src/guides', `${name}.md`)), `src/guides/${name}.md is listed in GUIDES but does not exist`);
+	assert.deepEqual(GUIDES.find(([name]) => name === 'navigation'), ['navigation', 'Navigation']);
 });

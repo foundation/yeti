@@ -13,8 +13,10 @@ import { loadSchema, loadAndMerge, loadVocabulary } from './lib/manifest.js';
 import { readPackage, cdnUrl } from './build.js';
 
 // The guides an agent needs and the component pages do not say: how color and
-// theming work across components, and what an entrance is for.
-const GUIDES = [['color', 'Color'], ['theming', 'Theming'], ['animations', 'Animations']];
+// theming work across components, what an entrance is for, and which of the
+// navigation parts to use when. Exported so a test can check each one has a
+// source, since a missing one is skipped without a word.
+export const GUIDES = [['color', 'Color'], ['theming', 'Theming'], ['animations', 'Animations'], ['navigation', 'Navigation']];
 
 const KIND_ORDER = { layout: 0, recipe: 1, component: 2, utility: 3 };
 const ordered = (merged) => Object.values(merged).sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || a.name.localeCompare(b.name));
@@ -37,7 +39,7 @@ function preamble(pkg) {
 	return [
 		`# Yeti ${pkg.version}`,
 		'',
-		`Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (\`class="card"\`), configuration is a \`data-*\` attribute with a fixed value list (\`data-gap="md"\`), and state is native or ARIA (\`open\`, \`aria-current\`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: ${pkg.homepage}. Each component's guidance, every token's default and the color, theming and animation guides are in ${cdnUrl(pkg, 'llms-full.txt')}; it is large, so search it rather than reading it whole.`,
+		`Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (\`class="card"\`), configuration is a \`data-*\` attribute with a fixed value list (\`data-gap="md"\`), and state is native or ARIA (\`open\`, \`aria-current\`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: ${pkg.homepage}. Each component's guidance, every token's default and the color, theming, animation and navigation guides are in ${cdnUrl(pkg, 'llms-full.txt')}; it is large, so search it rather than reading it whole.`,
 		'',
 		'To begin a page, start from dist/starter/index.html, a complete and valid page (skip link, sticky nav, hero, card grid, prose, footer), and dist/starter/theme.css, the essential theme settings with their defaults, commented out. Copy both and delete what the page does not need.',
 		'',
