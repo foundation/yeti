@@ -8,7 +8,10 @@
   "attributes": [
     { "name": "data-variant", "type": "enum", "vocabulary": "variant", "default": "primary", "description": "Which hue's ladder the button uses." },
     { "name": "data-emphasis", "type": "enum", "vocabulary": "emphasis", "default": "high", "description": "How loud: high is a solid fill, medium an outline, low text alone." },
-    { "name": "data-size", "type": "enum", "vocabulary": "size-control", "default": "md", "description": "Scales the text and the padding together." }
+    { "name": "data-size", "type": "enum", "vocabulary": "size-control", "default": "md", "description": "Scales the text and the padding together." },
+    { "name": "data-action", "type": "enum", "values": ["copy", "share"], "description": "Read by the module: what a click does. copy puts the text of the element data-target names on the clipboard. share opens the browser's share sheet for the page, or for the link data-target names, and copies the link where the browser has no share sheet." },
+    { "name": "data-target", "type": "string", "description": "Read by the module: the id of the element the action works on. For copy, the element whose text is copied, or whose value when it is a form field. For share, a link to share in place of the page." },
+    { "name": "data-done", "type": "string", "description": "Read by the module: the label the button shows for two seconds once something is on the clipboard, in your own words." }
   ],
   "classes": [],
   "children": [
@@ -45,8 +48,8 @@
     { "name": "--_yeti-size-space", "public": false },
     { "name": "--_yeti-variant-soft", "public": false }
   ],
-  "a11y": { "requiredAttributes": [], "keyboard": [ { "key": "Enter / Space", "action": "Activates a button element; Enter follows a link." }, { "key": "Space / Arrow keys", "action": "On a label.button toggle, Space checks its input; the arrow keys move the choice within a radio group." } ], "notes": "Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy=\"true\" together with aria-disabled=\"true\", and your handler ignores presses while it waits." },
-  "js": null,
+  "a11y": { "requiredAttributes": [], "keyboard": [ { "key": "Enter / Space", "action": "Activates a button element; Enter follows a link." }, { "key": "Space / Arrow keys", "action": "On a label.button toggle, Space checks its input; the arrow keys move the choice within a radio group." } ], "notes": "Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy=\"true\" together with aria-disabled=\"true\", and your handler ignores presses while it waits. A copy or share button carries aria-live=\"polite\" and a data-done label: the label read aloud is the only sign a screen reader gets that something was copied." },
+  "js": [ { "module": "button.js", "optional": true, "events": [ { "name": "yeti:copy", "description": "Dispatched on the button once the browser has put text on the clipboard: after a copy, and after a share in a browser with no share sheet." }, { "name": "yeti:share", "description": "Dispatched on the button once the browser's share sheet reports that the visitor shared." } ] } ],
   "support": { "unguarded": ["inline flexbox", "logical properties"], "guarded": [] },
   "since": "7.0.0",
   "example": "example.html",

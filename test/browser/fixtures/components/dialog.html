@@ -12,6 +12,12 @@
 	<main>
 		<h1>Dialog component</h1>
 		<div id="stage">
+			<pre id="pre-flow"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
 			<button class="button" type="button" commandfor="confirm" command="show-modal" id="opener" data-contrast>Delete project</button>
 			<p><a href="#" id="after">A link after the button.</a></p>
 
@@ -32,7 +38,136 @@
 					<form method="dialog"><button class="button" type="submit" id="nested-cancel">No</button></form>
 				</footer>
 			</dialog>
+
+			<!-- A centered dialog with a close button, and a heading long enough to wrap beside it. -->
+			<button class="button" type="button" commandfor="closable" command="show-modal" id="closable-open">Closable</button>
+			<dialog class="dialog" id="closable" data-max="sm" aria-labelledby="closable-title">
+				<button type="button" data-close aria-label="Close" commandfor="closable" command="close" id="closable-close">×</button>
+				<h2 id="closable-title">A heading long enough to wrap onto a second line beside the close button</h2>
+				<p>Some words under it.</p>
+			</dialog>
+
+			<!-- Drawers: one per edge, a narrow one, and a long one at the bottom. -->
+			<button class="button" type="button" commandfor="drawer-start" command="show-modal" id="drawer-start-open">Start drawer</button>
+			<dialog class="dialog" id="drawer-start" data-panel="drawer" aria-labelledby="drawer-start-title">
+				<button type="button" data-close aria-label="Close" commandfor="drawer-start" command="close" id="drawer-start-close">×</button>
+				<h2 id="drawer-start-title">Filters</h2>
+				<p>A short drawer.</p>
+				<footer id="drawer-start-footer">
+					<form method="dialog"><button class="button" type="submit" id="drawer-start-done">Done</button></form>
+				</footer>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-end" command="show-modal" id="drawer-end-open">End drawer</button>
+			<dialog class="dialog" id="drawer-end" data-panel="drawer" data-placement="end" aria-labelledby="drawer-end-title">
+				<h2 id="drawer-end-title">Cart</h2>
+				<p>Two items.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-top" command="show-modal" id="drawer-top-open">Top drawer</button>
+			<dialog class="dialog" id="drawer-top" data-panel="drawer" data-placement="top" aria-labelledby="drawer-top-title">
+				<h2 id="drawer-top-title">Notice</h2>
+				<p>A line from the top.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-bottom" command="show-modal" id="drawer-bottom-open">Bottom drawer</button>
+			<dialog class="dialog" id="drawer-bottom" data-panel="drawer" data-placement="bottom" aria-labelledby="drawer-bottom-title">
+				<h2 id="drawer-bottom-title">Details</h2>
+				<p>Paragraph one of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph two of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph three of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph four of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<pre id="pre-bottom"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
+				<p>Paragraph five of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph six of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph seven of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph eight of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph nine of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph ten of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph eleven of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph twelve of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph thirteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph fourteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph fifteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph sixteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-long" command="show-modal" id="drawer-long-open">Long side drawer</button>
+			<dialog class="dialog" id="drawer-long" data-panel="drawer" aria-labelledby="drawer-long-title">
+				<h2 id="drawer-long-title">Long</h2>
+				<p>Paragraph 1 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 2 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 3 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 4 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 5 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 6 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 7 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 8 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<pre id="pre-side"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
+				<p>Paragraph 1 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 2 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 3 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 4 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 5 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 6 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 7 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 8 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-xs" command="show-modal" id="drawer-xs-open">Narrow drawer</button>
+			<dialog class="dialog" id="drawer-xs" data-panel="drawer" data-max="xs" aria-labelledby="drawer-xs-title">
+				<h2 id="drawer-xs-title">Narrow</h2>
+				<p>A drawer from the extra small width.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="body-plain" command="show-modal" id="body-plain-open">Body dialog</button>
+			<button class="button" type="button" commandfor="body-start" command="show-modal" id="body-start-open">Body start drawer</button>
+			<button class="button" type="button" commandfor="body-end" command="show-modal" id="body-end-open">Body end drawer</button>
+			<button class="button" type="button" commandfor="body-top" command="show-modal" id="body-top-open">Body top drawer</button>
+			<button class="button" type="button" commandfor="body-bottom" command="show-modal" id="body-bottom-open">Body bottom drawer</button>
+			<button class="button" type="button" commandfor="section-plain" command="show-modal" id="section-plain-open">Section dialog</button>
 		</div>
+
+		<!-- A dialog after a sibling inside a flow container, which the base layer would space. -->
+		<section>
+			<p>A paragraph before the dialog.</p>
+			<dialog class="dialog" id="section-plain" aria-labelledby="section-plain-title">
+				<h2 id="section-plain-title">In a section</h2>
+				<p>Second child of its section.</p>
+			</dialog>
+		</section>
 	</main>
+
+	<!-- Dialogs as children of body after a sibling, which the base layer would space. -->
+	<dialog class="dialog" id="body-plain" aria-labelledby="body-plain-title">
+		<h2 id="body-plain-title">After main</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-start" data-panel="drawer" aria-labelledby="body-start-title">
+		<h2 id="body-start-title">Start</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-end" data-panel="drawer" data-placement="end" aria-labelledby="body-end-title">
+		<h2 id="body-end-title">End</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-top" data-panel="drawer" data-placement="top" aria-labelledby="body-top-title">
+		<h2 id="body-top-title">Top</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-bottom" data-panel="drawer" data-placement="bottom" aria-labelledby="body-bottom-title">
+		<h2 id="body-bottom-title">Bottom</h2>
+		<p>A child of body.</p>
+	</dialog>
 </body>
 </html>

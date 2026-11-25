@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Popover fixture</title>
+	<link rel="stylesheet" href="../../../../src/yeti.css">
+	<style>
+		main { padding: 1rem; }
+		#stage { inline-size: 100%; }
+		#placements { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 6rem; padding-block: 12rem 2rem; }
+		#low-open { position: fixed; inset-block-end: 0.5rem; left: 0.5rem; }
+		#edge-open { position: fixed; top: 40%; right: 0.5rem; }
+	</style>
+</head>
+<body>
+	<main>
+		<h1>Popover component</h1>
+		<h2>Buttons that open a panel</h2>
+		<div id="stage">
+			<p><button class="button" type="button" popovertarget="share" id="share-open">Share</button> <a href="#" id="after-share">A link after the button.</a></p>
+			<p><button class="button" type="button" popovertarget="rename" id="rename-open">Rename</button> <button class="button" type="button" id="outside">Outside</button> <button class="button" type="button" popovertarget="outer" id="outer-open">Outer</button></p>
+
+			<div id="placements">
+				<button class="button" type="button" popovertarget="above" id="above-open">Above</button>
+				<button class="button" type="button" popovertarget="before" id="before-open">Before</button>
+				<button class="button" type="button" popovertarget="beside" id="beside-open">Beside</button>
+			</div>
+
+			<p>
+				<button class="button" type="button" popovertarget="one" id="one-open">One</button>
+				<button class="button" type="button" popovertarget="two" id="two-open">Two</button>
+				<button class="button" type="button" popovertarget="three" id="three-open">Three</button>
+			</p>
+
+			<section>
+				<div class="box">
+					<div>
+						<button class="button" type="button" popovertarget="nested" id="nested-open">Nested</button>
+					</div>
+				</div>
+			</section>
+
+			<p>
+				<button class="button" type="button" popovertarget="long" id="long-open">Long</button>
+				<button class="button" type="button" popovertarget="wide" id="wide-open">Wide</button>
+				<button class="button" type="button" popovertarget="content" id="content-open">Content</button>
+			</p>
+
+			<p><a href="#" id="out-link">A link outside.</a> <button class="button" type="button" id="out-button">A button outside</button></p>
+
+			<article id="flow">
+				<h3>A heading</h3>
+				<p>A paragraph.</p>
+				<p>Another paragraph.</p>
+			</article>
+
+			<button class="button" type="button" popovertarget="low" id="low-open">Near the bottom</button>
+			<button class="button" type="button" popovertarget="edge" id="edge-open">Edge</button>
+		</div>
+
+		<div class="popover" id="above" popover data-placement="top"><p>Above its button.</p></div>
+		<div class="popover" id="before" popover data-placement="start"><p>Before its button.</p></div>
+		<div class="popover" id="beside" popover data-placement="end"><p>Beside its button.</p></div>
+		<div class="popover" id="one" popover><p>One.</p></div>
+		<div class="popover" id="two" popover><p>Two.</p></div>
+		<div class="popover" id="three" popover><p>Three.</p></div>
+		<div class="popover" id="long" popover><p>A long paragraph that runs on well past the width of the panel, so the panel grows as wide as it may and no wider, and wraps the rest of the words onto the lines below.</p></div>
+		<div class="popover" id="wide" popover data-max="sm"><p>A long paragraph that runs on well past the width of the panel, so the panel grows as wide as it may and no wider, and wraps the rest of the words onto the lines below.</p></div>
+		<div class="popover" id="content" popover>
+			<h3 id="content-heading">A heading</h3>
+			<p id="content-one">A paragraph with a <a href="#" id="content-link">link</a> in it.</p>
+			<p id="content-two">Another paragraph.</p>
+			<button class="button" type="button" id="content-button">Copy link</button>
+		</div>
+		<dialog class="popover" id="rename" popover aria-labelledby="rename-title">
+			<h3 id="rename-title">Rename</h3>
+			<div class="field">
+				<label for="rename-input">Name</label>
+				<input id="rename-input" type="text" autofocus>
+			</div>
+		</dialog>
+		<div class="popover" id="low" popover><p>No room below, so it opens above.</p><p>A second line.</p><p>A third line.</p></div>
+		<div class="popover" id="edge" popover><p>This panel would run past the end edge, so it flips to line up with the other side of its button.</p></div>
+		<div class="popover" id="nested" popover><p>Beside the nested button.</p></div>
+		<div class="popover" id="outer" popover>
+			<p>A panel that holds another panel and a dialog.</p>
+			<button class="button" type="button" popovertarget="inner" id="inner-open">Inner</button>
+			<button class="button" type="button" commandfor="inside-dialog" command="show-modal" id="inside-dialog-open">Dialog</button>
+			<div class="popover" id="inner" popover><p>A panel inside a panel.</p></div>
+			<dialog class="dialog" id="inside-dialog" aria-labelledby="inside-dialog-title">
+				<h2 id="inside-dialog-title">A dialog inside a panel</h2>
+				<p>It is centered all the same.</p>
+			</dialog>
+		</div>
+	</main>
+
+	<div class="popover" id="share" popover>
+		<h3>Share this page</h3>
+		<p>Anyone with the <a href="#" id="share-link">link</a> can read it.</p>
+		<button class="button" type="button" id="share-copy">Copy link</button>
+	</div>
+</body>
+</html>

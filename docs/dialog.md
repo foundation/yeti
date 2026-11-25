@@ -57,9 +57,41 @@ Opening is native too. A `button` carrying `commandfor` with the dialog's id and
 </dialog>
 ```
 
+## A drawer
+
+A drawer is the same dialog, pinned to an edge of the screen. Use it for a panel that is longer or taller than a centered dialog suits: filters, a cart, the details of a row. It is still modal, so the page behind is inert and Escape closes it. A panel that should leave the page usable is a different thing: a `sidebar` layout, or a popover.
+
+Add `data-panel="drawer"`, and pick the edge with `data-placement`: `start` (the default), `end`, `top` or `bottom`. `start` and `end` follow the writing direction, so in a right-to-left page a `start` drawer comes from the right. A side drawer is as tall as the screen, and its width comes from `data-max`, `sm` when it is absent. It always leaves a strip of backdrop to tap. A top or bottom drawer is as wide as the screen and as tall as its content, up to the screen's height less that strip; `data-max` does nothing on it. The drawer slides in from its edge and back out.
+
+A long drawer scrolls as one piece. The footer sits at the bottom when the content is short, and scrolls with the content when it is long.
+
+```html
+<button class="button" type="button" commandfor="filters" command="show-modal">Filters</button>
+
+<dialog class="dialog" id="filters" data-panel="drawer" data-placement="end" aria-labelledby="filters-title">
+	<button type="button" data-close aria-label="Close" commandfor="filters" command="close">×</button>
+	<h2 id="filters-title">Filters</h2>
+	<p>Choose what to show.</p>
+	<footer>
+		<form method="dialog"><button class="button" type="submit" data-emphasis="medium">Cancel</button></form>
+		<button class="button" type="button">Apply</button>
+	</footer>
+</dialog>
+```
+
+## A close button
+
+A `button` carrying `data-close`, as a child of any dialog, sits in the top end corner. Put it first in the dialog, with the heading straight after it: the heading is what keeps clear of the button, so its text never runs under it. It works in a centered dialog and in a drawer. It closes the dialog natively: give it `commandfor` with the dialog's id and `command="close"`, and no script is needed. Yeti adds only the look. Give it an `aria-label`, since its text is a symbol.
+
+```html
+<button type="button" data-close aria-label="Close" commandfor="share" command="close">×</button>
+```
+
 ## Accessibility
 
 Name the dialog with `aria-labelledby` pointing at its heading, so it is announced as something rather than as an unnamed dialog. Because it is opened modally the page behind it is genuinely inert, not merely covered, so a screen reader cannot wander out of it. Focus returns to the opener on close, which is what keeps a keyboard reader's place.
+
+The browser focuses the first control in a dialog when it opens. That is the close button when there is one, so put `autofocus` on a field that should have focus instead. The close button scrolls away with a long drawer's content, and Escape still closes the drawer.
 
 Without the module the dialog still opens and Escape still closes it. What is lost is the backdrop click and, in Safari, the return of focus to the opener, because Safari does not focus a button when it is clicked. Load the module on any page where a keyboard reader will meet a dialog.
 
@@ -69,7 +101,21 @@ Without the module the dialog still opens and Escape still closes it. What is lo
 
 | Attribute | Type | Values | Default | Description |
 | --- | --- | --- | --- | --- |
-| `data-max` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. |
+| `data-max` | enum | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | `md` | The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. A side drawer defaults to sm, and a top or bottom drawer ignores it. |
+| `data-panel` | enum | `drawer` |  | Pins the dialog to an edge of the screen as a drawer, sliding in from that edge. Absent, the dialog is centered. |
+| `data-placement` | enum | `top`, `bottom`, `start`, `end` | `start` | Which edge of the screen a drawer is pinned to. start and end follow the writing direction; a side drawer takes its width from data-max, and a top or bottom one is as wide as the screen. |
+
+</div>
+
+## Markers
+
+Attributes that descendants carry, not the root.
+
+<div class="scroller" role="region" aria-label="Dialog markers" tabindex="0" markdown="1">
+
+| Attribute | Type | Values | On | Description |
+| --- | --- | --- | --- | --- |
+| `data-close` | boolean |  | `> button` | The close button, in the top end corner. It closes the dialog with commandfor and command="close", with no script. |
 
 </div>
 
@@ -77,6 +123,7 @@ Without the module the dialog still opens and Escape still closes it. What is lo
 
 - `> *`: at least 1. The contents: a heading that names the dialog, then whatever it is for.
 - `> footer`: 0 to 1. The buttons, at the end edge. A button inside a form with method="dialog" closes it with no script.
+- `> button[data-close]`: 0 to 1. A close button in the top end corner. Give it commandfor naming the dialog, command="close", and an aria-label; it closes the dialog with no script.
 
 ## Tokens
 
@@ -89,24 +136,29 @@ Without the module the dialog still opens and Escape still closes it. What is lo
 | `--yeti-dialog-padding` | Padding inside. |
 | `--yeti-dialog-backdrop` | The wash over the page behind it. |
 | `--yeti-shadow-md` | The dialog's shadow. |
-| `--yeti-space-md` | The least margin kept between the dialog and the viewport's edges. |
+| `--yeti-space-md` | The least margin kept between the dialog and the viewport's edges, and the space above a drawer's footer. |
 | `--yeti-color-text` | The dialog's text. |
 | `--yeti-width-md` | The default maximum, when data-max is absent. |
-| `--yeti-space-sm` | Gap between the footer's actions. |
-| `--yeti-duration-fast` | How long the dialog and its backdrop take to appear. |
+| `--yeti-space-sm` | Gap between the footer's actions, and the close button's inset from the corner. |
+| `--yeti-duration-fast` | How long the dialog and its backdrop take to appear, and a drawer to slide in. |
 | `--yeti-ease` | The curve of that transition. |
+| `--yeti-space-xl` | The strip of backdrop a drawer leaves at the screen edge opposite it. |
+| `--yeti-width-sm` | A side drawer's default width, when data-max is absent. |
+| `--yeti-control-size` | The close button's size, and the room a heading after it leaves at its end. |
+| `--yeti-control-radius` | The close button's corner. |
 
 </div>
 
 <details><summary>Internal tokens (may change between minor versions)</summary>
 
 - `--_yeti-max`
+- `--_yeti-off`
 
 </details>
 
 ## Accessibility
 
-- Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command="show-modal" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method="dialog" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it.
+- Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command="show-modal" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method="dialog" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it. The browser focuses the first control in the dialog, which is the close button when there is one, so put autofocus on a field that should have focus first.
 
 <div class="scroller" role="region" aria-label="Dialog keyboard shortcuts" tabindex="0" markdown="1">
 
@@ -119,7 +171,7 @@ Without the module the dialog still opens and Escape still closes it. What is lo
 
 ## Browser support
 
-- Used without guards: invoker commands (commandfor and command), dialog, ::backdrop, @starting-style, transition-behavior: allow-discrete
+- Used without guards: invoker commands (commandfor and command), dialog, ::backdrop, @starting-style, transition-behavior: allow-discrete, :dir()
 - Behind `@supports`: nothing
 
 ## JavaScript

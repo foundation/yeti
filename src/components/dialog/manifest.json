@@ -11,7 +11,20 @@
       "type": "enum",
       "vocabulary": "width",
       "default": "md",
-      "description": "The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter."
+      "description": "The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. A side drawer defaults to sm, and a top or bottom drawer ignores it."
+    },
+    {
+      "name": "data-panel",
+      "type": "enum",
+      "values": ["drawer"],
+      "description": "Pins the dialog to an edge of the screen as a drawer, sliding in from that edge. Absent, the dialog is centered."
+    },
+    {
+      "name": "data-placement",
+      "type": "enum",
+      "vocabulary": "placement",
+      "default": "start",
+      "description": "Which edge of the screen a drawer is pinned to. start and end follow the writing direction; a side drawer takes its width from data-max, and a top or bottom one is as wide as the screen."
     }
   ],
   "classes": [],
@@ -27,6 +40,20 @@
       "min": 0,
       "max": 1,
       "description": "The buttons, at the end edge. A button inside a form with method=\"dialog\" closes it with no script."
+    },
+    {
+      "selector": "> button[data-close]",
+      "min": 0,
+      "max": 1,
+      "description": "A close button in the top end corner. Give it commandfor naming the dialog, command=\"close\", and an aria-label; it closes the dialog with no script."
+    }
+  ],
+  "markers": [
+    {
+      "name": "data-close",
+      "type": "boolean",
+      "on": "> button",
+      "description": "The close button, in the top end corner. It closes the dialog with commandfor and command=\"close\", with no script."
     }
   ],
   "tokens": [
@@ -58,7 +85,7 @@
     {
       "name": "--yeti-space-md",
       "public": true,
-      "description": "The least margin kept between the dialog and the viewport's edges."
+      "description": "The least margin kept between the dialog and the viewport's edges, and the space above a drawer's footer."
     },
     {
       "name": "--yeti-color-text",
@@ -73,12 +100,12 @@
     {
       "name": "--yeti-space-sm",
       "public": true,
-      "description": "Gap between the footer's actions."
+      "description": "Gap between the footer's actions, and the close button's inset from the corner."
     },
     {
       "name": "--yeti-duration-fast",
       "public": true,
-      "description": "How long the dialog and its backdrop take to appear."
+      "description": "How long the dialog and its backdrop take to appear, and a drawer to slide in."
     },
     {
       "name": "--yeti-ease",
@@ -86,7 +113,31 @@
       "description": "The curve of that transition."
     },
     {
+      "name": "--yeti-space-xl",
+      "public": true,
+      "description": "The strip of backdrop a drawer leaves at the screen edge opposite it."
+    },
+    {
+      "name": "--yeti-width-sm",
+      "public": true,
+      "description": "A side drawer's default width, when data-max is absent."
+    },
+    {
+      "name": "--yeti-control-size",
+      "public": true,
+      "description": "The close button's size, and the room a heading after it leaves at its end."
+    },
+    {
+      "name": "--yeti-control-radius",
+      "public": true,
+      "description": "The close button's corner."
+    },
+    {
       "name": "--_yeti-max",
+      "public": false
+    },
+    {
+      "name": "--_yeti-off",
       "public": false
     }
   ],
@@ -102,7 +153,7 @@
         "action": "Cycles inside the dialog, since the rest of the page is inert."
       }
     ],
-    "notes": "Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command=\"show-modal\" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method=\"dialog\" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it."
+    "notes": "Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command=\"show-modal\" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method=\"dialog\" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it. The browser focuses the first control in the dialog, which is the close button when there is one, so put autofocus on a field that should have focus first."
   },
   "js": [
     {
@@ -126,7 +177,8 @@
       "dialog",
       "::backdrop",
       "@starting-style",
-      "transition-behavior: allow-discrete"
+      "transition-behavior: allow-discrete",
+      ":dir()"
     ],
     "guarded": []
   },

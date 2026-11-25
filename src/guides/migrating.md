@@ -57,6 +57,7 @@ Version 6 had a class for each of these. Most of them are the browser's job, and
 | `.table`, `.hover`, `.stack` | `table` with `data-hover`, `data-striped`; a `scroller` for width | the stacking table is gone, a table stays a table |
 | `.top-bar` | `nav` | collapses behind a toggle at its own threshold |
 | `.title-bar` with `.off-canvas` | `nav` with `data-panel="drawer"` | the drawer is the nav's own panel |
+| `.off-canvas` holding anything but the site's links | `dialog` with `data-panel="drawer"` | a modal dialog pinned to an edge, from `data-placement` |
 | `.menu`, `.menu.vertical` | a `cluster` or `stack` of links; `nav` for a site menu | a menu is a list of links |
 | `.dropdown-pane` | `dropdown` | a popover, so no script and no z-index |
 | `.dropdown.menu` submenus | nested `dropdown`s inside a `nav` item | any depth; `data-grouped` for sections under headings |
@@ -111,6 +112,6 @@ Six of those rows deserve more than a line, because what they did is still worth
 
 **A threshold, not a breakpoint.** There are no `small-`, `medium-`, `large-` prefixes and nothing at all that asks the window how wide an element is. A component changes shape at its own width, chosen from the stops with `data-threshold` or `data-max`; where a thing genuinely has no narrow form, `data-show` and `data-hide` remove it at a width of its own container. The [responsive guide](responsive.md) is the whole story, and the [visibility guide](visibility.md) is the part about hiding.
 
-**Nothing to initialise.** There is no `Foundation.init()`, no `data-` attributes for plugins, no jQuery. Nine components ship ten optional modules; you load one with one script tag, anywhere, and it finds its own elements. Without the module the component still works, minus what the module adds.
+**Nothing to initialise.** There is no `Foundation.init()`, no `data-` attributes for plugins, no jQuery. Ten components and one utility ship twelve optional modules; you load one with one script tag, anywhere, and it finds its own elements. Without the module the component still works, minus what the module adds.
 
 **The browser does the opening and closing.** Dropdowns and the nav's menu are popovers; the dialog is a dialog; the accordion is `<details>`. Escape, light dismiss, the focus trap and the expanded state come from the platform. If you find yourself writing script to open something, look for the attribute that already does.

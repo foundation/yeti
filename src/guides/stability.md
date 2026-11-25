@@ -12,13 +12,13 @@ nav_order: 11
 
 ## Frozen
 
-- **Component class names.** `card` is `card`. The fifty-three names in the manifest.
+- **Component class names.** `card` is `card`. The fifty-four names in the manifest.
 - **Attribute names and their value lists.** `data-gap` takes the values it takes today; a value may be added, none will be removed or renamed.
 - **Vocabularies.** The named value lists attributes draw from, `gap`, `width`, `height` and the rest; a value may be added, none removed.
 - **Marker names and values.** `data-span` on a column, `data-numeric` on a cell, and the rest.
 - **Public token names.** Every `--yeti-*` in the catalogue. Their default values may still be tuned; their names and meanings will not change.
-- **Module file names.** `alert.js`, `tabs.js`, `dialog.js`, `hover.js`, `carousel.js`, `demo.js`, `range.js`, `validate.js`, `toc.js`, `nav.js`, `enter.js`, and that each is optional.
-- **Event names.** `yeti:close`, `yeti:open`, `yeti:select`, `yeti:slide`, `yeti:invalid`, `yeti:current`, what each is dispatched on, and the keys in its `detail`. An event may be added; none will be renamed or lose a key.
+- **Module file names.** `alert.js`, `tabs.js`, `dialog.js`, `hover.js`, `carousel.js`, `demo.js`, `range.js`, `validate.js`, `toc.js`, `nav.js`, `enter.js`, `button.js`, and that each is optional.
+- **Event names.** `yeti:close`, `yeti:open`, `yeti:select`, `yeti:slide`, `yeti:invalid`, `yeti:current`, `yeti:copy`, `yeti:share`, what each is dispatched on, and the keys in its `detail`. An event may be added; none will be renamed or lose a key.
 - **The manifest and token catalogue schemas**, and the package `exports` map, so tooling built on `@foundation/yeti/manifest` and `@foundation/yeti/tokens` keeps working.
 
 ## Not frozen

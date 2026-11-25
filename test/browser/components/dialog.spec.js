@@ -161,4 +161,275 @@ test.describe('dialog', () => {
 		expect(nested.width).toBeLessThan(outer.width);
 		expect(nested.width).toBeCloseTo(await token(page, '--yeti-width-sm'), 0);
 	});
+
+	test('a plain dialog is still centered, with its own corner, beside the drawer rules', async ({ page }) => {
+		await open(page);
+		await page.click('#opener');
+		await settle(page, '#confirm');
+		const box = await rect(page, '#confirm');
+		const view = await page.evaluate(() => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }));
+		expect(box.left).toBeGreaterThan(0);
+		expect(box.left).toBeCloseTo(view.width - box.right, 0);
+		expect(box.top).toBeCloseTo(view.height - box.bottom, 0);
+		expect(box.width).toBeLessThanOrEqual(await token(page, '--yeti-width-md') + 0.5);
+		expect(parseFloat(await style(page, '#confirm', 'border-top-left-radius'))).toBeCloseTo(await token(page, '--yeti-dialog-radius'), 0);
+		expect(await style(page, '#confirm', 'display')).toBe('block');
+	});
+});
+
+// The drawer's place is the screen's, not the stage's, so these size the
+// viewport before the page loads.
+const openAt = async (page, width = 1000, dir = 'ltr') => {
+	await page.setViewportSize({ width, height: 720 });
+	const response = await page.goto('/test/browser/fixtures/components/dialog.html');
+	expect(response.status()).toBe(200);
+	if (dir === 'rtl') await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+};
+const show = async (page, id) => {
+	await page.click(`#${id}-open`);
+	await settle(page, `#${id}`);
+	return rect(page, `#${id}`);
+};
+const viewport = (page) => page.evaluate(() => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }));
+const openState = (page, id) => page.evaluate((i) => document.getElementById(i).open, id);
+
+test.describe('dialog drawer', () => {
+	// Runs in all three engines.
+	test('a side drawer is full height at the start edge, or at the end with data-placement="end"', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const start = await show(page, 'drawer-start');
+		expect(start.left).toBeCloseTo(0, 0);
+		expect(start.top).toBeCloseTo(0, 0);
+		expect(start.height).toBeCloseTo(view.height, 0);
+		expect(start.width).toBeCloseTo(await token(page, '--yeti-width-sm'), 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#drawer-start');
+		const end = await show(page, 'drawer-end');
+		expect(end.right).toBeCloseTo(view.width, 0);
+		expect(end.height).toBeCloseTo(view.height, 0);
+		expect(end.width).toBeCloseTo(await token(page, '--yeti-width-sm'), 0);
+	});
+
+	// Runs in all three engines.
+	test('right to left, the start and end drawers swap physical sides', async ({ page }) => {
+		await openAt(page, 1000, 'rtl');
+		const view = await viewport(page);
+		const start = await show(page, 'drawer-start');
+		expect(start.right).toBeCloseTo(view.width, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#drawer-start');
+		const end = await show(page, 'drawer-end');
+		expect(end.left).toBeCloseTo(0, 0);
+	});
+
+	// Runs in all three engines.
+	test('a top drawer and a bottom drawer span the width at their own edge', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const top = await show(page, 'drawer-top');
+		expect(top.top).toBeCloseTo(0, 0);
+		expect(top.left).toBeCloseTo(0, 0);
+		expect(top.width).toBeCloseTo(view.width, 0);
+		expect(top.height).toBeLessThan(view.height);
+		await page.keyboard.press('Escape');
+		await settle(page, '#drawer-top');
+		const bottom = await show(page, 'drawer-bottom');
+		expect(bottom.bottom).toBeCloseTo(view.height, 0);
+		expect(bottom.left).toBeCloseTo(0, 0);
+		expect(bottom.width).toBeCloseTo(view.width, 0);
+	});
+
+	test('data-max sets a side drawer\'s width, and a narrow screen keeps a strip of backdrop', async ({ page }) => {
+		await openAt(page, 1000);
+		const narrow = await show(page, 'drawer-xs');
+		expect(narrow.width).toBeCloseTo(await token(page, '--yeti-width-xs'), 0);
+		await openAt(page, 390);
+		const view = await viewport(page);
+		const phone = await show(page, 'drawer-start');
+		expect(phone.width).toBeLessThan(view.width);
+		expect(phone.width).toBeLessThanOrEqual(view.width - await token(page, '--yeti-space-xl') + 0.5);
+	});
+
+	test('a long bottom drawer stops short of the top and scrolls as one piece', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'drawer-bottom');
+		expect(box.height).toBeLessThanOrEqual(view.height - await token(page, '--yeti-space-xl') + 0.5);
+		expect(await page.evaluate(() => { const d = document.getElementById('drawer-bottom'); return d.scrollHeight > d.clientHeight; })).toBe(true);
+	});
+
+	test('a short side drawer keeps its footer at the bottom, inside its padding', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'drawer-start');
+		const footer = await rect(page, '#drawer-start-footer');
+		const padding = await token(page, '--yeti-dialog-padding');
+		expect(box.bottom).toBeCloseTo(view.height, 0);
+		expect(footer.bottom).toBeCloseTo(box.bottom - padding, 0);
+	});
+
+	test('a drawer is modal; Escape and the backdrop close it, and focus returns to its opener', async ({ page }) => {
+		await openAt(page, 1000);
+		await show(page, 'drawer-start');
+		expect(await page.evaluate(() => document.getElementById('drawer-start').matches(':modal'))).toBe(true);
+		await page.keyboard.press('Escape');
+		expect(await openState(page, 'drawer-start')).toBe(false);
+		expect(await page.evaluate(() => document.activeElement.id)).toBe('drawer-start-open');
+		await settle(page, '#drawer-start');
+		await show(page, 'drawer-start');
+		const view = await viewport(page);
+		await page.mouse.click(view.width - 5, 5);
+		expect(await openState(page, 'drawer-start')).toBe(false);
+		expect(await page.evaluate(() => document.activeElement.id)).toBe('drawer-start-open');
+	});
+
+	test('it rests in place without fading, and once closed it is gone', async ({ page }) => {
+		await openAt(page, 1000);
+		await show(page, 'drawer-start');
+		expect(await style(page, '#drawer-start', 'opacity')).toBe('1');
+		expect(['none', '0px', '0px 0px']).toContain(await style(page, '#drawer-start', 'translate'));
+		await page.keyboard.press('Escape');
+		await settle(page, '#drawer-start');
+		expect(await style(page, '#drawer-start', 'display')).toBe('none');
+	});
+
+	test('has no accessibility violations, open with a close button', async ({ page }) => {
+		await openAt(page, 1000);
+		await show(page, 'drawer-start');
+		expect(await axe(page)).toEqual([]);
+	});
+});
+
+test.describe('dialog close button', () => {
+	// Runs in all three engines.
+	test('command="close" closes a centered dialog and a drawer, with no module', async ({ page }) => {
+		await withoutModule(page, 'dialog');
+		await openAt(page, 1000);
+		await show(page, 'closable');
+		await page.click('#closable-close');
+		expect(await openState(page, 'closable')).toBe(false);
+		await settle(page, '#closable');
+		await show(page, 'drawer-start');
+		await page.click('#drawer-start-close');
+		expect(await openState(page, 'drawer-start')).toBe(false);
+	});
+
+	for (const dir of ['ltr', 'rtl']) {
+		test(`a control-sized square in the top end corner (${dir})`, async ({ page }) => {
+			await openAt(page, 1000, dir);
+			const box = await show(page, 'closable');
+			const button = await rect(page, '#closable-close');
+			const size = await token(page, '--yeti-control-size');
+			const padding = await token(page, '--yeti-dialog-padding');
+			expect(button.width).toBeCloseTo(size, 0);
+			expect(button.height).toBeCloseTo(size, 0);
+			expect(button.top - box.top).toBeGreaterThanOrEqual(0);
+			expect(button.top - box.top).toBeLessThan(padding);
+			const gap = dir === 'ltr' ? box.right - button.right : button.left - box.left;
+			expect(gap).toBeGreaterThanOrEqual(0);
+			expect(gap).toBeLessThan(padding);
+		});
+	}
+
+	test('a wrapping heading does not run under the close button', async ({ page }) => {
+		await openAt(page, 1000);
+		await show(page, 'closable');
+		const button = await rect(page, '#closable-close');
+		const lines = await page.evaluate(() => {
+			const range = document.createRange();
+			range.selectNodeContents(document.getElementById('closable-title'));
+			return [...range.getClientRects()].map((r) => ({ top: r.top, right: r.right, bottom: r.bottom, left: r.left }));
+		});
+		expect(new Set(lines.map((l) => Math.round(l.top))).size).toBeGreaterThan(1);
+		// A heading balances its lines, so its words rarely reach the end of
+		// the line; the box they are laid out in is what has to keep clear.
+		const content = await page.evaluate(() => {
+			const heading = document.getElementById('closable-title');
+			const r = heading.getBoundingClientRect();
+			const cs = getComputedStyle(heading);
+			return { top: r.top + parseFloat(cs.paddingTop), right: r.right - parseFloat(cs.paddingRight), bottom: r.bottom - parseFloat(cs.paddingBottom), left: r.left + parseFloat(cs.paddingLeft) };
+		});
+		for (const box of [...lines, content]) {
+			const overlaps = box.left < button.right && box.right > button.left && box.top < button.bottom && box.bottom > button.top;
+			expect(overlaps).toBe(false);
+		}
+	});
+});
+
+// The base layer spaces every child of a flow container after the first, and
+// body and section are flow containers, so a dialog placed after a sibling
+// would take that margin and leave its center or its edge.
+test.describe('dialog after a sibling', () => {
+	// Runs in all three engines.
+	test('a plain dialog after a sibling in body is centered on both axes', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'body-plain');
+		expect(Math.abs(box.left - (view.width - box.right))).toBeLessThanOrEqual(1);
+		expect(Math.abs(box.top - (view.height - box.bottom))).toBeLessThanOrEqual(1);
+	});
+
+	// Runs in all three engines.
+	test('a drawer after a sibling in body keeps to its edge', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const start = await show(page, 'body-start');
+		expect(start.top).toBeCloseTo(0, 0);
+		expect(start.bottom).toBeCloseTo(view.height, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-start');
+		const end = await show(page, 'body-end');
+		expect(end.right).toBeCloseTo(view.width, 0);
+		expect(end.top).toBeCloseTo(0, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-end');
+		const top = await show(page, 'body-top');
+		expect(top.top).toBeCloseTo(0, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-top');
+		const bottom = await show(page, 'body-bottom');
+		expect(bottom.bottom).toBeCloseTo(view.height, 0);
+	});
+
+	test('a plain dialog as the second child of a section is centered', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'section-plain');
+		expect(Math.abs(box.left - (view.width - box.right))).toBeLessThanOrEqual(1);
+		expect(Math.abs(box.top - (view.height - box.bottom))).toBeLessThanOrEqual(1);
+	});
+});
+
+test.describe('dialog drawer, in detail', () => {
+	// A pre is its own scroll container, so its automatic minimum is zero, and
+	// in a fixed-height column it would be squeezed to nothing.
+	for (const [id, pre] of [['drawer-bottom', 'pre-bottom'], ['drawer-long', 'pre-side']]) {
+		test(`a pre in a long drawer keeps its height (${id})`, async ({ page }) => {
+			await openAt(page, 1000);
+			const flow = await rect(page, '#pre-flow');
+			await show(page, id);
+			const inside = await rect(page, `#${pre}`);
+			expect(flow.height).toBeGreaterThan(0);
+			expect(inside.height).toBeCloseTo(flow.height, 0);
+		});
+	}
+
+	// A closed drawer waits off its own edge, which is where it slides in from.
+	// The engines write a translate differently, so each is read as two lengths.
+	const off = (page, id) => page.evaluate((i) => {
+		const parts = getComputedStyle(document.getElementById(i)).translate.split(' ');
+		const length = (v) => (v === undefined || v === 'none' || parseFloat(v) === 0 ? '0' : v);
+		return `${length(parts[0])} ${length(parts[1])}`;
+	}, id);
+	test('a closed drawer waits off its own edge, in either direction', async ({ page }) => {
+		await openAt(page, 1000);
+		expect(await off(page, 'drawer-start')).toBe('-100% 0');
+		expect(await off(page, 'drawer-end')).toBe('100% 0');
+		expect(await off(page, 'drawer-top')).toBe('0 -100%');
+		expect(await off(page, 'drawer-bottom')).toBe('0 100%');
+		await openAt(page, 1000, 'rtl');
+		expect(await off(page, 'drawer-start')).toBe('100% 0');
+		expect(await off(page, 'drawer-end')).toBe('-100% 0');
+	});
 });

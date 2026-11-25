@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Copy button fixture</title>
+	<link rel="stylesheet" href="../../../../src/yeti.css">
+	<script type="module" src="../../../../src/components/button/button.js"></script>
+</head>
+<body>
+	<main>
+		<h1>Copy button</h1>
+		<div class="stack" data-gap="sm">
+			<pre id="snippet"><code>npm install @foundation/yeti</code></pre>
+			<div class="cluster" data-gap="sm">
+				<button class="button" type="button" id="plain" data-action="copy" data-target="snippet">Copy</button>
+				<button class="button" type="button" id="labelled" data-action="copy" data-target="snippet" data-done="Copied" aria-live="polite">Copy snippet</button>
+				<button class="button" type="button" id="icon" data-action="copy" data-target="snippet" data-done="Copied" aria-live="polite"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" fill="currentColor"/></svg><span>Copy</span></button>
+				<button class="button" type="button" id="missing" data-action="copy" data-target="nowhere" data-done="Copied">Copy nothing</button>
+				<button class="button" type="button" id="inert" data-action="copy" data-target="snippet" data-done="Copied" aria-disabled="true">Copy</button>
+				<button class="button" type="button" id="untargeted" data-action="copy" data-done="Copied">Copy what</button>
+			</div>
+			<pre id="block"><code>  first line
+    second line
+
+</code></pre>
+			<button class="button" type="button" id="copy-block" data-action="copy" data-target="block">Copy block</button>
+			<label for="field">Field</label>
+			<input id="field" type="text" value="from the value">
+			<button class="button" type="button" id="copy-field" data-action="copy" data-target="field">Copy field</button>
+			<label for="area">Area</label>
+			<textarea id="area">from the area</textarea>
+			<button class="button" type="button" id="copy-area" data-action="copy" data-target="area">Copy area</button>
+		</div>
+	</main>
+</body>
+</html>
