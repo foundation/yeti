@@ -52,14 +52,14 @@
 		text-decoration: none;
 		cursor: pointer;
 	}
-	/* An icon in a row, a direct svg or img, sits before the label at the
-	   size a button gives one, and the row's gap stands it off the label. A
-	   bare svg with only a viewBox would otherwise fill the row's width. */
-	.dropdown > [popover] :is(a, button):where(:not(.button)) > :is(svg, img) {
+	/* An icon in a row, a direct svg, sits before the label at the size a
+	   button gives one, and the row's gap stands it off the label. A bare svg
+	   with only a viewBox would otherwise fill the row's width. An img keeps
+	   its own size, since it is as often an avatar or a logo as an icon. */
+	.dropdown > [popover] :is(a, button):where(:not(.button)) > svg {
 		flex: none;
 		inline-size: 1em;
 		block-size: 1em;
-		object-fit: contain;
 	}
 	.dropdown > [popover] a:where(:not(.button)):hover,
 	.dropdown > [popover] button:where(:not(.button)):hover { background-color: var(--yeti-dropdown-hover); }

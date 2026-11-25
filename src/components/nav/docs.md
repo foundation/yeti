@@ -62,7 +62,7 @@ The actions slot takes anything, not only buttons: a running head, a version, a 
 
 Many phone designs keep the main links in a row along the bottom of the screen, in reach of a thumb, instead of behind a menu button. `data-panel="bar"` does that. Below the threshold the links leave the top bar and sit in a row fixed to the bottom of the screen, where they stay as the page scrolls. The brand and the actions stay in the top bar. At the threshold and above, the nav is the same bar as any other.
 
-Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, the icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. There is no toggle in this mode, so you can leave it out:
+Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, an `svg` icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. An `img` keeps its own size there, so give it a `width` and a `height` that suit both places. There is no toggle in this mode, so you can leave it out:
 
 ```html
 <nav class="nav" aria-label="Site" data-panel="bar">

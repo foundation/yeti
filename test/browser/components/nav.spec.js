@@ -1757,6 +1757,41 @@ test.describe('nav', () => {
 			expect(Math.abs(top.svg.top - top.label.top)).toBeLessThan(top.em);
 		});
 
+		test('an img with its own width and height keeps that size in a top-bar link and in a panel row', async ({ page }) => {
+			await openMore(page, 1000);
+			await settles(page, wide);
+			// An avatar or a logo: an img with width and height attributes.
+			await page.evaluate(() => {
+				const src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8"/></svg>');
+				for (const id of ['m-home-link', 'm-guides-first']) {
+					const img = Object.assign(document.createElement('img'), { src, alt: '', width: 32, height: 32 });
+					document.getElementById(id).prepend(img);
+				}
+			});
+			const size = (id) => page.evaluate((i) => {
+				const box = document.querySelector(`#${i} > img`).getBoundingClientRect();
+				return [box.width, box.height];
+			}, id);
+			expect(await size('m-home-link')).toEqual([32, 32]);
+			await page.click('#m-guides-trigger');
+			await settle(page, '#m-guides-menu');
+			expect(await size('m-guides-first')).toEqual([32, 32]);
+		});
+
+		test('an icon-only link in the top bar has no space after its icon', async ({ page }) => {
+			await openMore(page, 1000);
+			await settles(page, wide);
+			await page.evaluate(() => {
+				const link = document.getElementById('m-home-link');
+				link.setAttribute('aria-label', 'Home');
+				link.innerHTML = '<svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/></svg>';
+			});
+			const [svg, link] = await Promise.all([rect(page, '#m-home-link > svg'), rect(page, '#m-home-link')]);
+			const padding = await page.evaluate(() => parseFloat(getComputedStyle(document.getElementById('m-home-link')).paddingInlineEnd));
+			expect(link.right - svg.right).toBeCloseTo(padding, 0);
+			expect(svg.left - link.left).toBeCloseTo(padding, 0);
+		});
+
 		test('has no accessibility violations, wide, with More shown and open, and behind the toggle', async ({ page }) => {
 			await openMore(page, 1000);
 			expect(await axe(page)).toEqual([]);
