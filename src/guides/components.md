@@ -45,12 +45,12 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-hover` | boolean | table |
 | `data-inline` | boolean | field |
 | `data-justify` | `start`, `center`, `end`, `between`, `around`, `evenly` | pagination |
-| `data-max` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog |
+| `data-max` | `3xs`, `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl` | dialog, popover |
 | `data-numeric` | boolean | table (td, th) |
 | `data-orientation` | `horizontal`, `vertical` | tabs |
 | `data-panel` | `drawer` | dialog |
 | `data-panel` | `sheet`, `drawer`, `screen` | nav |
-| `data-placement` | `top`, `bottom`, `start`, `end` | dialog, tooltip |
+| `data-placement` | `top`, `bottom`, `start`, `end` | dialog, popover, tooltip |
 | `data-preview` | string | demo (> div) |
 | `data-print` | `only`, `none` | print |
 | `data-raised` | boolean | card |
@@ -206,9 +206,11 @@ A `progress` bar fills to its value, and without one it goes indeterminate: the 
 
 ## Things that open
 
-Six components hold something shut until a person asks for it, and each hands that job to whatever the platform already does best. An accordion opens on `details` and `summary`. A dropdown opens on `popover`. A dialog opens on the `dialog` element. A tooltip opens on hover and focus. A carousel moves on scroll-snap. Tabs select a panel with `aria-controls` and `aria-labelledby`. Of the six, only tabs needs a script to work at all, because nothing else can hide the inactive panels and rove focus between the tabs. The dialog opens on its own: a `button` with `commandfor` naming the dialog and `command="show-modal"` calls `showModal` itself, and `dialog.js` only adds the backdrop click that closes it and the return of focus to the opener. The other four are complete in CSS and HTML alone.
+Seven components hold something shut until a person asks for it, and each hands that job to whatever the platform already does best. An accordion opens on `details` and `summary`. A dropdown and a popover both open on `popover`. A dialog opens on the `dialog` element. A tooltip opens on hover and focus. A carousel moves on scroll-snap. Tabs select a panel with `aria-controls` and `aria-labelledby`. Of the seven, only tabs needs a script to work at all, because nothing else can hide the inactive panels and rove focus between the tabs. The dialog opens on its own: a `button` with `commandfor` naming the dialog and `command="show-modal"` calls `showModal` itself, and `dialog.js` only adds the backdrop click that closes it and the return of focus to the opener. The other five are complete in CSS and HTML alone.
 
-Three attributes name a side, and the word differs because the geometry does. `data-side` is `start` or `end`: which edge of its trigger a `dropdown` panel lines up with, as it is which child a `sidebar` treats as the sidebar. `data-placement` is one of four: which side of its trigger a `tooltip` sits on, or which edge of the screen a `dialog` drawer is pinned to. `data-edge` is `top`, `bottom`, or `both`: which edge a `seam` cuts. A two-value side, a four-value placement, a cut edge.
+Three attributes name a side, and the word differs because the geometry does. `data-side` is `start` or `end`: which edge of its trigger a `dropdown` panel lines up with, as it is which child a `sidebar` treats as the sidebar. `data-placement` is one of four: which side of its trigger a `tooltip` or a `popover` sits on, or which edge of the screen a `dialog` drawer is pinned to. `data-edge` is `top`, `bottom`, or `both`: which edge a `seam` cuts. A two-value side, a four-value placement, a cut edge.
+
+Four of them float over the page, and each has its own job. A `tooltip` is a hint, with nothing in it to click. A `dropdown` is a menu of links and actions. A `popover` is any content beside its button, and the page stays usable while it is open. A `dialog` stops the page until it is answered.
 
 The accordion's one-at-a-time mode is not a Yeti attribute. Give every `details` in a set the same `name` and the browser closes the others when one opens, the same way radio buttons share a name to close each other out. Yeti adds nothing for it, because CSS cannot set an attribute on an element — only the markup or a script can — and here the markup already can. A single disclosure needs no accordion at all: the base layer gives every `details` the same chevron and the same panel that grows open, and the component is what turns a column of them into one bordered set.
 

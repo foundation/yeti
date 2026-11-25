@@ -60,6 +60,7 @@
 @import "components/tabs/tabs.css";
 @import "components/dropdown/dropdown.css";
 @import "components/dialog/dialog.css";
+@import "components/popover/popover.css";
 @import "components/tooltip/tooltip.css";
 @import "components/carousel/carousel.css";
 @import "components/demo/demo.css";

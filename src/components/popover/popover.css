@@ -1,0 +1,73 @@
+/* Popover: a panel of any content beside the button that opens it. The panel
+   carries popover, so opening, Escape, a click outside and the button's
+   expanded state are all the browser's. The button that opened a popover is
+   its implicit anchor, so the panel needs no wrapper and no anchor name, and
+   can sit anywhere in the page. Unlike a dropdown's panel, its content is
+   ordinary flow content and keeps the page's own look. */
+@layer yeti.components {
+	.popover {
+		/* The user agent centers a popover with an auto margin, but the reset
+		   zeroes every margin but a dialog's, and a panel in body or main takes
+		   the flow rhythm's top margin, so the auto margin is set again here for
+		   the centering to survive where anchor positioning is missing. Inside a
+		   position-area an auto margin comes to nothing. */
+		margin: auto;
+		inline-size: max-content;
+		/* The viewport, not 100%: once anchored, the containing block is the
+		   area beside the button, and a percentage would shrink with it. */
+		max-inline-size: min(var(--_yeti-max), 100vw - 2 * var(--yeti-space-md));
+		padding: var(--yeti-popover-padding);
+		border: 0;
+		border-radius: var(--yeti-popover-radius);
+		background-color: var(--yeti-popover-surface);
+		color: var(--yeti-color-text);
+		box-shadow: var(--yeti-shadow-md);
+	}
+	.popover:not([data-max]) { --_yeti-max: var(--yeti-width-xs); }
+
+	/* A div is not one of the flow containers the base layer spaces, and the
+	   reset has zeroed every child's margin, so the panel spaces its own
+	   children with the base layer's two rules. A dialog is one of those
+	   containers; these rules set the same values on the same property, so a
+	   dialog panel is spaced once, and the same as a div. */
+	.popover > * + * { margin-block-start: var(--yeti-space-md); }
+	.popover > :is(h1, h2, h3, h4, h5, h6) + * { margin-block-start: var(--yeti-heading-space-after); }
+
+	/* Arriving fades in. Leaving is instant, since nothing transitions the
+	   closed state and the user agent hides it at once. */
+	.popover:popover-open { transition: opacity var(--yeti-duration-fast) var(--yeti-ease); }
+	@starting-style {
+		.popover:popover-open { opacity: 0; }
+	}
+
+	/* Anchored beside its button, flipping to the other side, or to the other
+	   end, where there is no room. The gap is an inset on the side that faces
+	   the button: inside a position-area an inset is measured from the edge
+	   of the area, and a flip swaps insets the same way it swaps margins.
+	   Without anchor positioning nothing here applies and the user agent
+	   centers the panel, which still opens, closes and reads correctly. */
+	@supports (position-area: block-end) and (position-try-fallbacks: flip-block) {
+		.popover:popover-open {
+			position: fixed;
+			inset: auto;
+			inset-block-start: var(--yeti-space-xs);
+			position-area: block-end span-inline-end;
+			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		}
+		.popover[data-placement="top"]:popover-open {
+			inset: auto;
+			inset-block-end: var(--yeti-space-xs);
+			position-area: block-start span-inline-end;
+		}
+		.popover[data-placement="start"]:popover-open {
+			inset: auto;
+			inset-inline-end: var(--yeti-space-xs);
+			position-area: inline-start span-block-end;
+		}
+		.popover[data-placement="end"]:popover-open {
+			inset: auto;
+			inset-inline-start: var(--yeti-space-xs);
+			position-area: inline-end span-block-end;
+		}
+	}
+}

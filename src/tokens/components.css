@@ -92,6 +92,10 @@
 		   over a page at 16 and lit the page up instead of dimming it. */
 		--yeti-dialog-backdrop: color-mix(in oklch, black 60%, transparent);
 
+		--yeti-popover-surface: var(--yeti-color-surface-raised);
+		--yeti-popover-radius: var(--yeti-radius-md);
+		--yeti-popover-padding: var(--yeti-space-md);
+
 		--yeti-tooltip-surface: var(--yeti-color-text);
 		--yeti-tooltip-text: var(--yeti-color-surface);
 		--yeti-tooltip-radius: var(--yeti-radius-sm);
