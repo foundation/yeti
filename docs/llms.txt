@@ -414,11 +414,13 @@ Attributes:
 - data-variant: primary (default) | secondary | success | warning | alert | danger | neutral | black | white — Which hue's ladder the button uses.
 - data-emphasis: high (default) | medium | low — How loud: high is a solid fill, medium an outline, low text alone.
 - data-size: sm | md (default) | lg — Scales the text and the padding together.
-- data-copy (string) — Read by the module: the id of the element whose text a click copies to the clipboard, or whose value when it is a form field.
-- data-copied (string) — Read by the module: the label the button shows for two seconds after a copy, in your own words.
+- data-action: copy | share — Read by the module: what a click does. copy puts the text of the element data-target names on the clipboard. share opens the browser's share sheet for the page, or for the link data-target names, and copies the link where the browser has no share sheet.
+- data-target (string) — Read by the module: the id of the element the action works on. For copy, the element whose text is copied, or whose value when it is a form field. For share, a link to share in place of the page.
+- data-done (string) — Read by the module: the label the button shows for two seconds once something is on the clipboard, in your own words.
 
-module: copy.js (optional)
-- event yeti:copy — Dispatched on the button once the browser has put the text on the clipboard.
+module: button.js (optional)
+- event yeti:copy — Dispatched on the button once the browser has put text on the clipboard: after a copy, and after a share in a browser with no share sheet.
+- event yeti:share — Dispatched on the button once the browser's share sheet reports that the visitor shared.
 
 Children:
 - > svg: at least 0, at most 1. An optional icon, sized to the text.

@@ -71,25 +71,48 @@ A toggle needs no script when it is a native input. Put the class on a `label` w
 
 A link that is a button, `<a class="button">`, is drawn as a button and never underlined, since Yeti sets that inside its layer. A stylesheet of your own that underlines links on hover sits outside every layer and outranks it, so exclude buttons there: `a:hover:not(.button)`.
 
-## A copy button
+## Buttons that copy and share
 
-`data-copy` makes a button copy text to the clipboard. It takes the id of the element to copy, a bare id as `for` and `popovertarget` take. A click copies that element's text. Where the element is an `input`, a `textarea` or a `select`, its value is copied instead, including what was typed after the page loaded. Line breaks at the very end are dropped, so a pasted command does not run by itself. Nothing else is changed: indentation and inner line breaks are copied as they are.
-
-`data-copied` is optional. It is the label the button shows for two seconds after a copy, in your own words. Then the button gets back exactly what it held before, the same nodes, so an icon survives. The button keeps its width while a shorter label shows, so nothing beside it moves.
+`data-action` makes a button do one thing that the browser keeps for script. It takes `copy` or `share`. Both need the optional module `button.js`. Without the module such a button does nothing at all, so on a page that does not load it, leave the button out, or add it with the script that loads the module.
 
 ```html
 <pre id="install"><code>npm install @foundation/yeti</code></pre>
-<button class="button" type="button" data-copy="install" data-copied="Copied" aria-live="polite">Copy</button>
-<script type="module" src="…/js/copy.js"></script>
+<button class="button" type="button" data-action="copy" data-target="install" data-done="Copied" aria-live="polite">Copy</button>
+
+<button class="button" type="button" data-action="share" data-done="Link copied" aria-live="polite">Share</button>
+
+<script type="module" src="…/js/button.js"></script>
 ```
 
-Only script can write to the clipboard, so this needs `copy.js`. Without the module the button does nothing at all. On a page that does not load it, leave the button out, or add it with the script that loads the module. The browser's clipboard works only in a secure context, which is a page on https or on localhost. Where it is missing, or the browser refuses the write, the button stays as it is and no label shows.
+### Copy
 
-After each copy the module dispatches `yeti:copy` on the button. It bubbles, so one listener on `document` hears every copy button on the page.
+`data-action="copy"` copies text to the clipboard. `data-target` is the id of the element to copy, a bare id as `for` and `popovertarget` take. A click copies that element's text. Where the element is an `input`, a `textarea` or a `select`, its value is copied instead, including what was typed after the page loaded. Line breaks at the very end are dropped, so a pasted command does not run by itself. Nothing else is changed: indentation and inner line breaks are copied as they are.
+
+The browser's clipboard works only in a secure context, which is a page on https or on localhost. Where it is missing, or the browser refuses the write, the button stays as it is and no label shows.
+
+### Share
+
+`data-action="share"` opens the browser's share sheet, the one a phone shows with its apps and contacts. With no `data-target` it shares the page: its title, and the address in its `<link rel="canonical">`, or its own address when it has none. To share another page, give `data-target` the id of a link; the button shares that link's address and its text.
+
+Not every browser has a share sheet. Safari has one, and so do the browsers on phones; Firefox on a desktop has none, and Chrome has one on some systems only. Where there is none, the button copies the link to the clipboard, so it always does something useful.
+
+A visitor who closes the sheet without sharing changes nothing.
+
+### The label
+
+`data-done` is optional. It is the label the button shows for two seconds once something is on the clipboard, in your own words. Then the button gets back exactly what it held before, the same nodes, so an icon survives. The button keeps its width while a shorter label shows, so nothing beside it moves.
+
+On a copy button the label shows after every copy. On a share button it shows only where the link was copied because there was no share sheet. The sheet is its own sign, so word the label for the copy: "Link copied", not "Shared".
+
+### Events
+
+The module dispatches `yeti:copy` on the button each time it puts text on the clipboard, which includes a share button in a browser with no share sheet. It dispatches `yeti:share` once the share sheet reports that the visitor shared. Both bubble, so one listener on `document` hears every button on the page.
+
+An action the module does not know is left alone, so a `data-action` that belongs to another script on the page does no harm.
 
 ## Accessibility
 
-A `button` is a button and an `a` is a link; the class changes the look, not the role, so use the element that matches what happens. An icon-only button needs an `aria-label`. A toggle is either a `label.button` wrapping a native radio or checkbox, whose own checked state is what a screen reader announces, or a button carrying `aria-pressed`, and the pressed look follows either. A button that is waiting on a request carries `aria-busy="true"` and `aria-disabled="true"` together: it dims, shows a progress cursor, and your handler ignores presses until the request returns. The focus ring is the page's ring and is never removed. A copy button needs `aria-live="polite"`, so a screen reader says the new label when it shows. Give it a `data-copied` label too: without one, nothing tells any reader that the copy happened. An icon-only copy button still needs an `aria-label`. Text over every fill meets AA in both color schemes; the test suite checks each variant.
+A `button` is a button and an `a` is a link; the class changes the look, not the role, so use the element that matches what happens. An icon-only button needs an `aria-label`. A toggle is either a `label.button` wrapping a native radio or checkbox, whose own checked state is what a screen reader announces, or a button carrying `aria-pressed`, and the pressed look follows either. A button that is waiting on a request carries `aria-busy="true"` and `aria-disabled="true"` together: it dims, shows a progress cursor, and your handler ignores presses until the request returns. The focus ring is the page's ring and is never removed. A copy or share button needs `aria-live="polite"`, so a screen reader says the new label when it shows. Give it a `data-done` label too: without one, nothing tells any reader that something was copied. An icon-only copy or share button still needs an `aria-label`. Text over every fill meets AA in both color schemes; the test suite checks each variant.
 
 ## Attributes
 
@@ -100,8 +123,9 @@ A `button` is a button and an `a` is a link; the class changes the look, not the
 | `data-variant` | enum | `primary`, `secondary`, `success`, `warning`, `alert`, `danger`, `neutral`, `black`, `white` | `primary` | Which hue's ladder the button uses. |
 | `data-emphasis` | enum | `high`, `medium`, `low` | `high` | How loud: high is a solid fill, medium an outline, low text alone. |
 | `data-size` | enum | `sm`, `md`, `lg` | `md` | Scales the text and the padding together. |
-| `data-copy` | string |  |  | Read by the module: the id of the element whose text a click copies to the clipboard, or whose value when it is a form field. |
-| `data-copied` | string |  |  | Read by the module: the label the button shows for two seconds after a copy, in your own words. |
+| `data-action` | enum | `copy`, `share` |  | Read by the module: what a click does. copy puts the text of the element data-target names on the clipboard. share opens the browser's share sheet for the page, or for the link data-target names, and copies the link where the browser has no share sheet. |
+| `data-target` | string |  |  | Read by the module: the id of the element the action works on. For copy, the element whose text is copied, or whose value when it is a form field. For share, a link to share in place of the page. |
+| `data-done` | string |  |  | Read by the module: the label the button shows for two seconds once something is on the clipboard, in your own words. |
 
 </div>
 
@@ -154,7 +178,7 @@ A `button` is a button and an `a` is a link; the class changes the look, not the
 
 ## Accessibility
 
-- Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy="true" together with aria-disabled="true", and your handler ignores presses while it waits. A copy button carries aria-live="polite" and a data-copied label: the label read aloud is the only sign a screen reader gets that the copy happened.
+- Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy="true" together with aria-disabled="true", and your handler ignores presses while it waits. A copy or share button carries aria-live="polite" and a data-done label: the label read aloud is the only sign a screen reader gets that something was copied.
 
 <div class="scroller" role="region" aria-label="Button keyboard shortcuts" tabindex="0" markdown="1">
 
@@ -172,7 +196,7 @@ A `button` is a button and an `a` is a link; the class changes the look, not the
 
 ## JavaScript
 
-Optional enhancement: `components/button/copy.js`. The component works without it.
+Optional enhancement: `components/button/button.js`. The component works without it.
 
 Each event bubbles, crosses a shadow boundary, and cannot be cancelled.
 
@@ -180,7 +204,8 @@ Each event bubbles, crosses a shadow boundary, and cannot be cancelled.
 
 | Event | Module | Detail | Description |
 | --- | --- | --- | --- |
-| `yeti:copy` | `copy.js` | none | Dispatched on the button once the browser has put the text on the clipboard. |
+| `yeti:copy` | `button.js` | none | Dispatched on the button once the browser has put text on the clipboard: after a copy, and after a share in a browser with no share sheet. |
+| `yeti:share` | `button.js` | none | Dispatched on the button once the browser's share sheet reports that the visitor shared. |
 
 </div>
 
