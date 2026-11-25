@@ -359,7 +359,7 @@ test.describe('dialog close button', () => {
 
 // The base layer spaces every child of a flow container after the first, and
 // body and section are flow containers, so a dialog placed after a sibling
-// would take that margin and leave its centre or its edge.
+// would take that margin and leave its center or its edge.
 test.describe('dialog after a sibling', () => {
 	// Runs in all three engines.
 	test('a plain dialog after a sibling in body is centered on both axes', async ({ page }) => {
@@ -398,5 +398,38 @@ test.describe('dialog after a sibling', () => {
 		const box = await show(page, 'section-plain');
 		expect(Math.abs(box.left - (view.width - box.right))).toBeLessThanOrEqual(1);
 		expect(Math.abs(box.top - (view.height - box.bottom))).toBeLessThanOrEqual(1);
+	});
+});
+
+test.describe('dialog drawer, in detail', () => {
+	// A pre is its own scroll container, so its automatic minimum is zero, and
+	// in a fixed-height column it would be squeezed to nothing.
+	for (const [id, pre] of [['drawer-bottom', 'pre-bottom'], ['drawer-long', 'pre-side']]) {
+		test(`a pre in a long drawer keeps its height (${id})`, async ({ page }) => {
+			await openAt(page, 1000);
+			const flow = await rect(page, '#pre-flow');
+			await show(page, id);
+			const inside = await rect(page, `#${pre}`);
+			expect(flow.height).toBeGreaterThan(0);
+			expect(inside.height).toBeCloseTo(flow.height, 0);
+		});
+	}
+
+	// A closed drawer waits off its own edge, which is where it slides in from.
+	// The engines write a translate differently, so each is read as two lengths.
+	const off = (page, id) => page.evaluate((i) => {
+		const parts = getComputedStyle(document.getElementById(i)).translate.split(' ');
+		const length = (v) => (v === undefined || v === 'none' || parseFloat(v) === 0 ? '0' : v);
+		return `${length(parts[0])} ${length(parts[1])}`;
+	}, id);
+	test('a closed drawer waits off its own edge, in either direction', async ({ page }) => {
+		await openAt(page, 1000);
+		expect(await off(page, 'drawer-start')).toBe('-100% 0');
+		expect(await off(page, 'drawer-end')).toBe('100% 0');
+		expect(await off(page, 'drawer-top')).toBe('0 -100%');
+		expect(await off(page, 'drawer-bottom')).toBe('0 100%');
+		await openAt(page, 1000, 'rtl');
+		expect(await off(page, 'drawer-start')).toBe('100% 0');
+		expect(await off(page, 'drawer-end')).toBe('-100% 0');
 	});
 });

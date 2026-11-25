@@ -48,6 +48,14 @@
       "description": "A close button in the top end corner. Give it commandfor naming the dialog, command=\"close\", and an aria-label; it closes the dialog with no script."
     }
   ],
+  "markers": [
+    {
+      "name": "data-close",
+      "type": "boolean",
+      "on": "> button",
+      "description": "The close button, in the top end corner. It closes the dialog with commandfor and command=\"close\", with no script."
+    }
+  ],
   "tokens": [
     {
       "name": "--yeti-dialog-surface",

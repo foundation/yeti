@@ -12,6 +12,12 @@
 	<main>
 		<h1>Dialog component</h1>
 		<div id="stage">
+			<pre id="pre-flow"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
 			<button class="button" type="button" commandfor="confirm" command="show-modal" id="opener" data-contrast>Delete project</button>
 			<p><a href="#" id="after">A link after the button.</a></p>
 
@@ -71,6 +77,12 @@
 				<p>Paragraph two of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph three of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph four of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<pre id="pre-bottom"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
 				<p>Paragraph five of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph six of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph seven of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
@@ -83,6 +95,33 @@
 				<p>Paragraph fourteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph fifteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 				<p>Paragraph sixteen of a drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+			</dialog>
+
+			<button class="button" type="button" commandfor="drawer-long" command="show-modal" id="drawer-long-open">Long side drawer</button>
+			<dialog class="dialog" id="drawer-long" data-panel="drawer" aria-labelledby="drawer-long-title">
+				<h2 id="drawer-long-title">Long</h2>
+				<p>Paragraph 1 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 2 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 3 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 4 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 5 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 6 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 7 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 8 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<pre id="pre-side"><code>line one
+line two
+line three
+line four
+line five
+line six</code></pre>
+				<p>Paragraph 1 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 2 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 3 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 4 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 5 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 6 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 7 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
+				<p>Paragraph 8 of a side drawer whose content is taller than the screen, so that it has to scroll as one piece.</p>
 			</dialog>
 
 			<button class="button" type="button" commandfor="drawer-xs" command="show-modal" id="drawer-xs-open">Narrow drawer</button>

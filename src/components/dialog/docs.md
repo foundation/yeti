@@ -44,7 +44,7 @@ A long drawer scrolls as one piece. The footer sits at the bottom when the conte
 
 ## A close button
 
-A `button` carrying `data-close`, as the first child of any dialog, sits in the top end corner. It works in a centered dialog and in a drawer. It closes the dialog natively: give it `commandfor` with the dialog's id and `command="close"`, and no script is needed. Yeti adds only the look. Give it an `aria-label`, since its text is a symbol.
+A `button` carrying `data-close`, as a child of any dialog, sits in the top end corner. Put it first in the dialog, with the heading straight after it: the heading is what keeps clear of the button, so its text never runs under it. It works in a centered dialog and in a drawer. It closes the dialog natively: give it `commandfor` with the dialog's id and `command="close"`, and no script is needed. Yeti adds only the look. Give it an `aria-label`, since its text is a symbol.
 
 ```html
 <button type="button" data-close aria-label="Close" commandfor="share" command="close">×</button>

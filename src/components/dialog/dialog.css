@@ -26,10 +26,9 @@
 		align-items: center;
 		gap: var(--yeti-space-sm);
 	}
-	/* dialog is not one of the flow containers the base layer spaces, and the
-	   reset has zeroed every child's margin, so the dialog spaces its own. */
-	/* footer IS one of those containers, and a block-start margin on a centred
-	   flex item shifts it down half its own margin. */
+	/* The base layer spaces the dialog's children, as it spaces any flow
+	   container's. The footer is a flow container too, and a block-start
+	   margin on a centered flex item shifts it down half its own margin. */
 	.dialog > footer > * { margin-block: 0; }
 
 	/* Arriving and leaving. display and overlay transition discretely so the
@@ -86,6 +85,10 @@
 	/* Open, it is a column, so a short drawer's footer sits at the bottom. A
 	   long one's scrolls with the content, and the padding keeps it apart. */
 	.dialog[data-panel="drawer"][open] { display: flex; flex-direction: column; }
+	/* A child that is its own scroll container, such as a pre, has no
+	   minimum height of its own, so it would be squeezed to nothing when the
+	   content is taller than the drawer. None shrinks; the drawer scrolls. */
+	.dialog[data-panel="drawer"] > * { flex-shrink: 0; }
 	.dialog[data-panel="drawer"] > footer { margin-block-start: auto; padding-block-start: var(--yeti-space-md); }
 
 	/* It slides in from its own edge and back out, on the dialog's own

@@ -31,7 +31,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-attention` | `pulse`, `shake` | attention |
 | `data-border` | boolean | table |
 | `data-brand` | boolean | nav (> *) |
-| `data-close` | boolean | alert (> button), nav (li) |
+| `data-close` | boolean | alert (> button), dialog (> button), nav (li) |
 | `data-copied` | string | button |
 | `data-copy` | string | button |
 | `data-dots` | boolean | carousel (> *) |
