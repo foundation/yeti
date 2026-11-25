@@ -564,6 +564,26 @@ test.describe('nav', () => {
 		expect(await page.evaluate(() => { const el = document.getElementById('nav-more'); return el.scrollHeight > el.clientHeight + 1; })).toBe(true);
 	});
 
+	test('a group shown in place in the open panel is as tall as its pages, and the panel scrolls instead', async ({ page }) => {
+		await page.setViewportSize({ width: 400, height: 600 });
+		await open(page, 400);
+		await page.evaluate(() => {
+			const group = document.getElementById('nt-about-menu');
+			for (let i = 0; i < 60; i += 1) group.insertAdjacentHTML('beforeend', `<li><a href="#">Page ${i + 1}</a></li>`);
+		});
+		await page.click('#nt-toggle');
+		await settle(page, '#nt-menu');
+		const group = await page.evaluate(() => {
+			const el = document.getElementById('nt-about-menu');
+			const content = [...el.children].reduce((sum, child) => sum + child.getBoundingClientRect().height, 0);
+			return { height: el.getBoundingClientRect().height, content, scroll: el.scrollHeight, client: el.clientHeight };
+		});
+		expect(group.height).toBeGreaterThan(600);
+		expect(group.height).toBeCloseTo(group.content, 0);
+		expect(group.scroll).toBe(group.client);
+		expect(await page.evaluate(() => { const el = document.getElementById('nt-menu'); return el.scrollHeight > el.clientHeight; })).toBe(true);
+	});
+
 	test('a submenu inside a drawer stops at the drawer\u2019s edge', async ({ page }) => {
 		await withoutModule(page, 'nav');
 		await open(page, 400);
@@ -1250,6 +1270,21 @@ test.describe('nav', () => {
 				expect(box.right).toBeLessThanOrEqual(view.width);
 			});
 		}
+
+		test('a panel above the bar taller than the room stops short of the top of the screen and scrolls', async ({ page }) => {
+			await phone(page);
+			test.skip(!(await supported(page)), 'anchor positioning is missing, so the user agent centres the panel');
+			await page.evaluate(() => {
+				const panel = document.getElementById('bar-more-menu');
+				for (let i = 0; i < 60; i += 1) panel.insertAdjacentHTML('beforeend', `<li><a href="#">Page ${i + 1}</a></li>`);
+			});
+			await page.click('#bar-more-trigger');
+			await settle(page, '#bar-more-menu');
+			const [bar, box] = await Promise.all([rect(page, '#bar-menu'), rect(page, '#bar-more-menu')]);
+			expect(box.top).toBeGreaterThanOrEqual(0);
+			expect(box.bottom).toBeLessThanOrEqual(bar.top + 0.5);
+			expect(await page.evaluate(() => { const el = document.getElementById('bar-more-menu'); return el.scrollHeight > el.clientHeight; })).toBe(true);
+		});
 
 		test('at or above the threshold it is the same bar as a default nav, with nothing fixed', async ({ page }) => {
 			await openBar(page, 1000);

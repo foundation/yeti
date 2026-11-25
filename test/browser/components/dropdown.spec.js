@@ -757,6 +757,127 @@ test.describe('dropdown', () => {
 		});
 	});
 
+	test.describe('the room it has', () => {
+		// A short screen, so a long panel cannot fit below its trigger.
+		const short = async (page) => {
+			await page.setViewportSize({ width: 1000, height: 600 });
+			await open(page);
+		};
+		const fill = (page, id, count) => page.evaluate(([i, n]) => {
+			const panel = document.getElementById(i);
+			const list = panel.matches('ul');
+			for (let k = 0; k < n; k += 1) {
+				const link = document.createElement('a');
+				link.href = '#';
+				link.id = `${i}-${k}`;
+				link.textContent = `Page ${k + 1}`;
+				if (list) {
+					const li = document.createElement('li');
+					li.append(link);
+					panel.append(li);
+				} else panel.append(link);
+			}
+		}, [id, count]);
+		const scrolls = (page, id) => page.evaluate((i) => { const el = document.getElementById(i); return el.scrollHeight > el.clientHeight; }, id);
+		const inside = (inner, outer) => inner.top >= outer.top - 0.5 && inner.bottom <= outer.bottom + 0.5 && inner.left >= outer.left - 0.5 && inner.right <= outer.right + 0.5;
+		const screen = (page) => page.evaluate(() => ({ top: 0, left: 0, right: document.documentElement.clientWidth, bottom: document.documentElement.clientHeight }));
+
+		test('a panel taller than the room below its trigger stops at the viewport and scrolls inside itself', async ({ page }) => {
+			await short(page);
+			await fill(page, 'menu-one', 60);
+			await page.click('#trigger-one');
+			await settle(page, '#menu-one');
+			const [panel, view, trigger] = await Promise.all([rect(page, '#menu-one'), screen(page), rect(page, '#trigger-one')]);
+			expect(panel.bottom).toBeLessThanOrEqual(view.bottom + 0.5);
+			expect(panel.top).toBeGreaterThanOrEqual(0);
+			if (await anchored(page)) expect(panel.top).toBeGreaterThanOrEqual(trigger.bottom - 0.5);
+			expect(await scrolls(page, 'menu-one')).toBe(true);
+			await page.evaluate(() => document.getElementById('menu-one-59').scrollIntoView({ block: 'nearest' }));
+			await expect.poll(async () => {
+				const [last, box] = await Promise.all([rect(page, '#menu-one-59'), rect(page, '#menu-one')]);
+				return inside(last, box) && inside(last, view);
+			}).toBe(true);
+			expect(await isOpen(page, 'menu-one')).toBe(true);
+		});
+
+		test('a short panel keeps its own height and has nothing to scroll', async ({ page }) => {
+			await short(page);
+			await page.click('#trigger-one');
+			await settle(page, '#menu-one');
+			const { scroll, client, content, height } = await page.evaluate(() => {
+				const el = document.getElementById('menu-one');
+				const cs = getComputedStyle(el);
+				const items = [...el.children].reduce((sum, child) => sum + child.getBoundingClientRect().height, 0);
+				return { scroll: el.scrollHeight, client: el.clientHeight, content: items + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom), height: el.getBoundingClientRect().height };
+			});
+			expect(scroll).toBe(client);
+			expect(height).toBeCloseTo(content, 0);
+		});
+
+		test('a nested flyout taller than the viewport stays inside it and scrolls', async ({ page }) => {
+			await short(page);
+			test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+			await fill(page, 'sub-menu', 60);
+			await openTree(page);
+			const [fly, view] = await Promise.all([rect(page, '#sub-menu'), screen(page)]);
+			expect(inside(fly, view)).toBe(true);
+			expect(await scrolls(page, 'sub-menu')).toBe(true);
+		});
+
+		test('a grouped panel taller than the room keeps its columns and scrolls', async ({ page }) => {
+			await short(page);
+			await fill(page, 'g-a-menu', 60);
+			await page.click('#g-tree-toggle');
+			await settle(page, '#g-tree-menu');
+			const [menu, view, a, b] = await Promise.all([rect(page, '#g-tree-menu'), screen(page), rect(page, '#g-a-link'), rect(page, '#g-b-link')]);
+			expect(menu.bottom).toBeLessThanOrEqual(view.bottom + 0.5);
+			expect(await scrolls(page, 'g-tree-menu')).toBe(true);
+			expect(Math.abs(a.top - b.top)).toBeLessThan(2);
+		});
+
+		test('the focus ring of the first and last row is drawn whole inside a panel that scrolls', async ({ page, browserName }) => {
+			await short(page);
+			await fill(page, 'menu-one', 60);
+			await page.focus('#trigger-one');
+			await page.keyboard.press('Enter');
+			await settle(page, '#menu-one');
+			const ring = (id) => page.evaluate((i) => {
+				const el = document.getElementById(i);
+				el.focus({ focusVisible: true });
+				el.scrollIntoView({ block: 'nearest' });
+				const cs = getComputedStyle(el);
+				const grow = parseFloat(cs.outlineOffset) + parseFloat(cs.outlineWidth);
+				const r = el.getBoundingClientRect();
+				const panel = el.closest('[popover]');
+				const p = panel.getBoundingClientRect();
+				// The scroll box is the panel's padding box.
+				const box = { top: p.top + panel.clientTop, left: p.left + panel.clientLeft, right: p.left + panel.clientLeft + panel.clientWidth, bottom: p.top + panel.clientTop + panel.clientHeight };
+				return { visible: el.matches(':focus-visible'), width: parseFloat(cs.outlineWidth), ring: { top: r.top - grow, right: r.right + grow, bottom: r.bottom + grow, left: r.left - grow }, box };
+			}, id);
+			await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+			for (const id of ['item-one', 'menu-one-59']) {
+				await page.evaluate(() => document.getElementById('menu-one').scrollTop = 0);
+				const r = await ring(id);
+				expect(r.visible, id).toBe(true);
+				expect(r.width).toBeGreaterThan(0);
+				expect(inside(r.ring, r.box), id).toBe(true);
+			}
+		});
+
+		test('a hover panel that scrolls stays open while the pointer scrolls it', async ({ page }) => {
+			await short(page);
+			await fill(page, 'menu-three', 60);
+			await page.hover('#trigger-three');
+			await becomes(page, 'menu-three', true);
+			await settle(page, '#menu-three');
+			await page.hover('#item-three');
+			await page.mouse.wheel(0, 400);
+			await expect.poll(() => page.evaluate(() => document.getElementById('menu-three').scrollTop)).toBeGreaterThan(0);
+			await page.waitForTimeout(600);
+			expect(await isOpen(page, 'menu-three')).toBe(true);
+		});
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);

@@ -636,7 +636,9 @@
 	     the dropdown leaves under a trigger, and the card stands that gap
 	     clear of the bar. A panel that would pass the far edge of the screen takes
 	     the dropdown's own fallback, turned upward; the margin is the same on
-	     both sides, so the turn leaves it where it was.
+	     both sides, so the turn leaves it where it was. A tall panel is held
+	     to the room above the bar less both margins, and scrolls, as any
+	     dropdown's panel does in the room below its trigger.
 	   - With no toggle the actions keep the end of the bar for any
 	     data-justify, as they do without one. */
 	@container (inline-size < 16rem) {
@@ -649,7 +651,7 @@
 		.nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"][data-threshold="xs"]:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xs"] > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}
@@ -663,7 +665,7 @@
 		.nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"][data-threshold="sm"]:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="sm"] > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}
@@ -677,7 +679,7 @@
 		.nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]):is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"]:is(:not([data-threshold]), [data-threshold="md"]) > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}
@@ -691,7 +693,7 @@
 		.nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"][data-threshold="lg"]:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="lg"] > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}
@@ -705,7 +707,7 @@
 		.nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"][data-threshold="xl"]:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="xl"] > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}
@@ -719,7 +721,7 @@
 		.nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li.dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child), .nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li > .dropdown:has(> [popover]:popover-open) > :is(a + button, button:first-child) { --_yeti-turn: 45deg; --_yeti-nudge: 0 -0.15em; }
 		.nav[data-panel="bar"][data-threshold="2xl"]:is([data-justify="end"], [data-justify="center"]) > [data-actions] { margin-inline-start: auto; }
 		@supports (anchor-name: --a) and (anchor-scope: --a) and (position-anchor: --a) and (position-area: block-end) {
-			.nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); }
+			.nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li.dropdown > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li > .dropdown > [popover]:popover-open { position-area: block-start span-inline-end; position-try-fallbacks: --yeti-dropdown-edge flip-block; margin-block: calc(1.5 * var(--yeti-space-xs) + var(--yeti-border-width)); max-block-size: calc(100% - 3 * var(--yeti-space-xs) - 2 * var(--yeti-border-width)); }
 			.nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li.dropdown[data-side="end"] > [popover]:popover-open, .nav[data-panel="bar"][data-threshold="2xl"] > ul[popover] > li > .dropdown[data-side="end"] > [popover]:popover-open { position-area: block-start span-inline-start; position-try-fallbacks: --yeti-dropdown-edge-start flip-block; }
 		}
 	}

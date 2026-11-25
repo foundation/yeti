@@ -26,6 +26,8 @@ A panel is usually a list of links and buttons, but it takes any content: a shor
 
 The panel is at least `--yeti-dropdown-min` wide. Set the token on the dropdown to widen it, such as `style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))"` for a panel almost as wide as the screen. The navigation guide builds [a mega menu](guides/navigation.md#a-mega-menu) this way, from a dropdown and the layouts.
 
+A panel is never taller than the room it has. A long one stops at the edge of the screen and scrolls inside itself, so its last items can still be reached. The room is the space between the trigger and the edge of the screen that the panel opens toward, less the gap the panel keeps from its trigger. A submenu's room runs from the top of its row to the bottom of the screen. Where anchor positioning is missing, the room is the height of the screen less `--yeti-space-md` at the top and at the bottom. A panel shorter than its room keeps its own height and shows no scroll bar. Scrolling a panel does not close it, and a panel that opened on hover stays open while the pointer scrolls it. Once a nav's links are behind its toggle, a submenu shown in place in the nav's open panel is not limited: it is part of that panel, and the panel scrolls instead.
+
 ## A parent with its own page
 
 A menu often hangs off a section that is a page in its own right: About has a page, and History and Team sit under it. Write the parent's link first, then an empty button, then the panel. This is a split parent. The link goes to the parent's page, and the button beside it opens the panel. The button has no text, so give it an `aria-label` that names what it opens, such as "About pages". Yeti draws a chevron in it.
