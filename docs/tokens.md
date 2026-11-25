@@ -602,6 +602,18 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 
 </div>
 
+## Popover
+
+<div class="scroller" role="region" aria-label="Popover tokens" tabindex="0" markdown="1">
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `--yeti-popover-surface` | `var(--yeti-color-surface-raised)` | Background of the popover's panel. |
+| `--yeti-popover-radius` | `var(--yeti-radius-md)` | Corner of the popover's panel. |
+| `--yeti-popover-padding` | `var(--yeti-space-md)` | Padding inside the popover's panel. |
+
+</div>
+
 ## Tooltip
 
 <div class="scroller" role="region" aria-label="Tooltip tokens" tabindex="0" markdown="1">

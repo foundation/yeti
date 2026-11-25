@@ -1435,6 +1435,11 @@ Attributes:
 - data-variant: primary (default) | secondary | success | warning | alert | danger | neutral | black | white — Which hue's ladder the button uses.
 - data-emphasis: high (default) | medium | low — How loud: high is a solid fill, medium an outline, low text alone.
 - data-size: sm | md (default) | lg — Scales the text and the padding together.
+- data-copy (string) — Read by the module: the id of the element whose text a click copies to the clipboard, or whose value when it is a form field.
+- data-copied (string) — Read by the module: the label the button shows for two seconds after a copy, in your own words.
+
+module: copy.js (optional)
+- event yeti:copy — Dispatched on the button once the browser has put the text on the clipboard.
 
 ### When to use it
 
@@ -1473,9 +1478,25 @@ A toggle needs no script when it is a native input. Put the class on a `label` w
 
 A link that is a button, `<a class="button">`, is drawn as a button and never underlined, since Yeti sets that inside its layer. A stylesheet of your own that underlines links on hover sits outside every layer and outranks it, so exclude buttons there: `a:hover:not(.button)`.
 
+### A copy button
+
+`data-copy` makes a button copy text to the clipboard. It takes the id of the element to copy, a bare id as `for` and `popovertarget` take. A click copies that element's text. Where the element is an `input`, a `textarea` or a `select`, its value is copied instead, including what was typed after the page loaded. Line breaks at the very end are dropped, so a pasted command does not run by itself. Nothing else is changed: indentation and inner line breaks are copied as they are.
+
+`data-copied` is optional. It is the label the button shows for two seconds after a copy, in your own words. Then the button gets back exactly what it held before, the same nodes, so an icon survives. The button keeps its width while a shorter label shows, so nothing beside it moves.
+
+```html
+<pre id="install"><code>npm install @foundation/yeti</code></pre>
+<button class="button" type="button" data-copy="install" data-copied="Copied" aria-live="polite">Copy</button>
+<script type="module" src="…/js/copy.js"></script>
+```
+
+Only script can write to the clipboard, so this needs `copy.js`. Without the module the button does nothing at all. On a page that does not load it, leave the button out, or add it with the script that loads the module. The browser's clipboard works only in a secure context, which is a page on https or on localhost. Where it is missing, or the browser refuses the write, the button stays as it is and no label shows.
+
+After each copy the module dispatches `yeti:copy` on the button. It bubbles, so one listener on `document` hears every copy button on the page.
+
 ### Accessibility
 
-A `button` is a button and an `a` is a link; the class changes the look, not the role, so use the element that matches what happens. An icon-only button needs an `aria-label`. A toggle is either a `label.button` wrapping a native radio or checkbox, whose own checked state is what a screen reader announces, or a button carrying `aria-pressed`, and the pressed look follows either. A button that is waiting on a request carries `aria-busy="true"` and `aria-disabled="true"` together: it dims, shows a progress cursor, and your handler ignores presses until the request returns. The focus ring is the page's ring and is never removed. Text over every fill meets AA in both color schemes; the test suite checks each variant.
+A `button` is a button and an `a` is a link; the class changes the look, not the role, so use the element that matches what happens. An icon-only button needs an `aria-label`. A toggle is either a `label.button` wrapping a native radio or checkbox, whose own checked state is what a screen reader announces, or a button carrying `aria-pressed`, and the pressed look follows either. A button that is waiting on a request carries `aria-busy="true"` and `aria-disabled="true"` together: it dims, shows a progress cursor, and your handler ignores presses until the request returns. The focus ring is the page's ring and is never removed. A copy button needs `aria-live="polite"`, so a screen reader says the new label when it shows. Give it a `data-copied` label too: without one, nothing tells any reader that the copy happened. An icon-only copy button still needs an `aria-label`. Text over every fill meets AA in both color schemes; the test suite checks each variant.
 
 Children:
 - > svg: at least 0, at most 1. An optional icon, sized to the text.
@@ -1506,7 +1527,7 @@ Tokens:
 Accessibility contract:
 - Enter / Space: Activates a button element; Enter follows a link.
 - Space / Arrow keys: On a label.button toggle, Space checks its input; the arrow keys move the choice within a radio group.
-Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy="true" together with aria-disabled="true", and your handler ignores presses while it waits.
+Put the class on a button, an a, a submit input, or a label wrapping a radio or checkbox, nothing else. Use button for actions and a for navigation. An icon-only button needs an aria-label. A toggle is a label wrapping a native radio or checkbox, which needs no script, or a button with aria-pressed, which needs your script to move it; a button that is waiting sets aria-busy="true" together with aria-disabled="true", and your handler ignores presses while it waits. A copy button carries aria-live="polite" and a data-copied label: the label read aloud is the only sign a screen reader gets that the copy happened.
 
 ## buttons (component, class="buttons")
 
@@ -1806,7 +1827,12 @@ Give the iframe a title. Give a box holding direct markup tabindex="0": markup t
 The native dialog element as a modal, opened by a button whose commandfor names it, with the page behind it inert and focus held inside.
 
 Attributes:
-- data-max: 3xs | 2xs | xs | sm | md (default) | lg | xl | 2xl — The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter.
+- data-max: 3xs | 2xs | xs | sm | md (default) | lg | xl | 2xl — The widest the dialog may grow, from the width scale; it is always narrower than the viewport by a gutter. A side drawer defaults to sm, and a top or bottom drawer ignores it.
+- data-panel: drawer — Pins the dialog to an edge of the screen as a drawer, sliding in from that edge. Absent, the dialog is centered.
+- data-placement: top | bottom | start (default) | end — Which edge of the screen a drawer is pinned to. start and end follow the writing direction; a side drawer takes its width from data-max, and a top or bottom one is as wide as the screen.
+
+On children:
+- data-close on > button (boolean) — The close button, in the top end corner. It closes the dialog with commandfor and command="close", with no script.
 
 module: dialog.js (optional)
 - event yeti:open — Dispatched on the dialog once the browser has opened it from a commandfor button.
@@ -1834,15 +1860,48 @@ Opening is native too. A `button` carrying `commandfor` with the dialog's id and
 </dialog>
 ```
 
+### A drawer
+
+A drawer is the same dialog, pinned to an edge of the screen. Use it for a panel that is longer or taller than a centered dialog suits: filters, a cart, the details of a row. It is still modal, so the page behind is inert and Escape closes it. A panel that should leave the page usable is a different thing: a `sidebar` layout, or a popover.
+
+Add `data-panel="drawer"`, and pick the edge with `data-placement`: `start` (the default), `end`, `top` or `bottom`. `start` and `end` follow the writing direction, so in a right-to-left page a `start` drawer comes from the right. A side drawer is as tall as the screen, and its width comes from `data-max`, `sm` when it is absent. It always leaves a strip of backdrop to tap. A top or bottom drawer is as wide as the screen and as tall as its content, up to the screen's height less that strip; `data-max` does nothing on it. The drawer slides in from its edge and back out.
+
+A long drawer scrolls as one piece. The footer sits at the bottom when the content is short, and scrolls with the content when it is long.
+
+```html
+<button class="button" type="button" commandfor="filters" command="show-modal">Filters</button>
+
+<dialog class="dialog" id="filters" data-panel="drawer" data-placement="end" aria-labelledby="filters-title">
+	<button type="button" data-close aria-label="Close" commandfor="filters" command="close">×</button>
+	<h2 id="filters-title">Filters</h2>
+	<p>Choose what to show.</p>
+	<footer>
+		<form method="dialog"><button class="button" type="submit" data-emphasis="medium">Cancel</button></form>
+		<button class="button" type="button">Apply</button>
+	</footer>
+</dialog>
+```
+
+### A close button
+
+A `button` carrying `data-close`, as a child of any dialog, sits in the top end corner. Put it first in the dialog, with the heading straight after it: the heading is what keeps clear of the button, so its text never runs under it. It works in a centered dialog and in a drawer. It closes the dialog natively: give it `commandfor` with the dialog's id and `command="close"`, and no script is needed. Yeti adds only the look. Give it an `aria-label`, since its text is a symbol.
+
+```html
+<button type="button" data-close aria-label="Close" commandfor="share" command="close">×</button>
+```
+
 ### Accessibility
 
 Name the dialog with `aria-labelledby` pointing at its heading, so it is announced as something rather than as an unnamed dialog. Because it is opened modally the page behind it is genuinely inert, not merely covered, so a screen reader cannot wander out of it. Focus returns to the opener on close, which is what keeps a keyboard reader's place.
+
+The browser focuses the first control in a dialog when it opens. That is the close button when there is one, so put `autofocus` on a field that should have focus instead. The close button scrolls away with a long drawer's content, and Escape still closes the drawer.
 
 Without the module the dialog still opens and Escape still closes it. What is lost is the backdrop click and, in Safari, the return of focus to the opener, because Safari does not focus a button when it is clicked. Load the module on any page where a keyboard reader will meet a dialog.
 
 Children:
 - > *: at least 1. The contents: a heading that names the dialog, then whatever it is for.
 - > footer: at least 0, at most 1. The buttons, at the end edge. A button inside a form with method="dialog" closes it with no script.
+- > button[data-close]: at least 0, at most 1. A close button in the top end corner. Give it commandfor naming the dialog, command="close", and an aria-label; it closes the dialog with no script.
 
 Tokens:
 - --yeti-dialog-surface — Background of the dialog.
@@ -1850,17 +1909,21 @@ Tokens:
 - --yeti-dialog-padding — Padding inside.
 - --yeti-dialog-backdrop — The wash over the page behind it.
 - --yeti-shadow-md — The dialog's shadow.
-- --yeti-space-md — The least margin kept between the dialog and the viewport's edges.
+- --yeti-space-md — The least margin kept between the dialog and the viewport's edges, and the space above a drawer's footer.
 - --yeti-color-text — The dialog's text.
 - --yeti-width-md — The default maximum, when data-max is absent.
-- --yeti-space-sm — Gap between the footer's actions.
-- --yeti-duration-fast — How long the dialog and its backdrop take to appear.
+- --yeti-space-sm — Gap between the footer's actions, and the close button's inset from the corner.
+- --yeti-duration-fast — How long the dialog and its backdrop take to appear, and a drawer to slide in.
 - --yeti-ease — The curve of that transition.
+- --yeti-space-xl — The strip of backdrop a drawer leaves at the screen edge opposite it.
+- --yeti-width-sm — A side drawer's default width, when data-max is absent.
+- --yeti-control-size — The close button's size, and the room a heading after it leaves at its end.
+- --yeti-control-radius — The close button's corner.
 
 Accessibility contract:
 - Escape: Closes the dialog.
 - Tab: Cycles inside the dialog, since the rest of the page is inert.
-Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command="show-modal" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method="dialog" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it.
+Give the dialog a name with aria-labelledby pointing at its heading. A button with commandfor naming the dialog and command="show-modal" opens it modally: the browser makes everything behind it inert, holds focus inside, and closes on Escape; none of that needs ARIA or a script. A button inside a form with method="dialog" closes it without any script. dialog.js adds a backdrop click that closes the dialog and returns focus to the opening button on close; without it the dialog still opens and Escape still closes it. The browser focuses the first control in the dialog, which is the close button when there is one, so put autofocus on a field that should have focus first.
 
 ## dropdown (component, class="dropdown")
 
@@ -2410,6 +2473,110 @@ Tokens:
 Accessibility contract:
 Required: aria-label | aria-labelledby
 Put aria-label="Pagination" on the nav. The current page's link carries aria-current="page". Previous and Next carry rel="prev" and rel="next" and visible text or an aria-label; they are what remains when the row is narrow. Skipped pages are a span, not a link. Put role="list" on the ol.
+
+## popover (component, class="popover")
+
+A panel of any content that opens beside the button that names it, flipping to stay on the screen and closing on Escape or a click outside, with no script.
+
+Attributes:
+- data-placement: top | bottom (default) | start | end — Which side of its button the panel opens on. start and end follow the writing direction. Where there is no room on that side it flips to the other.
+- data-max: 3xs | 2xs | xs (default) | sm | md | lg | xl | 2xl — The widest the panel may grow, from the width scale; it is always narrower than the viewport by a gutter each side.
+
+### When to use it
+
+A small panel of anything beside the button that opens it: a share box with a link to copy, a short explanation, a filter or two, a quick form. The page stays usable while it is open.
+
+It is not a menu. A list of links and actions belongs in a `dropdown`, which turns each one into a menu row. It is not a hint either: a few words that explain a control, with nothing to click, are a `tooltip`. And a question the reader must answer before going on is a `dialog`.
+
+### How it works
+
+The panel is a native popover. The button carries `popovertarget` with the panel's id, and the panel carries `popover` and the class. The browser opens it, puts it in the top layer, closes it on Escape or a click outside, and keeps the button's expanded state current. No script is needed.
+
+The button that opens the panel is its anchor, so there is no wrapper and no anchor name. The panel can sit anywhere in the page, and a page can hold many. In Chromium and Firefox the browser also puts the panel straight after its button in the tab order, wherever it sits in the markup. WebKit was not measured, because its Tab key skips links and buttons by default.
+
+A panel opened by script has no button to sit beside unless you pass one as `source`: `panel.showPopover({ source: button })`.
+
+```html
+<button class="button" type="button" popovertarget="share">Share</button>
+
+<div class="popover" id="share" popover>
+	<h3>Share this page</h3>
+	<p>Anyone with the link can read it.</p>
+	<button class="button" type="button">Copy link</button>
+</div>
+```
+
+What it holds is ordinary flow content. Links look like links and buttons like buttons, and the panel spaces its own children: the medium space between siblings, and the smaller heading space after a heading. The panel fades in and closes at once.
+
+The panel's background is `--yeti-popover-surface`, its corner is `--yeti-popover-radius`, and its padding is `--yeti-popover-padding`.
+
+### Placement
+
+By default the panel opens below its button, lined up with the button's start edge, with a small gap between them. Pick another side with `data-placement`: `bottom` (the default), `top`, `start` or `end`. `start` and `end` follow the writing direction, so in a right-to-left page `end` is to the button's left.
+
+Where there is no room on that side, the panel flips to the other. Where it would run past the end of the screen, it lines up with the button's other edge instead, and it shifts to stay on the screen when neither fits.
+
+```html
+<button class="button" type="button" popovertarget="hint">What is this?</button>
+
+<div class="popover" id="hint" popover data-placement="end">
+	<p>Your plan renews on the first of each month.</p>
+</div>
+```
+
+Where anchor positioning is missing the browser centers the panel on the screen. It still opens, closes and reads correctly.
+
+### Width
+
+The panel is as wide as its content, up to `data-max`, from the width scale. The default is `xs`. On a narrow screen it is never wider than the screen less a margin each side.
+
+### A panel that holds a form
+
+Make the panel a `dialog` element when it holds a form. A screen reader then announces a named dialog, and `autofocus` on a field works. It is still not modal: the page behind stays usable, and a click outside closes it.
+
+```html
+<button class="button" type="button" popovertarget="rename">Rename</button>
+
+<dialog class="popover" id="rename" popover aria-labelledby="rename-title">
+	<h3 id="rename-title">Rename</h3>
+	<div class="field">
+		<label for="rename-name">Name</label>
+		<input id="rename-name" type="text" autofocus>
+	</div>
+</dialog>
+```
+
+### What it is not
+
+There is no arrow pointing at the button, because an arrow cannot follow the panel when it flips. It does not open on hover: that is the tooltip's job, or the dropdown's `hover.js`. A menu of links belongs in a `dropdown`.
+
+### Accessibility
+
+Give the button a name. The browser sets its expanded state from `popovertarget`, so a screen reader hears whether the panel is open. Escape closes the panel and returns focus to the button.
+
+In Chromium and Firefox, Tab moves from the button into the panel and, from the panel's last control, on to whatever follows the button, wherever the panel sits in the markup. WebKit was not measured, because its Tab key skips links and buttons by default. A screen reader reading the page in order still meets the panel where it sits, so keep it close to its button, and inside the same landmark.
+
+Children:
+- > *: at least 1. The contents: ordinary flow content, such as a heading, a sentence, a form or a button.
+
+Tokens:
+- --yeti-popover-surface — Background of the panel.
+- --yeti-popover-radius — Corner of the panel.
+- --yeti-popover-padding — Padding inside the panel.
+- --yeti-color-text — The panel's text.
+- --yeti-shadow-md — The panel's shadow.
+- --yeti-width-xs — The default maximum, when data-max is absent.
+- --yeti-space-md — The least margin kept between the panel and each side of the viewport, and the space between its children.
+- --yeti-space-xs — The gap between the button and the panel.
+- --yeti-heading-space-after — The space after a heading inside the panel.
+- --yeti-duration-fast — How long the panel takes to fade in.
+- --yeti-ease — The curve of that fade.
+
+Accessibility contract:
+- Enter / Space: On the button, opens or closes the panel.
+- Tab: From the button, moves into the panel; from the panel's last control, moves to what follows the button.
+- Escape: Closes the panel and returns focus to its button.
+The button needs a name, and the browser sets its expanded state from popovertarget. In Chromium and Firefox the browser puts the panel straight after its button in the tab order, wherever the panel sits in the markup; WebKit was not measured, because its Tab key skips links and buttons by default. A panel is not modal: the page behind stays usable, and a click outside closes it. For a panel that holds a form, make it a dialog element with aria-labelledby naming its heading, so a screen reader announces a named dialog and autofocus on a field works. Do not open it on hover, and keep a menu of links in a dropdown.
 
 ## progress (component, class="progress")
 
@@ -3558,6 +3725,9 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-dialog-radius (dialog): var(--yeti-radius-lg) — Corner of the dialog.
 - --yeti-dialog-padding (dialog): var(--yeti-space-lg) — Padding inside the dialog.
 - --yeti-dialog-backdrop (dialog): black at 60% — The backdrop behind an open dialog. Black rather than a theme color, because a backdrop dims what is behind it in every theme.
+- --yeti-popover-surface (popover): var(--yeti-color-surface-raised) — Background of the popover's panel.
+- --yeti-popover-radius (popover): var(--yeti-radius-md) — Corner of the popover's panel.
+- --yeti-popover-padding (popover): var(--yeti-space-md) — Padding inside the popover's panel.
 - --yeti-tooltip-surface (tooltip): var(--yeti-color-text) — Background of the bubble, inverted so it reads over anything.
 - --yeti-tooltip-text (tooltip): var(--yeti-color-surface) — Text of the bubble.
 - --yeti-tooltip-radius (tooltip): var(--yeti-radius-sm) — Corner of the bubble.
