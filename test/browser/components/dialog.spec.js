@@ -356,3 +356,47 @@ test.describe('dialog close button', () => {
 		}
 	});
 });
+
+// The base layer spaces every child of a flow container after the first, and
+// body and section are flow containers, so a dialog placed after a sibling
+// would take that margin and leave its centre or its edge.
+test.describe('dialog after a sibling', () => {
+	// Runs in all three engines.
+	test('a plain dialog after a sibling in body is centered on both axes', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'body-plain');
+		expect(Math.abs(box.left - (view.width - box.right))).toBeLessThanOrEqual(1);
+		expect(Math.abs(box.top - (view.height - box.bottom))).toBeLessThanOrEqual(1);
+	});
+
+	// Runs in all three engines.
+	test('a drawer after a sibling in body keeps to its edge', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const start = await show(page, 'body-start');
+		expect(start.top).toBeCloseTo(0, 0);
+		expect(start.bottom).toBeCloseTo(view.height, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-start');
+		const end = await show(page, 'body-end');
+		expect(end.right).toBeCloseTo(view.width, 0);
+		expect(end.top).toBeCloseTo(0, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-end');
+		const top = await show(page, 'body-top');
+		expect(top.top).toBeCloseTo(0, 0);
+		await page.keyboard.press('Escape');
+		await settle(page, '#body-top');
+		const bottom = await show(page, 'body-bottom');
+		expect(bottom.bottom).toBeCloseTo(view.height, 0);
+	});
+
+	test('a plain dialog as the second child of a section is centered', async ({ page }) => {
+		await openAt(page, 1000);
+		const view = await viewport(page);
+		const box = await show(page, 'section-plain');
+		expect(Math.abs(box.left - (view.width - box.right))).toBeLessThanOrEqual(1);
+		expect(Math.abs(box.top - (view.height - box.bottom))).toBeLessThanOrEqual(1);
+	});
+});

@@ -1,9 +1,14 @@
 /* Dialog: the native dialog element, styled. Opened as a modal by a button's
    commandfor and command="show-modal", which is what makes the rest of the
-   page inert and keeps focus inside. The reset already exempts dialog from
-   the universal margin rule, so the browser's own centring survives. */
+   page inert and keeps focus inside. The browser centers a modal dialog with
+   margin: auto, and the reset leaves that alone, but the base layer's flow
+   rule gives a margin to any child of body or a section that follows a
+   sibling, which pushed a dialog off center and a drawer off its edge. So
+   the dialog restates the auto margin here, where it outranks the base. A
+   drawer's auto margins come to nothing against its insets. */
 @layer yeti.components {
 	.dialog {
+		margin: auto;
 		max-inline-size: min(var(--_yeti-max), 100% - 2 * var(--yeti-space-md));
 		padding: var(--yeti-dialog-padding);
 		border: 0;

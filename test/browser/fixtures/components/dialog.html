@@ -90,7 +90,45 @@
 				<h2 id="drawer-xs-title">Narrow</h2>
 				<p>A drawer from the extra small width.</p>
 			</dialog>
+
+			<button class="button" type="button" commandfor="body-plain" command="show-modal" id="body-plain-open">Body dialog</button>
+			<button class="button" type="button" commandfor="body-start" command="show-modal" id="body-start-open">Body start drawer</button>
+			<button class="button" type="button" commandfor="body-end" command="show-modal" id="body-end-open">Body end drawer</button>
+			<button class="button" type="button" commandfor="body-top" command="show-modal" id="body-top-open">Body top drawer</button>
+			<button class="button" type="button" commandfor="body-bottom" command="show-modal" id="body-bottom-open">Body bottom drawer</button>
+			<button class="button" type="button" commandfor="section-plain" command="show-modal" id="section-plain-open">Section dialog</button>
 		</div>
+
+		<!-- A dialog after a sibling inside a flow container, which the base layer would space. -->
+		<section>
+			<p>A paragraph before the dialog.</p>
+			<dialog class="dialog" id="section-plain" aria-labelledby="section-plain-title">
+				<h2 id="section-plain-title">In a section</h2>
+				<p>Second child of its section.</p>
+			</dialog>
+		</section>
 	</main>
+
+	<!-- Dialogs as children of body after a sibling, which the base layer would space. -->
+	<dialog class="dialog" id="body-plain" aria-labelledby="body-plain-title">
+		<h2 id="body-plain-title">After main</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-start" data-panel="drawer" aria-labelledby="body-start-title">
+		<h2 id="body-start-title">Start</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-end" data-panel="drawer" data-placement="end" aria-labelledby="body-end-title">
+		<h2 id="body-end-title">End</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-top" data-panel="drawer" data-placement="top" aria-labelledby="body-top-title">
+		<h2 id="body-top-title">Top</h2>
+		<p>A child of body.</p>
+	</dialog>
+	<dialog class="dialog" id="body-bottom" data-panel="drawer" data-placement="bottom" aria-labelledby="body-bottom-title">
+		<h2 id="body-bottom-title">Bottom</h2>
+		<p>A child of body.</p>
+	</dialog>
 </body>
 </html>
