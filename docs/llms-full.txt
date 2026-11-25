@@ -1,6 +1,6 @@
 # Yeti 7.0.0-alpha.2
 
-Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/. Each component's guidance, every token's default and the color, theming and animation guides are in https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-alpha.2/dist/llms-full.txt; it is large, so search it rather than reading it whole.
+Yeti is a plain-CSS framework. Three rules cover every component: identity is a class (`class="card"`), configuration is a `data-*` attribute with a fixed value list (`data-gap="md"`), and state is native or ARIA (`open`, `aria-current`), never a class. Layouts arrange, recipes compose layouts, components are styled things. Every attribute below is validated: a value not in its list is an error. Rendered pages are checked with the same manifest by bin/validate-html.js in the Yeti repository (node bin/validate-html.js <dir> --manifest <path to yeti.manifest.json>); run it over built HTML before looking for a layout fault by hand. Docs: https://foundationcss.com/yeti/. Each component's guidance, every token's default and the color, theming, animation and navigation guides are in https://cdn.jsdelivr.net/npm/@foundation/yeti@7.0.0-alpha.2/dist/llms-full.txt; it is large, so search it rather than reading it whole.
 
 To begin a page, start from dist/starter/index.html, a complete and valid page (skip link, sticky nav, hero, card grid, prose, footer), and dist/starter/theme.css, the essential theme settings with their defaults, commented out. Copy both and delete what the page does not need.
 
@@ -1972,7 +1972,7 @@ A short list of things to go to or to do, hung off one button: an account menu, 
 
 The panel carries `popover` and the button carries `popovertarget`, so the browser opens it, puts it in the top layer, closes it on Escape or a click outside, and keeps the button's expanded state current. Yeti adds the surface, the shadow, and the placement. Because the panel is in the top layer, nothing on the page can clip it, which is why a dropdown inside a nav works even though the bar is a query container.
 
-Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. A [split parent's](#a-parent-with-its-own-page) panel hangs under its whole row, the link and the button together, so it starts under the link and not under the small button. The anchor name is scoped to each dropdown, so a page full of them behaves. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
+Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. A [split parent's](#a-parent-with-its-own-page) panel hangs under its whole row, the link and the button together, so it starts under the link and not under the small button. The anchor name is scoped to each dropdown, so a page full of them behaves. A panel that would pass the edge of the screen moves back in to fit, and keeps a margin of `--yeti-space-md` from that edge rather than touching it; a panel that fits beside its trigger stays lined up with it. The margin needs `position-try-fallbacks`; a browser without it still moves the panel in, but flush against the edge. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
 
 ```html
 <div class="dropdown" data-side="end">
@@ -1985,6 +1985,14 @@ Where anchor positioning exists the panel hangs under its own trigger, and `data
 ```
 
 The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. The current page's link, and each parent in the panel that holds it, takes `--yeti-dropdown-current`, which falls back to the variant's text color. Set the four together for a dark or tinted panel.
+
+### What a panel holds
+
+A panel is usually a list of links and buttons, but it takes any content: a short form, a few lines of text, or columns of links beside a feature card. Every link and button in it is drawn as a menu row, with the item padding and the hover fill. A `.button` is the exception. It keeps the look it has anywhere else, its fill, its color and its corners, so a call to action in a panel still reads as one. An `svg` straight inside a row's link or button is its icon. It sits before the label at the size of the text, with a small gap between them. An `img` there keeps its own size, so an avatar or a logo shows as you wrote it.
+
+The panel is at least `--yeti-dropdown-min` wide. Set the token on the dropdown to widen it, such as `style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))"` for a panel almost as wide as the screen. The navigation guide builds [a mega menu](guides/navigation.md#a-mega-menu) this way, from a dropdown and the layouts.
+
+A long panel never runs off the screen. It stops and scrolls inside itself, so its last items can still be reached. Its limit is the space between the trigger and the edge of the screen it opens toward, less the gap it keeps from its trigger, or half the height of the screen if that is more. So a trigger low on the screen still gets a panel of a useful height: where the panel does not fit below the trigger, the browser moves it up to stay on the screen, over the trigger if it must. A submenu's limit is the height of the screen, less a small gap at the top and the bottom, and it moves up the same way when its row is low. Where anchor positioning is missing, the limit is the height of the screen less `--yeti-space-md` at the top and at the bottom. A panel shorter than its limit keeps its own height and shows no scroll bar. Scrolling a panel does not close it, and a panel that opened on hover stays open while the pointer scrolls it. Once a nav's links are behind its toggle, a submenu shown in place in the nav's open panel is not limited: it is part of that panel, and the panel scrolls instead.
 
 ### A parent with its own page
 
@@ -2072,7 +2080,7 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
 
-Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its trigger sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its trigger. The grouped panel shows three levels: its own trigger, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its trigger sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side, as any panel does: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its trigger. The grouped panel shows three levels: its own trigger, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
 
 A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
 
@@ -2112,7 +2120,7 @@ Opening on hover changes none of that. The module never touches focus, ARIA, or 
 Children:
 - > a: at least 0, at most 1. The parent page's link, before the button. With it the button is a small toggle beside the link.
 - > button[popovertarget]: at least 1, at most 1. The trigger; its popovertarget names the panel's id.
-- > [popover]: at least 1, at most 1. The panel, holding ordinary links and buttons.
+- > [popover]: at least 1, at most 1. The panel: usually ordinary links and buttons, but it takes any content.
 
 Tokens:
 - --yeti-color-primary-text — The color of the current page's link and of each parent above it, when no variant scope is set.
@@ -2133,7 +2141,7 @@ Tokens:
 - --yeti-ease — The curve of that transition.
 - --yeti-space-xs — Gap between an item's icon and its label, and between the trigger and the panel.
 - --yeti-space-sm — Inline padding of an item.
-- --yeti-space-md — The margin kept between a grouped panel and the viewport's edges, and the gap between its columns.
+- --yeti-space-md — The margin kept between a panel that moves in to fit and the viewport's edge, and the gap between a grouped panel's columns.
 - --yeti-text-sm — The size of a grouped panel's headings.
 
 Accessibility contract:
@@ -2264,12 +2272,12 @@ The label's for must match the control's id; the validator checks it. Reference 
 
 ## nav (component, class="nav")
 
-A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen.
+A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen, or puts them in a bar fixed to the bottom of the screen; with nav.js, links that do not fit the bar move into a More menu.
 
 Attributes:
 - data-variant: primary (default) | secondary | success | warning | alert | danger | neutral | black | white — The hue of the current link and of the hover tint.
 - data-threshold: 3xs | 2xs | xs | sm | md (default) | lg | xl | 2xl — The nav's own width at or above which the links sit in the bar; below it they are behind the toggle.
-- data-panel: sheet (default) | drawer | screen — The shape of the open list below the threshold: a sheet under the bar, a drawer from the start edge, or the whole screen.
+- data-panel: sheet (default) | drawer | screen | bar — What the links become below the threshold: a sheet under the bar, a drawer from the start edge, or the whole screen, each opened by the toggle; or bar, a row of icons and labels fixed to the bottom of the screen, with no toggle.
 - data-gap: none | xs | sm (default) | md | lg | xl | 2xl | 3xl | 4xl | xs-sm | xs-md | xs-lg | xs-xl | xs-2xl | xs-3xl | xs-4xl | sm-md | sm-lg | sm-xl | sm-2xl | sm-3xl | sm-4xl | md-lg | md-xl | md-2xl | md-3xl | md-4xl | lg-xl | lg-2xl | lg-3xl | lg-4xl | xl-2xl | xl-3xl | xl-4xl | 2xl-3xl | 2xl-4xl | 3xl-4xl — Space between the bar's parts and between the links.
 - data-justify: start (default) | center | end — Where the links sit in the bar's free room: beside the brand, in the middle between the brand and the actions, or at the end with the actions straight after them. With center or end the toggle sits at the end below the threshold.
 - data-sticky (boolean) — Keep the bar at the top of the scrollport as the page scrolls, flush with the edge.
@@ -2277,6 +2285,7 @@ Attributes:
 On children:
 - data-brand on > * (boolean) — The site's name or mark, usually a link home.
 - data-close on li (boolean) — The item holding the button that closes the panel; hidden in the bar.
+- data-more on li (boolean) — The More item, written hidden; nav.js fills it with the links that do not fit the bar and shows it.
 - data-actions on > * (boolean) — A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 module: nav.js (optional)
@@ -2289,7 +2298,7 @@ The bar across the top of a site: the name, the main links, a button or two. It 
 
 One list of links, two modes. The list carries `popover` and the button carries `popovertarget` naming it. When the bar is narrower than `data-threshold` (its own width, not the screen's, so a nav in a narrow column collapses while the same one across a page does not), the list is a closed popover and the button opens it; light dismiss, Escape, and the button's expanded state all come from the browser. At the threshold and above, the nav's own container query puts the list back in the bar and hides the button. The `popover` attribute is still there, so nothing changes in the markup and no link exists twice.
 
-`data-panel` chooses the shape of the open list. `sheet`, the default, hangs under the bar at the full width. `drawer` slides in from the start edge as a column with the page dimmed behind it. `screen` fills the viewport with the links large and centred. Where anchor positioning exists the sheet sits exactly under the bar; elsewhere it starts at the top of the viewport and covers the bar, and Escape or a click outside still closes it. A close item, an `li` carrying `data-close` with a button that hides the popover, sits in the panel's top end corner and disappears in the bar; `screen` needs one, since there is no outside to click.
+`data-panel` chooses the shape of the open list. `sheet`, the default, hangs under the bar at the full width. `drawer` slides in from the start edge as a column with the page dimmed behind it. `screen` fills the viewport with the links large and centred. `bar` is not a panel that opens: it puts the links in a row along the bottom of the screen, and has a section of its own below. Where anchor positioning exists the sheet sits exactly under the bar; elsewhere it starts at the top of the viewport and covers the bar, and Escape or a click outside still closes it. A close item, an `li` carrying `data-close` with a button that hides the popover, sits in the panel's top end corner and disappears in the bar; `screen` needs one, since there is no outside to click.
 
 ```html
 <nav class="nav" aria-label="Site" data-threshold="sm" data-panel="drawer">
@@ -2341,6 +2350,44 @@ The actions slot takes anything, not only buttons: a running head, a version, a 
 .nav > [data-actions] { font-size: var(--yeti-text-sm); color: var(--yeti-color-text-muted); }
 ```
 
+### A bar at the bottom of the screen
+
+Many phone designs keep the main links in a row along the bottom of the screen, in reach of a thumb, instead of behind a menu button. `data-panel="bar"` does that. Below the threshold the links leave the top bar and sit in a row fixed to the bottom of the screen, where they stay as the page scrolls. The brand and the actions stay in the top bar. At the threshold and above, the nav is the same bar as any other.
+
+Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, an `svg` icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. An `img` keeps its own size there, so give it a `width` and a `height` that suit both places. There is no toggle in this mode, so you can leave it out:
+
+```html
+<nav class="nav" aria-label="Site" data-panel="bar">
+	<a href="/" data-brand>Yeti</a>
+	<ul id="menu" popover role="list">
+		<li><a href="/" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Home</a></li>
+		<li><a href="/search/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Search</a></li>
+		<li><a href="/inbox/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Inbox</a></li>
+		<li><a href="/account/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Account</a></li>
+	</ul>
+</nav>
+```
+
+The label is the link's name, so the icon is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. The current page's link is marked as it is in the top bar, with the same color and weight.
+
+Every link gets an equal share of the row. The row never wraps and never scrolls sideways, so a label that does not fit is cut off with an ellipsis. That is why the bar suits five links or fewer. With more, each one gets too narrow for its label, unless the list ends with [a More menu](#links-that-do-not-fit-a-more-menu). A split parent gives part of its share to its toggle, so its label has even less room; a short label, or a dropdown with no link of its own, suits the bar better.
+
+A link that is a `dropdown` opens its panel upward, as a card above the bar. Where anchor positioning is missing, the browser centres the panel on the screen instead, as it does for any dropdown.
+
+The bar covers the bottom of the page, and the nav cannot make room for it from inside itself. So the page needs one rule that leaves room under its last line, the bar's height plus the phone's safe area, at the screen widths where the bar shows:
+
+```css
+@media (width < 36rem) {
+	body { padding-block-end: calc(2 * var(--yeti-leading-sm) * var(--yeti-text-sm) + 2 * var(--yeti-space-xs) + var(--yeti-border-width) + env(safe-area-inset-bottom)); }
+}
+```
+
+The bar's height is worked out from the tokens it uses: two lines of the label, an icon being one line tall, plus its padding and its top edge. The safe area is only reported to a page whose viewport meta tag includes `viewport-fit=cover`.
+
+The threshold is the nav's own width, not the screen's, while the rule above follows the screen. The two agree only while the nav is as wide as the screen. That is the usual place for a site's nav, and it is where this mode belongs. Even then the nav measures its own content box, the room inside its padding, so it switches when the screen is a little wider than the threshold. That is why the rule's width is a little wider than md's 32rem: room the page does not need does no harm, but a bar over the last line does. For another threshold, or a nav with more padding, take the threshold plus the nav's inline padding on both sides, and round up.
+
+A fixed bar is placed against the screen only while no ancestor of the nav has a `transform`, a `filter`, a `backdrop-filter`, or a `contain` that includes layout or paint. Such an ancestor traps it, and the bar then sits at the foot of that ancestor instead of the screen, so keep the nav outside a wrapper like that.
+
 ### Submenus
 
 A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
@@ -2386,11 +2433,47 @@ Once the links are behind the toggle, a split parent's pages are shown in the na
 
 For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the nav's open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears. Where the panel has a close item and its first link is a group, the close button takes a row of its own above it, since the group's button sits in the same corner.
 
-The module marks each button with `aria-expanded` while the nav's open panel is shown. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the nav's panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
+The module marks each button with `aria-expanded` while the nav's open panel is shown. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the nav's panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. The folding does nothing while the links are in the bar.
 
-A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently. A split parent can hide its button because its link names the section; a label-only parent cannot, since its button is its name, and its own panel opens as a full-width block docked to the foot of its button and squared off against the edges of the nav's open panel, so a sheet, a drawer and a screen each keep it inside them. The block keeps the dropdown's own surface and text tokens, not the nav panel's. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the nav's panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
+A section with no page of its own, a label button such as Resources, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently. A split parent can hide its button because its link names the section; a label-only parent cannot, since its button is its name, and its own panel opens as a full-width block docked to the foot of its button and squared off against the edges of the nav's open panel, so a sheet, a drawer and a screen each keep it inside them. The block keeps the dropdown's own surface and text tokens, not the nav panel's. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the nav's panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
 
 In a `screen` panel everything is centred, so a submenu has no indent. Each level steps down in size instead, to 0.875 times the size of the one above it.
+
+### Links that do not fit: a More menu
+
+A bar with many links runs out of room before it reaches its threshold, and its links would squeeze together or run past its edge. A More menu fixes that. As the bar narrows, the last links move into a dropdown at the end of the list, and they come back as the bar widens again. It is what most large sites do.
+
+You write the More item yourself, as the last item of the list, hidden. A close item, if the nav has one, may come after it:
+
+```html
+<nav class="nav" aria-label="Site">
+	<a href="/" data-brand>Yeti</a>
+	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="menu" popover role="list">
+		<li><a href="/docs/">Docs</a></li>
+		<li><a href="/guides/">Guides</a></li>
+		<li><a href="/blog/">Blog</a></li>
+		<li><a href="/pricing/">Pricing</a></li>
+		<li class="dropdown" data-more hidden>
+			<button type="button" popovertarget="menu-more">More</button>
+			<ul id="menu-more" popover role="list"></ul>
+		</li>
+	</ul>
+</nav>
+<script type="module" src="…/js/nav.js"></script>
+```
+
+The label and the id are yours, so you can write the label in your page's language. The script creates no markup. It needs `nav.js`. Without it the More item stays hidden and the nav works exactly as it does without one.
+
+With the module, while the links are in the bar, as many as fit on one line stay there, in their order. The rest move into the More panel, from the end, and the More item shows. Read together, the links in the bar and the links in More are always in the order you wrote them, and a link that comes back returns to the place it left. The decision counts the room the More button takes, so the bar never flips back and forth between the two. It is made again when the nav changes size, when its brand or its actions change size, such as a logo that loads late, and once the page's fonts have loaded. A link you add to the list later is placed the next time the nav changes size.
+
+A link that moves is a row of the More panel, like any link in a dropdown. A dropdown that moves, in either of its shapes, becomes a submenu that flies out beside its row. When the page being read is one of the links in More, the More button takes the current color, as any dropdown does that holds the current page. If the link with focus moves into More while More is closed, focus goes to the More button. If More is hidden while it has focus, on its button or in its panel, focus goes to the last link in the bar.
+
+Below the threshold every link goes back to the list and More is hidden, so the open panel is the same as it is without More. The links return to the bar when the panel has closed and the nav is wide enough again.
+
+A bottom bar, `data-panel="bar"`, shares its row by count, not by width. With five links or fewer they all show and More is hidden. With more than five, the first four show, the rest go into More, and More takes the fifth place, with its panel opening upward like any dropdown in the bottom bar. Keep any dropdown among the first four links: on a phone there is no room beside More's panel, so a dropdown that moves into More opens its submenu over that panel.
+
+The module finds each nav once, when it runs. A nav added to the page later, such as one in a page that a script swaps into place without a full load, gets no More menu, and its More item stays hidden. The folding of its groups still works. On such a site, keep the nav outside the part of the page that is swapped, so it is the same nav from page to page.
 
 ### Accessibility
 
@@ -2398,18 +2481,19 @@ Give the `nav` an `aria-label`, since a page often has more than one. The toggle
 
 Children:
 - > [data-brand]: at least 0, at most 1. The site's name or mark, usually a link home.
-- > button[popovertarget]: at least 1, at most 1. The toggle; its popovertarget names the list's id. Hidden while the links are in the bar.
+- > button[popovertarget]: at least 0, at most 1. The toggle; its popovertarget names the list's id. Hidden while the links are in the bar. Needed for every data-panel but bar, which has no toggle, so the markup may leave it out.
 - > ul[popover]: at least 1, at most 1. The links, one per li, with role="list" and the id the toggle names.
 - li: at least 1. An entry in the list; each holds one link, or a dropdown: a split parent's link, toggle and panel, or a label button and its panel.
-- [data-close]: at least 0, at most 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar. Required with data-panel="screen".
+- [data-close]: at least 0, at most 1. An li holding a button with popovertargetaction="hide", shown at the panel's top end corner and hidden in the bar and in a bottom bar. Required with data-panel="screen".
+- [data-more]: at least 0, at most 1. The More item: an li.dropdown with a label button and an empty list panel, written hidden as the last item of the list (a close item may follow it). nav.js moves the links that do not fit the bar into its panel, from the end, and shows it while it holds any; in a bottom bar with more than five links it keeps four and More. Without the module it stays hidden.
 - .dropdown: at least 0. A nav item may hold a dropdown for its own children. In the bar it is the usual card, in the top layer so the bar never clips it. Behind the toggle, a split dropdown (a link and a toggle) shows its pages in place in the open panel, indented one step per level, every level open and its toggle hidden. With nav.js each group, a label-only one included, folds in place behind its button, and the branch holding the current page starts open. Without the module a label-only dropdown opens as a full-width block docked under its trigger and squared off against the open panel's edges.
 - > [data-actions]: at least 0, at most 1. A wrapper, usually a div, holding whatever sits at the end of the bar: buttons, a phone number, a version. The attribute goes on the wrapper, not on a button.
 
 Tokens:
 - --yeti-nav-padding — Padding of the bar and of the open panel.
 - --yeti-nav-radius — Corner of the links and the toggle.
-- --yeti-nav-border — The bar's bottom edge, and the sheet's.
-- --yeti-nav-surface — Background of the bar.
+- --yeti-nav-border — The bar's bottom edge, and the sheet's; the top edge of a bottom bar.
+- --yeti-nav-surface — Background of the bar. A bottom bar takes the nav's own background, whatever sets it.
 - --yeti-nav-panel — Background of the open panel.
 - --yeti-nav-brand-weight — Weight of the brand.
 - --yeti-nav-brand-size — Size of the brand; 1em keeps the bar's.
@@ -2424,7 +2508,7 @@ Tokens:
 - --yeti-shadow-md — The open panel's shadow.
 - --yeti-shadow-color — The drawer's backdrop.
 - --yeti-color-text — The bar's text, and the open panel's.
-- --yeti-border-width — Width of the bar's bottom edge, and of the sheet's.
+- --yeti-border-width — Width of the bar's bottom edge, of the sheet's, and of a bottom bar's top edge.
 - --yeti-space-sm — The default gap; a link's inline padding and the close item's inset follow it.
 - --yeti-color-primary — The default variant's color, when data-variant is absent.
 - --yeti-color-primary-subtle — The default variant's tint.
@@ -2434,10 +2518,12 @@ Tokens:
 - --yeti-on-primary — Text on the default variant's color.
 - --yeti-weight-strong — Weight of the brand, and of the current page's link.
 - --yeti-space-md — How far each level of a submenu shown in place in the open panel is indented.
-- --yeti-space-xs — Block padding of a link, and of the close button.
+- --yeti-space-xs — Block padding of a link, and of the close button; the padding of a bottom bar and of each item in it.
 - --yeti-duration-fast — How long the panel takes to open.
 - --yeti-duration-base — How long a group in the open panel takes to fold or unfold.
 - --yeti-ease — The curve of that transition.
+- --yeti-text-sm — Text size of a label in a bottom bar.
+- --yeti-leading-sm — Line height of a label in a bottom bar. An icon there is one line tall, so an item is two lines plus its padding.
 - --yeti-text-lg — Text size of the links in a screen panel.
 - --yeti-space-xl — Inset of a screen panel that has no close item.
 
@@ -2446,7 +2532,7 @@ Required: aria-label | aria-labelledby
 - Enter / Space: On the toggle, opens or closes the list. With nav.js, on a group's button in the open panel, opens or closes that group in place.
 - Tab: From the toggle, into the open list's first link.
 - Escape: Closes the open list and returns focus to the toggle.
-Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current="page". Put role="list" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel="screen" there is no outside to click, so include the close item. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it.
+Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current="page". Put role="list" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel="screen" there is no outside to click, so include the close item. With data-panel="bar" every link keeps a visible label beside its icon, and the icon is decoration: aria-hidden on an svg, an empty alt on an img. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it. The More item's button needs a name, from its visible text, in the page's language. When a link with focus moves into More's closed panel, nav.js puts focus on the More button.
 
 ## pagination (component, class="pagination")
 
@@ -4367,3 +4453,148 @@ A dot that walks a curve as the page scrolls: an SVG draws the path, and the mar
 The base rule puts the marker at the end of the walk, and only the animation inside `@supports` starts it at 0%. Where scroll timelines are missing, or motion is reduced, the dot rests at the end: a marker parked at the start would claim the reader had not moved, the same reason the reading bar is not shown at all without a timeline. Reduced motion does not collapse the duration here, because a scroll-driven animation never reads one; instead the rule turns the animation off outright, and the dot falls back to that resting place, reading as arrived rather than stranded at the start.
 
 The path is repeated from the SVG, not read from it: CSS has no way to reference an element's `d`, so the same coordinates live in both places and a change to one is a change to the other. The `path()` coordinates are CSS pixels of the marker's containing block, so an SVG that scales through its `viewBox` needs the path scaled with it, or the marker drifts off the drawn line.
+
+## Guide: Navigation
+
+<p class="lede">Yeti has seven parts for getting around a site, and each one does one job. This page says which part to reach for and which to leave alone. It also shows patterns that need no component of their own, built from the parts that already exist.</p>
+
+### Which part when
+
+<div class="scroller" role="region" aria-label="Which navigation part to use" tabindex="0" markdown="1">
+
+| Part | For | Not for |
+| --- | --- | --- |
+| [nav](../nav.md) | The site's main bar: the name, the main links, a button or two. As a rule there is one per page. When the bar is too narrow, the links fold behind a toggle and open as a panel, or move to a row along the bottom of the screen. With `nav.js` and a More item, the links that do not fit the bar move into a More menu first. | A tree of pages down a sidebar, which is `subnav`, or a row of tabs, which is `tabnav`. |
+| [dropdown](../dropdown.md) | A short menu of links or actions on one button: the pages under a nav item, an account menu, a row's secondary actions. | A panel of other content beside a button, such as a quick form or a short explanation, which is [popover](../popover.md). Choosing a value in a form, which is a `select` in a field. |
+| [subnav](../subnav.md) | A sidebar: a column of a site's pages, whose sections open in place on `details`. It stays a column at every width. | The bar across the top of the site, which is `nav` with dropdowns. |
+| [tabnav](../tabnav.md) | Links to sibling pages, drawn as tabs, with the current one marked. Each tab is its own page with its own URL, so following one loads that page. | Switching panels inside one page, which is [tabs](../tabs.md). |
+| [breadcrumbs](../breadcrumbs.md) | Where this page sits in the hierarchy, with one click to each level above it. | A menu. It only goes up, one level at a time. |
+| [toc](../toc.md) | Links to the headings of the page being read, with the reader's current section marked. | Links to other pages. |
+| [pagination](../pagination.md) | Stepping through a list split into numbered pages: search results, an archive, a long table. | The sections of a site. |
+
+</div>
+
+Three of these get confused. On a phone, the nav's open panel looks like a subnav, but it is the same nav in its narrow mode: the same list of links, shown as a panel below the nav's threshold and back in the bar above it. A subnav is a column at every width. A tabnav looks like a nav, since both are a row of links, but it marks the sibling pages of one section. It usually sits under the page heading, below the site's nav, not in its place.
+
+### A footer of link columns
+
+Many sites end with a footer of links in columns, each under a short heading, and a line of small print below. Yeti has no footer component, because the layouts already make one: a sunken `box` for the band, a `container` so that what sits inside can answer to the footer's width, a `grid` for the columns, a `stack` for each column, and a `cluster` for the small print.
+
+```html demo lg sm
+<footer class="box" data-surface="sunken">
+	<div class="container stack" data-gap="xl">
+		<nav class="grid" data-min="2xs" data-gap="lg" aria-label="Footer">
+			<div class="stack" data-gap="sm">
+				<h5>Product</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="#">Features</a></li>
+					<li><a href="#">Pricing</a></li>
+					<li><a href="#">Changelog</a></li>
+					<li><a href="#">Roadmap</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Company</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="#">About</a></li>
+					<li><a href="#">Careers</a></li>
+					<li><a href="#">Press</a></li>
+					<li><a href="#">Contact</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Resources</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="#">Docs</a></li>
+					<li><a href="#">Guides</a></li>
+					<li><a href="#">Blog</a></li>
+				</ul>
+			</div>
+			<div class="stack" data-gap="sm">
+				<h5>Legal</h5>
+				<ul class="stack" data-gap="xs" role="list">
+					<li><a href="#">Privacy</a></li>
+					<li><a href="#">Terms</a></li>
+					<li><a href="#">Cookies</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="cluster" data-justify="between">
+			<p><small>© 2026 Acme Ltd.</small></p>
+			<ul class="cluster" data-gap="sm" role="list">
+				<li><a href="#"><small>Status</small></a></li>
+				<li><a href="#"><small>Accessibility</small></a></li>
+				<li><a href="#"><small>Sitemap</small></a></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+```
+
+The grid fits as many columns as its width allows, so the four columns sit in a row on a wide screen and drop to fewer in each row as the footer narrows, down to one. The small print wraps the same way.
+
+One `nav`, labelled "Footer", holds all four columns. A `nav` for each column would add four more landmarks, and for someone moving through the page by landmark with a screen reader, that is four more stops that say little.
+
+The column headings are real headings, so a screen reader can list them and jump between them. Yeti sizes a heading by its level and nothing else: `data-size` is for controls and does not change a heading. So the example uses `h5`, the level drawn at body size, the same size as the links under it. On a page whose outline stops at `h2`, an `h5` skips two levels, and some checkers flag that. Use the level that follows your own page's outline, usually `h2` for a footer, and set its size in your own CSS. Each list carries `role="list"`, which keeps it a list for a screen reader after the reset removes the markers.
+
+The links keep the look every plain link has, the link color and an underline. For a quieter footer, give the footer a grey with `data-text`, such as `data-text="grey-70"`. The footer's words take that grey, and a plain link inside it takes the same grey instead of the link color, under the pointer too. The underline stays, so a link still looks like a link. A link with a class, such as a `.button`, keeps its own colors.
+
+This is an example, not a recipe. It adds no CSS: every rule it uses belongs to a part with its own page. Change the columns, the headings and the small print to suit the site.
+
+### A mega menu
+
+A mega menu is a wide panel under one item of the site's nav: columns of links, each under a short heading, and often a card that points to something new. Yeti has no mega menu component, because a plain `dropdown` already makes one. Its panel holds a `grid` of `stack`s, one for each column of links, and a `card`.
+
+```html demo lg
+<nav class="nav" aria-label="Site">
+	<a href="#" data-brand>Acme</a>
+	<button type="button" popovertarget="mega-site" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="mega-site" popover role="list">
+		<li class="dropdown" style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))">
+			<button type="button" popovertarget="mega-products">Products</button>
+			<div id="mega-products" popover>
+				<div class="grid" data-min="2xs" data-gap="md">
+					<div class="stack" data-gap="none">
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Build</h5>
+						<a href="#">Editor</a>
+						<a href="#">Components</a>
+						<a href="#">Themes</a>
+					</div>
+					<div class="stack" data-gap="none">
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Ship</h5>
+						<a href="#">Hosting</a>
+						<a href="#">Domains</a>
+						<a href="#">Analytics</a>
+					</div>
+					<div class="stack" data-gap="none">
+						<h5 class="box" data-gap="none" data-gap-inline="sm">Learn</h5>
+						<a href="#">Guides</a>
+						<a href="#">Templates</a>
+						<a href="#">Community</a>
+					</div>
+					<div class="card">
+						<h5>New this month</h5>
+						<p>Publish straight from the editor, with a preview link for every change.</p>
+						<footer><a class="button" href="#">Take the tour</a></footer>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li><a href="#">Pricing</a></li>
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">Blog</a></li>
+	</ul>
+</nav>
+```
+
+The panel's width comes from the dropdown's own token, `--yeti-dropdown-min`, set on the dropdown. Here it is `min(56rem, calc(100vw - 2rem))`: wide on a large screen, and never wider than the screen less a margin. Where the panel would pass the edge of the screen, it moves back in and keeps a margin from that edge.
+
+The links in the columns become menu rows, with the dropdown's padding and hover fill, as they would in any panel. The `.button` in the card keeps its own look, its fill and its corners, so the call to action still reads as one.
+
+A row's padding keeps its label in from the edge of its hover fill, so a plain heading above the links would sit further out than they do. Each column heading here is a `box` with `data-gap="none"` and `data-gap-inline="sm"`, which pads it in by the same step, so the heading and its links line up.
+
+Below the nav's threshold the same panel shows inside the nav's open panel, and the grid drops to one column, so the columns and the card read down the page in order.
+
+Leave `data-grouped` off. It is for a section whose own pages sit in columns under their parent pages, and it lays the panel out in its own way: a grid inside it loses its columns.
+
+Give the card a plain heading, not a link. Every link in a panel is drawn as a menu row, and that includes a link inside a heading. The button below the heading is the card's link.
