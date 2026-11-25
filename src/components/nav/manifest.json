@@ -3,7 +3,7 @@
   "name": "nav",
   "kind": "component",
   "group": "Navigation",
-  "description": "A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen, or puts them in a bar fixed to the bottom of the screen.",
+  "description": "A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen, or puts them in a bar fixed to the bottom of the screen; with nav.js, links that do not fit the bar move into a More menu.",
   "class": "nav",
   "attributes": [
     {
@@ -80,6 +80,12 @@
       "description": "An li holding a button with popovertargetaction=\"hide\", shown at the panel's top end corner and hidden in the bar and in a bottom bar. Required with data-panel=\"screen\"."
     },
     {
+      "selector": "[data-more]",
+      "min": 0,
+      "max": 1,
+      "description": "The More item: an li.dropdown with a label button and an empty list panel, written hidden as the last item of the list (a close item may follow it). nav.js moves the links that do not fit the bar into its panel, from the end, and shows it while it holds any; in a bottom bar with more than five links it keeps four and More. Without the module it stays hidden."
+    },
+    {
       "selector": ".dropdown",
       "min": 0,
       "max": null,
@@ -104,6 +110,12 @@
       "type": "boolean",
       "on": "li",
       "description": "The item holding the button that closes the panel; hidden in the bar."
+    },
+    {
+      "name": "data-more",
+      "type": "boolean",
+      "on": "li",
+      "description": "The More item, written hidden; nav.js fills it with the links that do not fit the bar and shows it."
     },
     {
       "name": "data-actions",
@@ -365,7 +377,7 @@
         "action": "Closes the open list and returns focus to the toggle."
       }
     ],
-    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item. With data-panel=\"bar\" every link keeps a visible label beside its icon, and the icon is decoration: aria-hidden on an svg, an empty alt on an img. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it."
+    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item. With data-panel=\"bar\" every link keeps a visible label beside its icon, and the icon is decoration: aria-hidden on an svg, an empty alt on an img. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it. The More item's button needs a name, from its visible text, in the page's language. When a link with focus moves into More's closed panel, nav.js puts focus on the More button."
   },
   "js": [{ "module": "nav.js", "optional": true }],
   "support": {

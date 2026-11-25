@@ -531,6 +531,14 @@
 		inline-size: auto;
 	}
 
+	/* More, the item nav.js fills with the links that do not fit the bar. An
+	   item whose dropdown is a wrapper inside the li keeps that wrapper's
+	   inline-block from the bar once it moves into More's panel, so its
+	   button would shrink to its label instead of filling the row, and its
+	   flyout would hang off that short box. A wrapper with a link is already
+	   a full row there. */
+	.nav > ul[popover] > [data-more] > [popover] > li > .dropdown:not(:has(> a)) { display: block; }
+
 	/* Entering: the sheet and the screen fade in, the drawer slides in.
 	   Leaving is instant. The durations are tokens, so reduced motion
 	   makes entering instant too. */

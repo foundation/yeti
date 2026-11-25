@@ -78,7 +78,7 @@ Give each link an icon and a short label. The icon is an `svg` or `img` straight
 
 The label is the link's name, so the icon is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. The current page's link is marked as it is in the top bar, with the same color and weight.
 
-Every link gets an equal share of the row. The row never wraps and never scrolls sideways, so a label that does not fit is cut off with an ellipsis. That is why the bar suits five links or fewer. With more, each one gets too narrow for its label. A split parent gives part of its share to its toggle, so its label has even less room; a short label, or a dropdown with no link of its own, suits the bar better.
+Every link gets an equal share of the row. The row never wraps and never scrolls sideways, so a label that does not fit is cut off with an ellipsis. That is why the bar suits five links or fewer. With more, each one gets too narrow for its label, unless the list ends with [a More menu](#links-that-do-not-fit-a-more-menu). A split parent gives part of its share to its toggle, so its label has even less room; a short label, or a dropdown with no link of its own, suits the bar better.
 
 A link that is a `dropdown` opens its panel upward, as a card above the bar. Where anchor positioning is missing, the browser centres the panel on the screen instead, as it does for any dropdown.
 
@@ -141,11 +141,45 @@ Once the links are behind the toggle, a split parent's pages are shown in the na
 
 For a long one, load `nav.js` once, with `<script type="module" src="…/js/nav.js">`. Each group in the nav's open panel then gets its button back and can be opened and closed in place. The branch that holds the current page starts open and the others start closed. What the reader opens or closes is remembered until they leave the page, so closing the panel and opening it again shows the same groups. Opening one group leaves its siblings as they are, so a reader comparing two sections can keep both open. The links of a closed group are skipped by Tab. A group grows open over `--yeti-duration-base`, so under reduced motion it simply appears. Where the panel has a close item and its first link is a group, the close button takes a row of its own above it, since the group's button sits in the same corner.
 
-The module marks each button with `aria-expanded` while the nav's open panel is shown. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the nav's panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. `nav.js` does nothing while the links are in the bar.
+The module marks each button with `aria-expanded` while the nav's open panel is shown. That attribute is what folds the group and what a screen reader announces. Do not write `aria-expanded` yourself. The module takes it off again when the nav's panel closes, because in the bar the same button opens its popover, and the browser reports that state itself. The folding does nothing while the links are in the bar.
 
 A section with no page of its own, a label button such as More, works the same way with the module: its button opens and closes its group in place. Without the module it opens differently. A split parent can hide its button because its link names the section; a label-only parent cannot, since its button is its name, and its own panel opens as a full-width block docked to the foot of its button and squared off against the edges of the nav's open panel, so a sheet, a drawer and a screen each keep it inside them. The block keeps the dropdown's own surface and text tokens, not the nav panel's. It is still a popover, so it covers the items below rather than pushing them down, and Escape or a click outside closes it before the nav's panel it sits in. Where anchor positioning is missing the block docks to the foot of the viewport, which is still full width and still within reach.
 
 In a `screen` panel everything is centred, so a submenu has no indent. Each level steps down in size instead, to 0.875 times the size of the one above it.
+
+## Links that do not fit: a More menu
+
+A bar with many links runs out of room before it reaches its threshold, and its links would squeeze together or run past its edge. A More menu fixes that. As the bar narrows, the last links move into a dropdown at the end of the list, and they come back as the bar widens again. It is what most large sites do.
+
+You write the More item yourself, as the last item of the list, hidden. A close item, if the nav has one, may come after it:
+
+```html
+<nav class="nav" aria-label="Site">
+	<a href="/" data-brand>Yeti</a>
+	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="menu" popover role="list">
+		<li><a href="/docs/">Docs</a></li>
+		<li><a href="/guides/">Guides</a></li>
+		<li><a href="/blog/">Blog</a></li>
+		<li><a href="/pricing/">Pricing</a></li>
+		<li class="dropdown" data-more hidden>
+			<button type="button" popovertarget="menu-more">More</button>
+			<ul id="menu-more" popover role="list"></ul>
+		</li>
+	</ul>
+</nav>
+<script type="module" src="…/js/nav.js"></script>
+```
+
+The label and the id are yours, so you can write the label in your page's language. The script creates no markup. It needs `nav.js`. Without it the More item stays hidden and the nav works exactly as it does without one.
+
+With the module, while the links are in the bar, as many as fit on one line stay there, in their order. The rest move into the More panel, from the end, and the More item shows. Read together, the links in the bar and the links in More are always in the order you wrote them, and a link that comes back returns to the place it left. The decision counts the room the More button takes, so the bar never flips back and forth between the two. It is made again when the nav changes size and once the page's fonts have loaded. A link you add to the list later is placed the next time the nav changes size.
+
+A link that moves is a row of the More panel, like any link in a dropdown. A dropdown that moves, in either of its shapes, becomes a submenu that flies out beside its row. When the page being read is one of the links in More, the More button takes the current color, as any dropdown does that holds the current page. If the link with focus moves into More while More is closed, focus goes to the More button.
+
+Below the threshold every link goes back to the list and More is hidden, so the open panel is the same as it is without More. The links return to the bar when the panel has closed and the nav is wide enough again.
+
+A bottom bar, `data-panel="bar"`, shares its row by count, not by width. With five links or fewer they all show and More is hidden. With more than five, the first four show, the rest go into More, and More takes the fifth place, with its panel opening upward like any dropdown in the bottom bar.
 
 ## Accessibility
 

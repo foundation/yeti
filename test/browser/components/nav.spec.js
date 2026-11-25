@@ -1362,4 +1362,281 @@ test.describe('nav', () => {
 			expect(await axe(page)).toEqual([]);
 		});
 	});
+
+	test.describe('More', () => {
+		const openMore = async (page, width = 1000) => {
+			const response = await page.goto('/test/browser/fixtures/components/nav-more.html');
+			expect(response.status()).toBe(200);
+			await stage(page, width);
+			await painted(page);
+		};
+		const ids = ['m-home', 'm-guides', 'm-docs', 'm-blog', 'm-about', 'm-pricing', 'm-help', 'm-news'];
+		const bottom = ['b-1', 'b-2', 'b-3', 'b-4', 'b-5', 'b-6', 'b-7', 'b-8'];
+		// Where each item is: in the bar, in order, or in More's panel, in order.
+		// An item is named by its own id or, in the bottom bar, its link's.
+		const where = (page, list = 'more-menu', more = 'm-more') => page.evaluate(([l, m]) => {
+			const name = (li) => li.id || li.querySelector('[id]').id;
+			const item = document.getElementById(m);
+			return {
+				bar: [...document.getElementById(l).children].filter((li) => li !== item && !li.matches('[data-close]')).map(name),
+				more: [...item.querySelector(':scope > [popover]').children].map(name),
+				hidden: item.hidden,
+				box: item.getClientRects().length > 0,
+			};
+		}, [list, more]);
+		const wide = { bar: ids, more: [], hidden: true, box: false };
+		// The links have room to come back, or not, once the nav has its new size.
+		const settles = async (page, check) => { await expect.poll(() => where(page)).toEqual(expect.objectContaining(check)); };
+		const frames = (page) => page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+		test('a wide nav keeps every link in the bar, and More has no box', async ({ page }) => {
+			await openMore(page, 1000);
+			expect(await where(page)).toEqual(wide);
+		});
+
+		test('narrowed above the threshold, the links that do not fit move into More, in order, and the bar is one line inside the nav', async ({ page }) => {
+			await openMore(page, 1000);
+			await stage(page, 700);
+			await settles(page, { hidden: false, box: true });
+			const { bar, more } = await where(page);
+			expect(bar.length).toBeGreaterThan(0);
+			expect(more.length).toBeGreaterThan(0);
+			expect([...bar, ...more]).toEqual(ids);
+			expect(await page.evaluate(() => { const nav = document.getElementById('more-nav'); return nav.scrollWidth <= nav.clientWidth; })).toBe(true);
+			const [nav, boxes] = await Promise.all([rect(page, '#more-nav'), rects(page, '#more-menu > li:not([hidden])')]);
+			expect(boxes).toHaveLength(bar.length + 1);
+			for (const box of boxes) {
+				expect(Math.abs(box.top - boxes[0].top)).toBeLessThan(1);
+				expect(Math.abs(box.height - boxes[0].height)).toBeLessThan(1);
+				expect(box.left).toBeGreaterThanOrEqual(nav.left - 0.5);
+				expect(box.right).toBeLessThanOrEqual(nav.right + 0.5);
+			}
+			expect((await rect(page, '#more-actions')).right).toBeLessThanOrEqual(nav.right + 0.5);
+		});
+
+		test('widened again, every link is back in the bar in order and More is hidden and empty', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			await stage(page, 1000);
+			await settles(page, wide);
+		});
+
+		test('narrowing or widening in steps ends where one step does, and a resize that changes nothing moves nothing', async ({ page }) => {
+			await openMore(page, 1000);
+			await stage(page, 640);
+			await settles(page, { hidden: false });
+			const once = await where(page);
+			await stage(page, 1000);
+			await settles(page, wide);
+			for (const width of [950, 900, 850, 800, 750, 700, 640]) {
+				await stage(page, width);
+				await frames(page);
+			}
+			await settles(page, once);
+			for (const width of [700, 750, 800, 850, 900, 950, 1000]) {
+				await stage(page, width);
+				await frames(page);
+			}
+			await settles(page, wide);
+			await stage(page, 640);
+			await settles(page, once);
+			// The free room left in the bar is more than a pixel, so a pixel less
+			// still fits the same links.
+			const free = await page.evaluate(() => {
+				const more = document.getElementById('m-more').getBoundingClientRect();
+				const actions = document.getElementById('more-actions').getBoundingClientRect();
+				return actions.left - more.right - parseFloat(getComputedStyle(document.getElementById('more-nav')).columnGap);
+			});
+			expect(free).toBeGreaterThan(1);
+			await page.evaluate(() => {
+				window.moves = 0;
+				const observer = new MutationObserver((records) => { window.moves += records.length; });
+				observer.observe(document.getElementById('more-menu'), { childList: true });
+				observer.observe(document.getElementById('m-more-menu'), { childList: true });
+			});
+			await stage(page, 639);
+			await expect.poll(() => page.evaluate(() => document.getElementById('more-nav').getBoundingClientRect().width)).toBeLessThan(640);
+			await frames(page);
+			expect(await page.evaluate(() => window.moves)).toBe(0);
+			expect(await where(page)).toEqual(once);
+		});
+
+		test('a moved link is a row of More\'s panel, and a moved dropdown flies out beside its row', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			expect((await where(page)).more).toEqual(expect.arrayContaining(['m-about', 'm-pricing', 'm-help']));
+			const row = ['padding-inline-start', 'padding-inline-end', 'min-block-size', 'inline-size', 'border-top-left-radius'];
+			const read = (selector) => page.evaluate(([s, props]) => {
+				const cs = getComputedStyle(document.querySelector(s));
+				return Object.fromEntries(props.map((p) => [p, cs.getPropertyValue(p)]));
+			}, [selector, row]);
+			await page.click('#m-guides-trigger');
+			await settle(page, '#m-guides-menu');
+			const ordinary = await read('#m-guides-first');
+			await page.keyboard.press('Escape');
+			await page.click('#m-more-trigger');
+			await settle(page, '#m-more-menu');
+			expect(await read('#m-pricing-link')).toEqual(ordinary);
+			test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+			for (const [toggle, menu, item] of [['#m-about-toggle', '#m-about-menu', '#m-about'], ['#m-help-trigger', '#m-help-menu', '#m-help']]) {
+				await page.click(toggle);
+				await settle(page, menu);
+				expect(await isOpen(page, 'm-more-menu')).toBe(true);
+				const [panel, fly, own] = await Promise.all([rect(page, '#m-more-menu'), rect(page, menu), rect(page, item)]);
+				expect(fly.left >= panel.right - 1 || fly.right <= panel.left + 1, menu).toBe(true);
+				expect(Math.abs(fly.top - own.top)).toBeLessThan(8);
+				// The row is the panel's width, less its padding, whichever shape the item has.
+				expect(Math.abs(own.width - (await rect(page, '#m-pricing')).width)).toBeLessThan(1);
+			}
+		});
+
+		test('with the current page\'s link in More, the More button takes the color of a dropdown that holds the current page', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			const plain = await style(page, '#m-more-trigger', 'color');
+			await page.evaluate(() => document.getElementById('m-guides-first').setAttribute('aria-current', 'page'));
+			const holding = await style(page, '#m-guides-trigger', 'color');
+			expect(holding).not.toBe(plain);
+			await page.evaluate(() => {
+				document.getElementById('m-guides-first').removeAttribute('aria-current');
+				document.getElementById('m-news-link').setAttribute('aria-current', 'page');
+			});
+			expect(await style(page, '#m-more-trigger', 'color')).toBe(holding);
+		});
+
+		test('focus on a link that moves into More goes to the More button, and on one that comes back stays on it; never on the page', async ({ page }) => {
+			await openMore(page, 1000);
+			await page.focus('#m-news-link');
+			// From here on, every frame is checked.
+			await page.evaluate(() => {
+				window.fell = 0;
+				const watch = () => { if (document.activeElement === document.body) window.fell += 1; requestAnimationFrame(watch); };
+				requestAnimationFrame(watch);
+			});
+			await stage(page, 700);
+			await expect.poll(() => page.evaluate(() => document.activeElement.id)).toBe('m-more-trigger');
+			await settles(page, { hidden: false });
+			// Open More, and focus the moved link inside it; widening brings it back.
+			await page.keyboard.press('Enter');
+			await settle(page, '#m-more-menu');
+			await page.focus('#m-news-link');
+			await stage(page, 1000);
+			await settles(page, wide);
+			expect(await page.evaluate(() => document.activeElement.id)).toBe('m-news-link');
+			expect(await isOpen(page, 'm-more-menu')).toBe(false);
+			expect(await page.evaluate(() => window.fell)).toBe(0);
+		});
+
+		test('below the threshold every link is back in the list behind the toggle, and above it again the bar is as it was', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			const above = await where(page);
+			await stage(page, 400);
+			await settles(page, { bar: ids, more: [], hidden: true });
+			await page.click('#more-toggle');
+			await settle(page, '#more-menu');
+			expect(await isOpen(page, 'more-menu')).toBe(true);
+			expect(await style(page, '#more-menu', 'position')).toBe('fixed');
+			expect((await rect(page, '#more-menu')).width).toBeCloseTo(page.viewportSize().width, 0);
+			expect((await where(page)).box).toBe(false);
+			for (const id of ids) expect(await page.evaluate((i) => document.getElementById(i).getClientRects().length > 0, id), id).toBe(true);
+			await page.keyboard.press('Escape');
+			await stage(page, 700);
+			await settles(page, above);
+		});
+
+		test('in a bottom bar with eight links, four and More share the row, and More opens above the bar; with five, all five show', async ({ page }) => {
+			await page.setViewportSize({ width: 400, height: 700 });
+			await openMore(page, 400);
+			await page.evaluate(() => { document.getElementById('bar-nav').hidden = false; });
+			await expect.poll(() => where(page, 'bar-menu', 'b-more')).toEqual({ bar: bottom.slice(0, 4), more: bottom.slice(4), hidden: false, box: true });
+			const boxes = await rects(page, '#bar-menu > li:not([hidden])');
+			expect(boxes).toHaveLength(5);
+			for (const b of boxes) {
+				expect(Math.abs(b.width - boxes[0].width)).toBeLessThanOrEqual(0.5);
+				expect(b.top).toBeCloseTo(boxes[0].top, 1);
+			}
+			await page.click('#b-more-trigger');
+			await settle(page, '#b-more-menu');
+			if (await anchored(page)) expect((await rect(page, '#b-more-menu')).bottom).toBeLessThanOrEqual((await rect(page, '#bar-menu')).top + 0.5);
+			await openMore(page, 400);
+			await page.evaluate(() => {
+				for (const id of ['b-6', 'b-7', 'b-8']) document.getElementById(id).parentElement.remove();
+				document.getElementById('bar-nav').hidden = false;
+			});
+			await expect.poll(() => where(page, 'bar-menu', 'b-more')).toEqual({ bar: bottom.slice(0, 5), more: [], hidden: true, box: false });
+			expect(await rects(page, '#bar-menu > li:not([hidden])')).toHaveLength(5);
+		});
+
+		test('without the module More has no box at any width, and every link stays in the list', async ({ page }) => {
+			await withoutModule(page, 'nav');
+			await openMore(page, 1000);
+			for (const width of [1000, 700, 400]) {
+				await stage(page, width);
+				await frames(page);
+				expect(await where(page), String(width)).toEqual(wide);
+			}
+		});
+
+		test('a nav with no More item is untouched at every width, and the page logs no error', async ({ page }) => {
+			const errors = [];
+			page.on('pageerror', (error) => errors.push(String(error)));
+			page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
+			await openMore(page, 1000);
+			await page.evaluate(() => {
+				window.touched = 0;
+				new MutationObserver((records) => { window.touched += records.length; }).observe(document.getElementById('plain-nav'), { subtree: true, childList: true, attributes: true });
+				// A browser reports some errors only as an event on the window.
+				window.errors = [];
+				window.addEventListener('error', (event) => window.errors.push(event.message));
+				// Labels of several words wrap while the bar is squeezed, so the
+				// nav is taller until the links move: that must not be an error.
+				document.getElementById('m-pricing-link').textContent = 'Plans and pricing';
+				document.getElementById('more-brand').textContent = 'The Copper Pan Company';
+			});
+			for (const width of [700, 400, 1000, 640]) {
+				await stage(page, width);
+				await frames(page);
+			}
+			await settles(page, { hidden: false });
+			expect(await page.evaluate(() => window.touched)).toBe(0);
+			expect(errors).toEqual([]);
+			expect(await page.evaluate(() => window.errors)).toEqual([]);
+		});
+
+		test('a group that has been to More and back still folds in the open panel', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			expect((await where(page)).more).toContain('m-about');
+			await stage(page, 400);
+			await settles(page, { bar: ids });
+			await page.click('#more-toggle');
+			await settle(page, '#more-menu');
+			expect(await page.getAttribute('#m-about-toggle', 'aria-expanded')).toBe('false');
+			await expect(page.locator('#m-history')).toBeHidden();
+			await page.click('#m-about-toggle');
+			expect(await page.getAttribute('#m-about-toggle', 'aria-expanded')).toBe('true');
+			await expect(page.locator('#m-history')).toBeVisible();
+			await page.click('#m-about-toggle');
+			expect(await page.getAttribute('#m-about-toggle', 'aria-expanded')).toBe('false');
+			await expect(page.locator('#m-history')).toBeHidden();
+		});
+
+		test('has no accessibility violations, wide, with More shown and open, and behind the toggle', async ({ page }) => {
+			await openMore(page, 1000);
+			expect(await axe(page)).toEqual([]);
+			await stage(page, 700);
+			await settles(page, { hidden: false });
+			expect(await axe(page)).toEqual([]);
+			await page.click('#m-more-trigger');
+			await settle(page, '#m-more-menu');
+			expect(await axe(page)).toEqual([]);
+			await page.keyboard.press('Escape');
+			await stage(page, 400);
+			await settles(page, { hidden: true });
+			await page.click('#more-toggle');
+			await settle(page, '#more-menu');
+			expect(await axe(page)).toEqual([]);
+		});
+	});
 });

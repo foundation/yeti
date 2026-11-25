@@ -16,7 +16,7 @@ nav_order: 13
 
 | Part | For | Not for |
 | --- | --- | --- |
-| [nav](../nav.md) | The site's main bar: the name, the main links, a button or two. As a rule there is one per page. When the bar is too narrow, the links fold behind a toggle and open as a panel, or move to a row along the bottom of the screen. | A tree of pages down a sidebar, which is `subnav`, or a row of tabs, which is `tabnav`. |
+| [nav](../nav.md) | The site's main bar: the name, the main links, a button or two. As a rule there is one per page. When the bar is too narrow, the links fold behind a toggle and open as a panel, or move to a row along the bottom of the screen. With `nav.js` and a More item, the links that do not fit the bar move into a More menu first. | A tree of pages down a sidebar, which is `subnav`, or a row of tabs, which is `tabnav`. |
 | [dropdown](../dropdown.md) | A short menu of links or actions on one button: the pages under a nav item, an account menu, a row's secondary actions. | A panel of other content beside a button, such as a quick form or a short explanation, which is [popover](../popover.md). Choosing a value in a form, which is a `select` in a field. |
 | [subnav](../subnav.md) | A sidebar: a column of a site's pages, whose sections open in place on `details`. It stays a column at every width. | The bar across the top of the site, which is `nav` with dropdowns. |
 | [tabnav](../tabnav.md) | Links to sibling pages, drawn as tabs, with the current one marked. Each tab is its own page with its own URL, so following one loads that page. | Switching panels inside one page, which is [tabs](../tabs.md). |

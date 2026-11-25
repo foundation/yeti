@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Nav More fixture</title>
+	<link rel="stylesheet" href="../../../../src/yeti.css">
+	<style>#stage { inline-size: 100%; }</style>
+</head>
+<body>
+	<main>
+		<h1>Nav More menu</h1>
+		<div id="stage">
+			<nav class="nav" id="more-nav" aria-label="Site">
+				<a href="#" data-brand id="more-brand">Yeti</a>
+				<button type="button" popovertarget="more-menu" aria-label="Menu" id="more-toggle">☰</button>
+				<ul id="more-menu" popover role="list">
+					<li id="m-home"><a href="#" id="m-home-link">Home</a></li>
+					<li class="dropdown" id="m-guides">
+						<button type="button" popovertarget="m-guides-menu" id="m-guides-trigger">Guides</button>
+						<ul id="m-guides-menu" popover role="list">
+							<li><a href="#" id="m-guides-first">Start</a></li>
+							<li><a href="#">Install</a></li>
+						</ul>
+					</li>
+					<li id="m-docs"><a href="#" id="m-docs-link">Docs</a></li>
+					<li id="m-blog"><a href="#" id="m-blog-link">Blog</a></li>
+					<li class="dropdown" id="m-about">
+						<a href="#" id="m-about-link">About</a>
+						<button type="button" popovertarget="m-about-menu" id="m-about-toggle" aria-label="About pages"></button>
+						<ul id="m-about-menu" popover role="list">
+							<li><a href="#" id="m-history">History</a></li>
+							<li><a href="#" id="m-team">Team</a></li>
+						</ul>
+					</li>
+					<li id="m-pricing"><a href="#" id="m-pricing-link">Pricing</a></li>
+					<li id="m-help">
+						<div class="dropdown">
+							<button type="button" popovertarget="m-help-menu" id="m-help-trigger">Help</button>
+							<ul id="m-help-menu" popover role="list">
+								<li><a href="#" id="m-help-first">Contact</a></li>
+								<li><a href="#">Status</a></li>
+							</ul>
+						</div>
+					</li>
+					<li id="m-news"><a href="#" id="m-news-link">News</a></li>
+					<li class="dropdown" data-more hidden id="m-more">
+						<button type="button" popovertarget="m-more-menu" id="m-more-trigger">More</button>
+						<ul id="m-more-menu" popover role="list"></ul>
+					</li>
+				</ul>
+				<div data-actions id="more-actions"><a class="button" href="#" data-size="sm">Get started</a></div>
+			</nav>
+			<nav class="nav" id="plain-nav" aria-label="Plain">
+				<a href="#" data-brand>Yeti</a>
+				<button type="button" popovertarget="plain-menu" aria-label="Menu">☰</button>
+				<ul id="plain-menu" popover role="list">
+					<li><a href="#">Home</a></li>
+					<li><a href="#">Guides</a></li>
+					<li><a href="#">Docs</a></li>
+					<li><a href="#">Blog</a></li>
+					<li><a href="#">About</a></li>
+					<li><a href="#">Pricing</a></li>
+					<li><a href="#">Help</a></li>
+					<li><a href="#">News</a></li>
+				</ul>
+			</nav>
+			<nav class="nav" id="bar-nav" aria-label="Bottom" data-panel="bar" hidden>
+				<a href="#" data-brand>Yeti</a>
+				<ul id="bar-menu" popover role="list">
+					<li><a href="#" id="b-1">Home</a></li>
+					<li><a href="#" id="b-2">Search</a></li>
+					<li><a href="#" id="b-3">Inbox</a></li>
+					<li><a href="#" id="b-4">Saved</a></li>
+					<li><a href="#" id="b-5">Account</a></li>
+					<li><a href="#" id="b-6">Settings</a></li>
+					<li><a href="#" id="b-7">Help</a></li>
+					<li><a href="#" id="b-8">About</a></li>
+					<li class="dropdown" data-more hidden id="b-more">
+						<button type="button" popovertarget="b-more-menu" id="b-more-trigger">More</button>
+						<ul id="b-more-menu" popover role="list"></ul>
+					</li>
+				</ul>
+			</nav>
+			<p>Content below the bar.</p>
+		</div>
+	</main>
+	<script type="module" src="../../../../src/components/nav/nav.js"></script>
+</body>
+</html>
