@@ -24,7 +24,7 @@ The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdow
 
 A panel is usually a list of links and buttons, but it takes any content: a short form, a few lines of text, or columns of links beside a feature card. Every link and button in it is drawn as a menu row, with the item padding and the hover fill. A `.button` is the exception. It keeps the look it has anywhere else, its fill, its color and its corners, so a call to action in a panel still reads as one.
 
-The panel is at least `--yeti-dropdown-min` wide. Set the token on the dropdown to widen it, such as `style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))"` for a panel almost as wide as the screen.
+The panel is at least `--yeti-dropdown-min` wide. Set the token on the dropdown to widen it, such as `style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))"` for a panel almost as wide as the screen. The navigation guide builds [a mega menu](guides/navigation.md#a-mega-menu) this way, from a dropdown and the layouts.
 
 ## A parent with its own page
 

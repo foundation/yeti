@@ -92,3 +92,59 @@ The column headings are real headings, so a screen reader can list them and jump
 The links keep the look every plain link has, the link color and an underline. For a quieter footer, give the footer a grey with `data-text`, such as `data-text="grey-70"`. The footer's words take that grey, and a plain link inside it takes the same grey instead of the link color, under the pointer too. The underline stays, so a link still looks like a link. A link with a class, such as a `.button`, keeps its own colors.
 
 This is an example, not a recipe. It adds no CSS: every rule it uses belongs to a part with its own page. Change the columns, the headings and the small print to suit the site.
+
+## A mega menu
+
+A mega menu is a wide panel under one item of the site's nav: columns of links, each under a short heading, and often a card that points to something new. Yeti has no mega menu component, because a plain `dropdown` already makes one. Its panel holds a `grid` of `stack`s, one for each column of links, and a `card`.
+
+```html demo lg
+<nav class="nav" aria-label="Site">
+	<a href="#" data-brand>Acme</a>
+	<button type="button" popovertarget="mega-site" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="mega-site" popover role="list">
+		<li class="dropdown" style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))">
+			<button type="button" popovertarget="mega-products">Products</button>
+			<div id="mega-products" popover>
+				<div class="grid" data-min="2xs" data-gap="md">
+					<div class="stack" data-gap="none">
+						<h5>Build</h5>
+						<a href="/editor/">Editor</a>
+						<a href="/components/">Components</a>
+						<a href="/themes/">Themes</a>
+					</div>
+					<div class="stack" data-gap="none">
+						<h5>Ship</h5>
+						<a href="/hosting/">Hosting</a>
+						<a href="/domains/">Domains</a>
+						<a href="/analytics/">Analytics</a>
+					</div>
+					<div class="stack" data-gap="none">
+						<h5>Learn</h5>
+						<a href="/guides/">Guides</a>
+						<a href="/templates/">Templates</a>
+						<a href="/community/">Community</a>
+					</div>
+					<div class="card">
+						<h5>New this month</h5>
+						<p>Publish straight from the editor, with a preview link for every change.</p>
+						<footer><a class="button" href="/tour/">Take the tour</a></footer>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li><a href="/pricing/">Pricing</a></li>
+		<li><a href="/docs/">Docs</a></li>
+		<li><a href="/blog/">Blog</a></li>
+	</ul>
+</nav>
+```
+
+The panel's width comes from the dropdown's own token, `--yeti-dropdown-min`, set on the dropdown. Here it is `min(56rem, calc(100vw - 2rem))`: wide on a large screen, and never wider than the screen less a margin. Where the panel would pass the edge of the screen, it moves back in and keeps a margin from that edge.
+
+The links in the columns become menu rows, with the dropdown's padding and hover fill, as they would in any panel. The `.button` in the card keeps its own look, its fill and its corners, so the call to action still reads as one.
+
+Below the nav's threshold the same panel shows inside the nav's open panel, and the grid drops to one column, so the columns and the card read down the page in order.
+
+Leave `data-grouped` off. It is for a section whose own pages sit in columns under their parent pages, and it lays the panel out in its own way: a grid inside it loses its columns.
+
+Give the card a plain heading, not a link. Every link in a panel is drawn as a menu row, and that includes a link inside a heading. The button below the heading is the card's link.
