@@ -152,9 +152,9 @@ Public tokens are the theming API: set them in your own stylesheet and everythin
 | `--yeti-hue-success` | `145` | Success hue; 145 is green. |
 | `--yeti-hue-warning` | `80` | Warning hue; 80 is amber. |
 | `--yeti-hue-alert` | `25` | Alert hue; 25 is red. |
-| `--yeti-hue-neutral` | `var(--yeti-hue-primary)` | Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set. |
+| `--yeti-hue-neutral` | `var(--yeti-hue-primary)` | Hue of the tint in surfaces, text, and borders, which shows only when --yeti-chroma-neutral is above 0. Follows the primary hue unless set. |
 | `--yeti-chroma` | `0.15` | Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues. |
-| `--yeti-chroma-neutral` | `0.02` | How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted. |
+| `--yeti-chroma-neutral` | `0` | How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0, the default, makes them true greys; 0.02 is a faint tint; much above 0.04 and the page reads as tinted. |
 | `--yeti-brand-primary` | unset (override only) | Optional primary brand color, any color. When set, the primary base step is this color exactly and the other primary steps and tones are worked out from it; when not set, --yeti-hue-primary is used. |
 | `--yeti-brand-secondary` | unset (override only) | Optional secondary brand color, any color. When set, the secondary base step is this color exactly and the other secondary steps and tones are worked out from it; when not set, --yeti-hue-secondary is used. |
 | `--yeti-brand-success` | unset (override only) | Optional success brand color, any color. When set, the success base step is this color exactly and the other success steps and tones are worked out from it; when not set, --yeti-hue-success is used. |
