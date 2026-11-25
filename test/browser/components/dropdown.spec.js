@@ -800,18 +800,42 @@ test.describe('dropdown', () => {
 			expect(await isOpen(page, 'menu-one')).toBe(true);
 		});
 
-		test('a short panel keeps its own height and has nothing to scroll', async ({ page }) => {
+		// The Account dropdown, fixed with its trigger 24px above the bottom of
+		// the screen, so its panel has almost no room below it.
+		const low = (page) => page.addStyleTag({ content: '#first { position: fixed; inset-block-end: 24px; inset-inline-start: 20px; }' });
+		const box = (page, id) => page.evaluate((i) => {
+			const el = document.getElementById(i);
+			const r = el.getBoundingClientRect();
+			return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, height: r.height, scroll: el.scrollHeight, client: el.clientHeight };
+		}, id);
+
+		test('a short panel low on the screen is as tall as it is at the top, whole and on the screen', async ({ page }) => {
 			await short(page);
 			await page.click('#trigger-one');
 			await settle(page, '#menu-one');
-			const { scroll, client, content, height } = await page.evaluate(() => {
-				const el = document.getElementById('menu-one');
-				const cs = getComputedStyle(el);
-				const items = [...el.children].reduce((sum, child) => sum + child.getBoundingClientRect().height, 0);
-				return { scroll: el.scrollHeight, client: el.clientHeight, content: items + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom), height: el.getBoundingClientRect().height };
-			});
-			expect(scroll).toBe(client);
-			expect(height).toBeCloseTo(content, 0);
+			const high = await box(page, 'menu-one');
+			await page.keyboard.press('Escape');
+			await low(page);
+			expect((await rect(page, '#trigger-one')).bottom).toBeCloseTo(576, 0);
+			await page.click('#trigger-one');
+			await settle(page, '#menu-one');
+			const [panel, view] = await Promise.all([box(page, 'menu-one'), screen(page)]);
+			expect(panel.height).toBeCloseTo(high.height, 0);
+			expect(panel.scroll).toBe(panel.client);
+			expect(high.scroll).toBe(high.client);
+			expect(inside(panel, view)).toBe(true);
+		});
+
+		test('a long panel low on the screen is at most half the viewport tall, on the screen, and scrolls', async ({ page }) => {
+			await short(page);
+			await fill(page, 'menu-one', 60);
+			await low(page);
+			await page.click('#trigger-one');
+			await settle(page, '#menu-one');
+			const [panel, view] = await Promise.all([box(page, 'menu-one'), screen(page)]);
+			expect(panel.height).toBeLessThanOrEqual(view.bottom / 2 + 1);
+			expect(inside(panel, view)).toBe(true);
+			expect(panel.scroll).toBeGreaterThan(panel.client);
 		});
 
 		test('a nested flyout taller than the viewport stays inside it and scrolls', async ({ page }) => {
@@ -822,6 +846,19 @@ test.describe('dropdown', () => {
 			const [fly, view] = await Promise.all([rect(page, '#sub-menu'), screen(page)]);
 			expect(inside(fly, view)).toBe(true);
 			expect(await scrolls(page, 'sub-menu')).toBe(true);
+		});
+
+		test('a short flyout from a row low on the screen is whole and on the screen', async ({ page }) => {
+			await short(page);
+			test.skip(!(await anchored(page)), 'anchor positioning is missing, so the user agent centres the panel');
+			await fill(page, 'sub-menu', 5);
+			await page.addStyleTag({ content: '#tree { position: fixed; inset-block-start: 380px; inset-inline-start: 20px; }' });
+			await openTree(page);
+			const [fly, view, row] = await Promise.all([box(page, 'sub-menu'), screen(page), rect(page, '#sub')]);
+			// Six rows do not fit between the row's top and the bottom of the screen.
+			expect(fly.height).toBeGreaterThan(view.bottom - row.top);
+			expect(fly.scroll).toBe(fly.client);
+			expect(inside(fly, view)).toBe(true);
 		});
 
 		test('a grouped panel taller than the room keeps its columns and scrolls', async ({ page }) => {

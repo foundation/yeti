@@ -253,9 +253,13 @@
 			margin-block-start: var(--yeti-space-xs);
 			/* position-area makes the panel's containing block the area it
 			   opens into, from the trigger's far edge to the viewport's, so a
-			   percentage is that room. The gap under the trigger comes out of
-			   it, or the panel would pass the edge by the gap. */
-			max-block-size: calc(100% - var(--yeti-space-xs));
+			   percentage is that room, less the gap under the trigger. A
+			   trigger low on the screen leaves little room below it, so the
+			   limit is never less than half the viewport: a panel taller than
+			   its room is then moved up by the browser to stay on the screen,
+			   as it was before there was a limit, instead of being cut to a
+			   sliver. */
+			max-block-size: max(calc(100% - var(--yeti-space-xs)), 50dvh);
 		}
 		.dropdown[data-side="end"] > [popover]:popover-open { position-area: block-end span-inline-start; }
 		/* A panel that fits beside its trigger stays lined up with it. One
@@ -295,9 +299,11 @@
 			position-try-fallbacks: flip-inline;
 			margin-block: 0;
 			margin-inline: var(--yeti-space-xs);
-			/* Its area runs from the row's top to the viewport's bottom, and it
-			   keeps no gap on that axis. */
-			max-block-size: 100%;
+			/* A submenu is limited by the viewport, not by the room below its
+			   row: one from a row low on the screen is moved up to fit, as a
+			   panel is, and stays whole if the screen can hold it. It keeps
+			   the gap it keeps beside its row at the top and the bottom. */
+			max-block-size: calc(100dvh - 2 * var(--yeti-space-xs));
 		}
 	}
 	@position-try --yeti-dropdown-edge {
