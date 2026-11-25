@@ -34,6 +34,9 @@ const restore = (button) => {
 	swapped.delete(button);
 	button.replaceChildren(...saved.nodes);
 	button.style.minInlineSize = saved.minInlineSize;
+	// A button that had no inline style before the swap is left with none,
+	// rather than an empty style attribute the author never wrote.
+	if (!button.getAttribute('style')) button.removeAttribute('style');
 };
 
 const showLabel = (button, label) => {
@@ -57,7 +60,9 @@ const showLabel = (button, label) => {
 
 document.addEventListener('click', (event) => {
 	const button = event.target?.closest?.('button[data-copy]');
-	if (!button) return;
+	// A disabled button never gets the click. One marked aria-disabled does,
+	// and the button's own docs promise that it ignores presses.
+	if (!button || button.getAttribute('aria-disabled') === 'true') return;
 	const source = button.ownerDocument.getElementById(button.dataset.copy);
 	if (!source) return;
 	// The clipboard exists only in a secure context, and a browser may refuse
