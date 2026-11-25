@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Nav bottom bar fixture</title>
+	<link rel="stylesheet" href="../../../../src/yeti.css">
+	<style>
+		#stage { inline-size: 100%; }
+		/* A long page, with something positioned in it, so the bar has content
+		   to sit above and a scroll that takes the top bar out of view. */
+		#filler { block-size: 250vh; position: relative; }
+		#filler > p { position: relative; z-index: 1; }
+	</style>
+</head>
+<body>
+	<main>
+		<div id="stage">
+			<nav class="nav" id="bar-nav" aria-label="Site" data-panel="bar">
+				<a href="#" data-brand id="bar-brand">Yeti</a>
+				<button type="button" popovertarget="bar-menu" aria-label="Menu" id="bar-toggle">☰</button>
+				<ul id="bar-menu" popover role="list">
+					<li data-close id="bar-close"><button type="button" popovertarget="bar-menu" popovertargetaction="hide" aria-label="Close">×</button></li>
+					<li><a href="#" id="bar-home" aria-current="page"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+					<li><a href="#" id="bar-search"><svg id="bar-search-icon" aria-hidden="true" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+					<li><a href="#" id="bar-inbox">Inbox</a></li>
+					<li class="dropdown" id="bar-account">
+						<a href="#" id="bar-account-link"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a>
+						<button type="button" popovertarget="bar-account-menu" id="bar-account-toggle" aria-label="Account pages"></button>
+						<ul id="bar-account-menu" popover role="list">
+							<li><a href="#" id="bar-account-first">Profile</a></li>
+							<li><a href="#">Settings</a></li>
+						</ul>
+					</li>
+					<li class="dropdown" id="bar-more">
+						<button type="button" popovertarget="bar-more-menu" id="bar-more-trigger"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>More</button>
+						<ul id="bar-more-menu" popover role="list">
+							<li><a href="#" id="bar-more-first">Changelog</a></li>
+							<li><a href="#">Status</a></li>
+							<li><a href="#">Help</a></li>
+						</ul>
+					</li>
+				</ul>
+				<div data-actions id="bar-actions"><a class="button" href="#" data-size="sm">Sign in</a></div>
+			</nav>
+			<nav class="nav" id="bare-nav" aria-label="No toggle" data-panel="bar" hidden>
+				<a href="#" data-brand>Yeti</a>
+				<ul id="bare-menu" popover role="list">
+					<li><a href="#"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+					<li><a href="#"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+					<li><a href="#">Inbox</a></li>
+					<li><a href="#"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a></li>
+					<li><a href="#"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>More</a></li>
+				</ul>
+				<div data-actions><a class="button" href="#" data-size="sm">Sign in</a></div>
+			</nav>
+			<nav class="nav" id="ref-nav" aria-label="Reference">
+				<a href="#" data-brand>Yeti</a>
+				<button type="button" popovertarget="ref-menu" aria-label="Menu">☰</button>
+				<ul id="ref-menu" popover role="list">
+					<li data-close><button type="button" popovertarget="ref-menu" popovertargetaction="hide" aria-label="Close">×</button></li>
+					<li><a href="#" id="ref-home" aria-current="page"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+					<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+					<li><a href="#">Inbox</a></li>
+					<li class="dropdown">
+						<a href="#"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a>
+						<button type="button" popovertarget="ref-account-menu" aria-label="Account pages"></button>
+						<ul id="ref-account-menu" popover role="list">
+							<li><a href="#">Profile</a></li>
+							<li><a href="#">Settings</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<button type="button" popovertarget="ref-more-menu"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>More</button>
+						<ul id="ref-more-menu" popover role="list">
+							<li><a href="#">Changelog</a></li>
+							<li><a href="#">Status</a></li>
+							<li><a href="#">Help</a></li>
+						</ul>
+					</li>
+				</ul>
+				<div data-actions><a class="button" href="#" data-size="sm">Sign in</a></div>
+			</nav>
+			<div id="filler">
+				<h1>Nav bottom bar</h1>
+				<p>Content that scrolls under the bar.</p>
+			</div>
+			<p id="last">The last line of the page.</p>
+		</div>
+	</main>
+</body>
+</html>

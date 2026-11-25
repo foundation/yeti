@@ -51,7 +51,7 @@ Those three are the ones that repeat. Here is the whole list, every attribute th
 | `data-numeric` | boolean | table (td, th) |
 | `data-orientation` | `horizontal`, `vertical` | tabs |
 | `data-panel` | `drawer` | dialog |
-| `data-panel` | `sheet`, `drawer`, `screen` | nav |
+| `data-panel` | `sheet`, `drawer`, `screen`, `bar` | nav |
 | `data-placement` | `top`, `bottom`, `start`, `end` | dialog, popover, tooltip |
 | `data-preview` | string | demo (> div) |
 | `data-print` | `only`, `none` | print |

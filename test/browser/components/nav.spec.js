@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { stage, rect, style, axe, painted, withoutModule, token } from '../lib/layout.js';
+import { stage, rect, rects, style, axe, painted, withoutModule, token, same } from '../lib/layout.js';
 
 const open = async (page, width = 1000) => {
 	const response = await page.goto('/test/browser/fixtures/components/nav.html');
@@ -1113,6 +1113,220 @@ test.describe('nav', () => {
 			expect(await expanded(page, 'nt-about-toggle')).toBe('true');
 			await expect(page.locator('#nt-history')).toBeVisible();
 			await expect.poll(() => style(page, '#nt-about-menu', 'overflow')).toBe('visible');
+		});
+	});
+
+	test.describe('data-panel="bar"', () => {
+		const openBar = async (page, width = 400) => {
+			const response = await page.goto('/test/browser/fixtures/components/nav-bar.html');
+			expect(response.status()).toBe(200);
+			await stage(page, width);
+			await painted(page);
+		};
+		// A phone: the viewport as narrow as the stage, so a panel near the
+		// screen's edge has to find room.
+		const phone = async (page) => {
+			await page.setViewportSize({ width: 390, height: 700 });
+			await openBar(page, 390);
+		};
+		// The viewport's own box, less any scroll bar, which is what a fixed box
+		// with zero insets fills.
+		const viewport = (page) => page.evaluate(() => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }));
+		const items = '#bar-menu > li:not([data-close])';
+		// A link's label is a bare text node, so its box is read through a range.
+		// Its lines are counted by their tops: a line cut off with an ellipsis
+		// reports two boxes on one line.
+		// Its lines are counted by their tops: a cut-off line reports two boxes on
+		// one line, the text and the ellipsis.
+		const label = (page, selector) => page.evaluate((s) => {
+			const text = [...document.querySelector(s).childNodes].filter((n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim()).at(-1);
+			const range = document.createRange();
+			range.selectNodeContents(text);
+			const r = range.getBoundingClientRect();
+			return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height, lines: new Set([...range.getClientRects()].map((x) => Math.round(x.top))).size };
+		}, selector);
+		const middle = (r) => (r.left + r.right) / 2;
+		const level = (r) => (r.top + r.bottom) / 2;
+		const supported = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a') && CSS.supports('position-area', 'block-end'));
+
+		test('below the threshold the list is fixed across the bottom of the viewport, and stays there when the page scrolls', async ({ page }) => {
+			await openBar(page);
+			const view = await viewport(page);
+			const across = async () => {
+				const menu = await rect(page, '#bar-menu');
+				expect(menu.left).toBeCloseTo(0, 0);
+				expect(menu.width).toBeCloseTo(view.width, 0);
+				expect(menu.bottom).toBeCloseTo(view.height, 0);
+			};
+			await across();
+			await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+			expect((await rect(page, '#bar-nav')).bottom).toBeLessThan(0);
+			await across();
+			// It is drawn over the page, positioned content included.
+			expect(await page.evaluate(() => {
+				const menu = document.querySelector('#bar-menu');
+				const r = menu.getBoundingClientRect();
+				return menu.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2));
+			})).toBe(true);
+		});
+
+		test('the toggle and the close item have no box, and a nav with no toggle in its markup is the same bar', async ({ page }) => {
+			await openBar(page);
+			for (const s of ['#bar-toggle', '#bar-close']) expect(await page.evaluate((q) => document.querySelector(q).getClientRects().length, s)).toBe(0);
+			const withToggle = await rect(page, '#bar-menu');
+			await page.evaluate(() => { document.querySelector('#bar-nav').hidden = true; document.querySelector('#bare-nav').hidden = false; });
+			const without = await rect(page, '#bare-menu');
+			for (const k of ['left', 'top', 'width', 'height']) expect(without[k]).toBeCloseTo(withToggle[k], 1);
+		});
+
+		test('five items share the row equally, on one line', async ({ page }) => {
+			await openBar(page);
+			const boxes = await rects(page, items);
+			expect(boxes).toHaveLength(5);
+			for (const b of boxes) {
+				expect(Math.abs(b.width - boxes[0].width)).toBeLessThanOrEqual(0.5);
+				expect(b.top).toBeCloseTo(boxes[0].top, 1);
+			}
+		});
+
+		test('a link is its icon above its label, both centred; a link with no icon is its label, centred', async ({ page }) => {
+			await openBar(page);
+			const [link, icon, text] = await Promise.all([rect(page, '#bar-search'), rect(page, '#bar-search-icon'), label(page, '#bar-search')]);
+			expect(icon.height).toBeGreaterThan(0);
+			expect(icon.height).toBeLessThan(link.height / 2);
+			expect(icon.bottom).toBeLessThanOrEqual(text.top + 0.5);
+			expect(Math.abs(middle(icon) - middle(link))).toBeLessThan(1);
+			expect(Math.abs(middle(text) - middle(link))).toBeLessThan(1);
+			const [inbox, inboxText] = await Promise.all([rect(page, '#bar-inbox'), label(page, '#bar-inbox')]);
+			expect(Math.abs(middle(inboxText) - middle(inbox))).toBeLessThan(1);
+			expect(Math.abs(level(inboxText) - level(inbox))).toBeLessThan(2);
+		});
+
+		test('a long label stays on one line and is cut off, and the row keeps its height', async ({ page }) => {
+			await openBar(page);
+			const before = await rect(page, '#bar-menu');
+			await page.evaluate(() => { document.querySelector('#bar-search').lastChild.textContent = 'Search every page, post and person on the whole site'; });
+			const text = await label(page, '#bar-search');
+			expect(text.lines).toBe(1);
+			expect(await page.evaluate(() => { const a = document.querySelector('#bar-search'); return a.scrollWidth > a.clientWidth; })).toBe(true);
+			expect((await rect(page, '#bar-menu')).height).toBeCloseTo(before.height, 1);
+			// Nor does the row scroll sideways.
+			expect(await page.evaluate(() => { const m = document.querySelector('#bar-menu'); return m.scrollWidth <= m.clientWidth; })).toBe(true);
+		});
+
+		test('the current page\'s link takes the top bar\'s current color, with no underline or fill', async ({ page }) => {
+			await openBar(page, 400);
+			const below = await style(page, '#bar-home', 'color');
+			expect(below).not.toBe(await style(page, '#bar-search', 'color'));
+			expect(await style(page, '#bar-home', 'text-decoration-line')).toBe('none');
+			expect(await style(page, '#bar-home', 'background-color')).toBe('rgba(0, 0, 0, 0)');
+			await stage(page, 1000);
+			expect(await style(page, '#bar-home', 'color')).toBe(below);
+		});
+
+		const dropdowns = [
+			['a label-only dropdown', '#bar-more-trigger', '#bar-more-menu', null],
+			['a split parent', '#bar-account-toggle', '#bar-account-menu', null],
+			// The dropdown class on a wrapper inside the li, the nav's other shape.
+			['a dropdown in a wrapper', '#bar-more-trigger', '#bar-more-menu', () => {
+				const li = document.querySelector('#bar-more');
+				const wrap = document.createElement('div');
+				wrap.className = 'dropdown';
+				wrap.append(...li.children);
+				li.classList.remove('dropdown');
+				li.append(wrap);
+			}],
+		];
+		for (const [name, trigger, panel, setup] of dropdowns) {
+			test(`${name} opens its panel upward, above the bar and inside the viewport`, async ({ page }) => {
+				await phone(page);
+				test.skip(!(await supported(page)), 'anchor positioning is missing, so the user agent centres the panel');
+				if (setup) await page.evaluate(setup);
+				await page.click(trigger);
+				await settle(page, panel);
+				const [bar, box, view] = await Promise.all([rect(page, '#bar-menu'), rect(page, panel), viewport(page)]);
+				expect(box.height).toBeGreaterThan(0);
+				expect(box.bottom).toBeLessThanOrEqual(bar.top + 0.5);
+				expect(box.top).toBeGreaterThanOrEqual(0);
+				expect(box.left).toBeGreaterThanOrEqual(0);
+				expect(box.right).toBeLessThanOrEqual(view.width);
+			});
+		}
+
+		test('at or above the threshold it is the same bar as a default nav, with nothing fixed', async ({ page }) => {
+			await openBar(page, 1000);
+			for (const p of ['position', 'display', 'flex-direction', 'z-index']) expect(await style(page, '#bar-menu', p)).toBe(await style(page, '#ref-menu', p));
+			const [barNav, refNav] = await Promise.all([rect(page, '#bar-nav'), rect(page, '#ref-nav')]);
+			same(await rect(page, '#bar-menu'), await rect(page, '#ref-menu'), barNav, refNav);
+			// Every item, link and icon that has a box; hidden ones have none to compare.
+			const parts = (menu) => page.evaluate((m) => [...document.querySelectorAll(`${m} > li, ${m} > li > *, ${m} > li > * > svg`)].filter((el) => el.getClientRects().length).map((el) => {
+				const r = el.getBoundingClientRect();
+				return { width: r.width, height: r.height, left: r.left, top: r.top };
+			}), menu);
+			const [barParts, refParts] = await Promise.all([parts('#bar-menu'), parts('#ref-menu')]);
+			expect(barParts.length).toBeGreaterThan(5);
+			expect(barParts).toHaveLength(refParts.length);
+			barParts.forEach((b, i) => same(b, refParts[i], barNav, refNav));
+			const fixed = await page.evaluate(() => [...document.querySelectorAll('body *')].filter((el) => getComputedStyle(el).position === 'fixed' && el.getClientRects().length).map((el) => el.id || el.tagName));
+			expect(fixed).toEqual([]);
+		});
+
+		test('the bottom padding adds the safe area to the bar\'s own padding', async ({ page }) => {
+			await openBar(page);
+			expect(await style(page, '#bar-menu', 'padding-bottom')).toBe(await style(page, '#bar-menu', 'padding-top'));
+			expect(parseFloat(await style(page, '#bar-menu', 'padding-top'))).toBeGreaterThan(0);
+			// The inset cannot be emulated, so the source is what shows it is there.
+			const rules = await page.evaluate(() => {
+				const walk = (list) => [...list].flatMap((r) => [r, ...(r.styleSheet ? walk(r.styleSheet.cssRules) : r.cssRules ? walk(r.cssRules) : [])]);
+				return walk([...document.styleSheets].flatMap((s) => [...s.cssRules]))
+					.filter((r) => r.selectorText?.includes('[data-panel="bar"]') && /padding-block-end:[^;]*env\(safe-area-inset-bottom\)/.test(r.style.cssText))
+					.length;
+			});
+			expect(rules).toBeGreaterThan(0);
+		});
+
+		test('in forced colors the top edge stays, as the nav\'s own bottom edge does', async ({ page }) => {
+			await page.emulateMedia({ forcedColors: 'active' });
+			await openBar(page);
+			expect(await style(page, '#bar-menu', 'border-top-width')).toBe(await style(page, '#bar-nav', 'border-bottom-width'));
+			expect(await style(page, '#bar-menu', 'border-top-style')).toBe('solid');
+			expect(await style(page, '#bar-menu', 'border-top-color')).toBe(await style(page, '#bar-nav', 'border-bottom-color'));
+		});
+
+		test('in a right-to-left page the row runs from the right', async ({ page }) => {
+			await openBar(page);
+			await page.evaluate(() => { document.documentElement.dir = 'rtl'; });
+			const [menu, boxes] = await Promise.all([rect(page, '#bar-menu'), rects(page, items)]);
+			const pad = parseFloat(await style(page, '#bar-menu', 'padding-left'));
+			expect(boxes[0].right).toBeCloseTo(menu.right - pad, 0);
+			expect(boxes[1].right).toBeLessThan(boxes[0].left + 1);
+		});
+
+		test('data-justify leaves no gap where the toggle was: the actions keep the end of the top bar', async ({ page }) => {
+			for (const value of ['end', 'center']) {
+				await openBar(page);
+				await page.evaluate((v) => document.querySelector('#bar-nav').setAttribute('data-justify', v), value);
+				const [nav, actions] = await Promise.all([rect(page, '#bar-nav'), rect(page, '#bar-actions')]);
+				const pad = parseFloat(await style(page, '#bar-nav', 'padding-right'));
+				expect(nav.right - pad - actions.right).toBeLessThan(1);
+			}
+		});
+
+		test('with the page rule from the docs, the last line of a long page scrolls clear of the bar', async ({ page }) => {
+			await openBar(page);
+			await page.addStyleTag({ content: 'body { padding-block-end: calc(2 * var(--yeti-leading-sm) * var(--yeti-text-sm) + 2 * var(--yeti-space-xs) + var(--yeti-border-width) + env(safe-area-inset-bottom)); }' });
+			await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+			const [bar, last] = await Promise.all([rect(page, '#bar-menu'), rect(page, '#last')]);
+			expect(last.bottom).toBeLessThanOrEqual(bar.top + 0.5);
+			// The rule is the bar's own height, worked out from the same tokens.
+			expect(parseFloat(await style(page, 'body', 'padding-bottom'))).toBeCloseTo(bar.height, 0);
+		});
+
+		test('has no accessibility violations, below and above the threshold', async ({ page }) => {
+			await openBar(page);
+			expect(await axe(page)).toEqual([]);
+			await stage(page, 1000);
+			expect(await axe(page)).toEqual([]);
 		});
 	});
 });

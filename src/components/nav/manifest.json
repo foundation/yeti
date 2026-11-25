@@ -3,7 +3,7 @@
   "name": "nav",
   "kind": "component",
   "group": "Navigation",
-  "description": "A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen.",
+  "description": "A bar with a brand, a list of links, and actions, that collapses the links behind a toggle at its own width and opens them as a sheet, a drawer, or a screen, or puts them in a bar fixed to the bottom of the screen.",
   "class": "nav",
   "attributes": [
     {
@@ -25,7 +25,7 @@
       "type": "enum",
       "vocabulary": "panel",
       "default": "sheet",
-      "description": "The shape of the open list below the threshold: a sheet under the bar, a drawer from the start edge, or the whole screen."
+      "description": "What the links become below the threshold: a sheet under the bar, a drawer from the start edge, or the whole screen, each opened by the toggle; or bar, a row of icons and labels fixed to the bottom of the screen, with no toggle."
     },
     {
       "name": "data-gap",
@@ -57,9 +57,9 @@
     },
     {
       "selector": "> button[popovertarget]",
-      "min": 1,
+      "min": 0,
       "max": 1,
-      "description": "The toggle; its popovertarget names the list's id. Hidden while the links are in the bar."
+      "description": "The toggle; its popovertarget names the list's id. Hidden while the links are in the bar. Needed for every data-panel but bar, which has no toggle, so the markup may leave it out."
     },
     {
       "selector": "> ul[popover]",
@@ -77,7 +77,7 @@
       "selector": "[data-close]",
       "min": 0,
       "max": 1,
-      "description": "An li holding a button with popovertargetaction=\"hide\", shown at the panel's top end corner and hidden in the bar. Required with data-panel=\"screen\"."
+      "description": "An li holding a button with popovertargetaction=\"hide\", shown at the panel's top end corner and hidden in the bar and in a bottom bar. Required with data-panel=\"screen\"."
     },
     {
       "selector": ".dropdown",
@@ -126,12 +126,12 @@
     {
       "name": "--yeti-nav-border",
       "public": true,
-      "description": "The bar's bottom edge, and the sheet's."
+      "description": "The bar's bottom edge, and the sheet's; the top edge of a bottom bar."
     },
     {
       "name": "--yeti-nav-surface",
       "public": true,
-      "description": "Background of the bar."
+      "description": "Background of the bar. A bottom bar takes the nav's own background, whatever sets it."
     },
     {
       "name": "--yeti-nav-panel",
@@ -207,7 +207,7 @@
     {
       "name": "--yeti-border-width",
       "public": true,
-      "description": "Width of the bar's bottom edge, and of the sheet's."
+      "description": "Width of the bar's bottom edge, of the sheet's, and of a bottom bar's top edge."
     },
     {
       "name": "--yeti-space-sm",
@@ -257,7 +257,7 @@
     {
       "name": "--yeti-space-xs",
       "public": true,
-      "description": "Block padding of a link, and of the close button."
+      "description": "Block padding of a link, and of the close button; the padding of a bottom bar and of each item in it."
     },
     {
       "name": "--yeti-duration-fast",
@@ -273,6 +273,16 @@
       "name": "--yeti-ease",
       "public": true,
       "description": "The curve of that transition."
+    },
+    {
+      "name": "--yeti-text-sm",
+      "public": true,
+      "description": "Text size of a label in a bottom bar."
+    },
+    {
+      "name": "--yeti-leading-sm",
+      "public": true,
+      "description": "Line height of a label in a bottom bar. An icon there is one line tall, so an item is two lines plus its padding."
     },
     {
       "name": "--yeti-text-lg",
@@ -355,7 +365,7 @@
         "action": "Closes the open list and returns focus to the toggle."
       }
     ],
-    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it."
+    "notes": "Give the nav an aria-label, since a page often has more than one. The toggle needs a name (aria-label or visible text); the browser sets its expanded state. Mark the current page's link with aria-current=\"page\". Put role=\"list\" on the ul, because the reset only removes list markers where that role says the list is decorative. With data-panel=\"screen\" there is no outside to click, so include the close item. With data-panel=\"bar\" every link keeps a visible label beside its icon, and the icon is decoration: aria-hidden on an svg, an empty alt on an img. A split parent's toggle has no text, so give it an aria-label that names its pages. Never write aria-expanded: the browser reports a popover's state, and nav.js sets the attribute on each group's button only while the open panel shows it."
   },
   "js": [{ "module": "nav.js", "optional": true }],
   "support": {
@@ -365,7 +375,7 @@
       "@starting-style"
     ],
     "guarded": [
-      "anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, and a label-only submenu in the open panel, without the module, docks to the foot of it)"
+      "anchor positioning with anchor-scope (fallback: the sheet starts at the top of the viewport, a label-only submenu in the open panel, without the module, docks to the foot of it, and a dropdown in a bottom bar is centred by the user agent)"
     ]
   },
   "since": "7.0.0",
