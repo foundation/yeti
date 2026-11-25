@@ -32,6 +32,10 @@
 		   shorter than its room is not changed. */
 		max-block-size: calc(100dvh - 2 * var(--yeti-space-md));
 		overflow-y: auto;
+		/* A row scrolled into view, by Tab or by script, stops the panel's
+		   padding short of the edge, so its focus ring is drawn whole. WebKit
+		   otherwise brings the row flush to the edge and cuts the ring off. */
+		scroll-padding-block: var(--yeti-dropdown-padding);
 	}
 	/* A .button in a panel is a call to action, not a row, so every item
 	   rule here passes it by and it keeps the look it has anywhere else.

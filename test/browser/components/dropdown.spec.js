@@ -872,6 +872,8 @@ test.describe('dropdown', () => {
 			expect(Math.abs(a.top - b.top)).toBeLessThan(2);
 		});
 
+		// 3E: engines differ here. WebKit scrolls a row into view flush with the
+		// panel's edge unless the panel has scroll padding, which cuts the ring.
 		test('the focus ring of the first and last row is drawn whole inside a panel that scrolls', async ({ page, browserName }) => {
 			await short(page);
 			await fill(page, 'menu-one', 60);
