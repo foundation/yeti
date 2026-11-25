@@ -25,8 +25,11 @@
 		box-shadow: var(--yeti-shadow-md);
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease);
 	}
-	.dropdown > [popover] a,
-	.dropdown > [popover] button {
+	/* A .button in a panel is a call to action, not a row, so every item
+	   rule here passes it by and it keeps the look it has anywhere else.
+	   The test sits in :where() so it adds nothing to a selector's weight. */
+	.dropdown > [popover] a:where(:not(.button)),
+	.dropdown > [popover] button:where(:not(.button)) {
 		display: flex;
 		align-items: center;
 		gap: var(--yeti-space-xs);
@@ -41,15 +44,15 @@
 		text-decoration: none;
 		cursor: pointer;
 	}
-	.dropdown > [popover] a:hover,
-	.dropdown > [popover] button:hover { background-color: var(--yeti-dropdown-hover); }
+	.dropdown > [popover] a:where(:not(.button)):hover,
+	.dropdown > [popover] button:where(:not(.button)):hover { background-color: var(--yeti-dropdown-hover); }
 	/* A button does not fill its row the way a link does: with an automatic
 	   width it shrinks to its label, so a label-only submenu row or a plain
 	   action such as Sign out would be a short pill, with its chevron beside
 	   the text and only the text clickable. A button that starts its row
 	   fills it instead. The split toggle comes after its link, so it is never
 	   matched and keeps its square. */
-	.dropdown > [popover] :is(li, .dropdown) > button:first-child { inline-size: 100%; }
+	.dropdown > [popover] :is(li, .dropdown) > button:first-child:where(:not(.button)) { inline-size: 100%; }
 
 	/* A panel may be a list. The list's own bullets and the items' margins go,
 	   so a ul of li reads the same as a div of bare links. */
@@ -213,7 +216,7 @@
 	   back to the default variant's. A trigger that is a .button keeps its
 	   own text, which is drawn for its own fill. The nav colors its own
 	   top-level parents in the bar. */
-	.dropdown > [popover] a[aria-current] {
+	.dropdown > [popover] a[aria-current]:where(:not(.button)) {
 		color: var(--yeti-dropdown-current, var(--_yeti-variant-text, var(--yeti-color-primary-text)));
 		font-weight: var(--yeti-weight-strong);
 	}
@@ -242,21 +245,26 @@
 			margin-block-start: var(--yeti-space-xs);
 		}
 		.dropdown[data-side="end"] > [popover]:popover-open { position-area: block-end span-inline-start; }
-		/* A grouped panel is as wide as its columns, not as wide as the room
-		   left beside its trigger, so it lines up with the trigger's inline
-		   start and overflows that area on purpose. Where the columns would pass
-		   the far edge, the fallback gives it the whole line and sets it against
-		   the viewport margin instead. */
+		/* A panel that fits beside its trigger stays lined up with it. One
+		   that would pass the far edge of the screen, such as a panel widened
+		   with --yeti-dropdown-min, is given the whole line by the fallback and
+		   set against the margin on that side, instead of the browser pushing it
+		   flush against the edge. This is for a top-level panel only: a nested
+		   one flips to the other side of its row instead (below), and a panel in
+		   a nav's open panel is docked there by the nav. The :where() keeps
+		   these selectors light, so the flyout rule below still outranks them. */
 		@supports (position-try-fallbacks: flip-inline) {
+			.dropdown > [popover]:popover-open:where(:not(.dropdown > [popover] *, .nav > ul[popover]:popover-open *)) { position-try-fallbacks: --yeti-dropdown-edge; }
+			.dropdown[data-side="end"] > [popover]:popover-open:where(:not(.dropdown > [popover] *, .nav > ul[popover]:popover-open *)) { position-try-fallbacks: --yeti-dropdown-edge-start; }
+			/* A grouped panel is as wide as its columns, not as wide as the room
+			   left beside its trigger, so it lines up with the trigger's inline
+			   start and overflows that area on purpose, and the fallback above
+			   moves it in where the columns would pass the far edge. */
 			.dropdown[data-grouped] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
 				inline-size: max-content;
 				justify-self: start;
-				position-try-fallbacks: --yeti-dropdown-edge;
 			}
-			.dropdown[data-grouped][data-side="end"] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) {
-				justify-self: end;
-				position-try-fallbacks: --yeti-dropdown-edge-start;
-			}
+			.dropdown[data-grouped][data-side="end"] > [popover]:popover-open:not(.nav > ul[popover]:popover-open *) { justify-self: end; }
 		}
 		/* A nested panel flies out beside its own row and flips to the other
 		   side where it would leave the screen. The row is the anchor, because

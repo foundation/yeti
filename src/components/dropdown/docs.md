@@ -6,7 +6,7 @@ A short list of things to go to or to do, hung off one button: an account menu, 
 
 The panel carries `popover` and the button carries `popovertarget`, so the browser opens it, puts it in the top layer, closes it on Escape or a click outside, and keeps the button's expanded state current. Yeti adds the surface, the shadow, and the placement. Because the panel is in the top layer, nothing on the page can clip it, which is why a dropdown inside a nav works even though the bar is a query container.
 
-Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. A [split parent's](#a-parent-with-its-own-page) panel hangs under its whole row, the link and the button together, so it starts under the link and not under the small button. The anchor name is scoped to each dropdown, so a page full of them behaves. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
+Where anchor positioning exists the panel hangs under its own trigger, and `data-side="end"` lines it up with the trigger's end edge instead. A [split parent's](#a-parent-with-its-own-page) panel hangs under its whole row, the link and the button together, so it starts under the link and not under the small button. The anchor name is scoped to each dropdown, so a page full of them behaves. A panel that would pass the edge of the screen moves back in to fit, and keeps a margin of `--yeti-space-md` from that edge rather than touching it; a panel that fits beside its trigger stays lined up with it. The margin needs `position-try-fallbacks`; a browser without it still moves the panel in, but flush against the edge. Where anchor positioning is missing the browser centres the panel, which is plainer but still opens, closes, and reads correctly.
 
 ```html
 <div class="dropdown" data-side="end">
@@ -19,6 +19,12 @@ Where anchor positioning exists the panel hangs under its own trigger, and `data
 ```
 
 The panel's background is `--yeti-dropdown-surface`, its text is `--yeti-dropdown-text`, and an item under the pointer takes `--yeti-dropdown-hover`. The current page's link, and each parent in the panel that holds it, takes `--yeti-dropdown-current`, which falls back to the variant's text color. Set the four together for a dark or tinted panel.
+
+## What a panel holds
+
+A panel is usually a list of links and buttons, but it takes any content: a short form, a few lines of text, or columns of links beside a feature card. Every link and button in it is drawn as a menu row, with the item padding and the hover fill. A `.button` is the exception. It keeps the look it has anywhere else, its fill, its color and its corners, so a call to action in a panel still reads as one.
+
+The panel is at least `--yeti-dropdown-min` wide. Set the token on the dropdown to widen it, such as `style="--yeti-dropdown-min: min(56rem, calc(100vw - 2rem))"` for a panel almost as wide as the screen.
 
 ## A parent with its own page
 
@@ -106,7 +112,7 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
 
-Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its trigger sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its trigger. The grouped panel shows three levels: its own trigger, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
+Each column is at least `--yeti-dropdown-min` wide, and the columns wrap onto further rows on a narrow screen. The panel keeps its full width wherever its trigger sits. Where it would pass the edge of the screen, it moves back in to fit, against the margin on that side, as any panel does: toward the start for the default side, toward the end with `data-side="end"`. That needs `position-try-fallbacks`; a browser without it keeps the panel lined up with its trigger. The grouped panel shows three levels: its own trigger, the headings, and the pages under them. A page under a heading keeps its link, and anything below that page is not shown. A label-only item at that third level is not shown at all. Its pages have no parent page, so they cannot be reached from that panel; give such a section a page, or move its pages up a level.
 
 A second-level item with no page of its own, a label button, does not become a heading. It keeps its button and opens its ordinary flyout card, because CSS cannot stop a button from opening its popover. Put such an item last in the panel, or its card opens over the column beside it.
 

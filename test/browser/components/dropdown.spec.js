@@ -649,6 +649,93 @@ test.describe('dropdown', () => {
 		});
 	});
 
+	test.describe('a .button in a panel', () => {
+		const looks = ['background-color', 'color', 'border-top-left-radius', 'padding-inline-start', 'padding-inline-end', 'font-weight'];
+		const read = (page, selector) => page.evaluate(([s, props]) => {
+			const cs = getComputedStyle(document.querySelector(s));
+			return Object.fromEntries(props.map((p) => [p, cs.getPropertyValue(p)]));
+		}, [selector, looks]);
+		const openCta = async (page) => {
+			await open(page);
+			await page.click('#cta-trigger');
+			await settle(page, '#cta-menu');
+			await settle(page, '#cta-link');
+			await settle(page, '#cta-button');
+		};
+
+		test('a .button link keeps the look it has outside a panel', async ({ page }) => {
+			await openCta(page);
+			expect(await read(page, '#cta-link')).toEqual(await read(page, '#ref-button-link'));
+		});
+
+		test('a .button button keeps the look it has outside a panel', async ({ page }) => {
+			await openCta(page);
+			expect(await read(page, '#cta-button')).toEqual(await read(page, '#ref-button'));
+		});
+
+		test('under the pointer it takes the button\'s hover fill, not the row hover', async ({ page }) => {
+			await open(page);
+			await page.addStyleTag({ content: '#cta-menu { --yeti-dropdown-hover: rgb(4, 5, 6); }' });
+			await page.hover('#ref-button');
+			await settle(page, '#ref-button');
+			const hovered = await style(page, '#ref-button', 'background-color');
+			await page.mouse.move(5, 5);
+			await page.click('#cta-trigger');
+			await settle(page, '#cta-menu');
+			await page.hover('#cta-button');
+			await settle(page, '#cta-button');
+			const fill = await style(page, '#cta-button', 'background-color');
+			expect(fill).toBe(hovered);
+			expect(fill).not.toBe('rgb(4, 5, 6)');
+		});
+
+		test('a plain link beside it is still a menu row', async ({ page }) => {
+			await openCta(page);
+			const row = ['padding-inline-start', 'padding-inline-end', 'border-top-left-radius', 'min-block-size'];
+			for (const p of row) expect(await style(page, '#cta-plain', p), p).toBe(await style(page, '#menu-one a', p));
+			const [plain, panel] = await Promise.all([rect(page, '#cta-plain'), rect(page, '#cta-menu')]);
+			const pad = await token(page, '--yeti-dropdown-padding');
+			expect(Math.abs(plain.width - (panel.width - 2 * pad))).toBeLessThan(1);
+		});
+	});
+
+	test.describe('the screen edge', () => {
+		const supported = (page) => page.evaluate(() => CSS.supports('anchor-name: --a') && CSS.supports('anchor-scope: --a') && CSS.supports('position-area', 'block-end') && CSS.supports('position-try-fallbacks', 'flip-inline'));
+		const openWide = async (page, { dir = 'ltr', at = 'calc(100vw - 12rem)', narrow = false } = {}) => {
+			await page.setViewportSize({ width: 1280, height: 720 });
+			await open(page, 1280);
+			test.skip(!(await supported(page)), 'anchor positioning or position-try is missing, so the user agent centres the panel');
+			await page.evaluate((d) => { document.documentElement.dir = d; }, dir);
+			await page.addStyleTag({ content: `#wide { margin-inline-start: ${at}; }` });
+			if (narrow) await page.evaluate(() => document.querySelector('#wide').style.removeProperty('--yeti-dropdown-min'));
+			await page.click('#wide-trigger');
+			await settle(page, '#wide-menu');
+			return { md: await token(page, '--yeti-space-md'), end: await page.evaluate(() => document.documentElement.clientWidth) };
+		};
+
+		test('a wide panel that moves in to fit keeps a margin from the end edge', async ({ page }) => {
+			const { md, end } = await openWide(page);
+			const menu = await rect(page, '#wide-menu');
+			expect(md).toBeGreaterThan(0);
+			expect(end - menu.right).toBeGreaterThanOrEqual(md - 0.5);
+			expect(menu.left).toBeGreaterThanOrEqual(0);
+		});
+
+		test('in a right-to-left page it keeps the margin from the left edge', async ({ page }) => {
+			const { md, end } = await openWide(page, { dir: 'rtl' });
+			const menu = await rect(page, '#wide-menu');
+			expect(menu.left).toBeGreaterThanOrEqual(md - 0.5);
+			expect(menu.right).toBeLessThanOrEqual(end + 0.5);
+		});
+
+		test('a narrow panel that fits beside the same trigger still lines up with it', async ({ page }) => {
+			await openWide(page, { at: 'calc(100vw - 20rem)', narrow: true });
+			const [trigger, menu] = await Promise.all([rect(page, '#wide-trigger'), rect(page, '#wide-menu')]);
+			expect(Math.abs(menu.left - trigger.left)).toBeLessThan(2);
+			expect(menu.top).toBeGreaterThanOrEqual(trigger.bottom - 1);
+		});
+	});
+
 	test('has no accessibility violations, shut and open', async ({ page }) => {
 		await open(page);
 		expect(await axe(page)).toEqual([]);

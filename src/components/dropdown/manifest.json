@@ -44,7 +44,7 @@
       "selector": "> [popover]",
       "min": 1,
       "max": 1,
-      "description": "The panel, holding ordinary links and buttons."
+      "description": "The panel: usually ordinary links and buttons, but it takes any content."
     }
   ],
   "tokens": [
@@ -144,7 +144,7 @@
     {
       "name": "--yeti-space-md",
       "public": true,
-      "description": "The margin kept between a grouped panel and the viewport's edges, and the gap between its columns."
+      "description": "The margin kept between a panel that moves in to fit and the viewport's edge, and the gap between a grouped panel's columns."
     },
     {
       "name": "--yeti-text-sm",

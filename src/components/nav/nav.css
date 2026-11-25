@@ -180,7 +180,9 @@
 		overflow: auto;
 		transition: opacity var(--yeti-duration-fast) var(--yeti-ease), translate var(--yeti-duration-fast) var(--yeti-ease);
 	}
-	.nav > ul[popover]:popover-open :is(a, .dropdown > button) { inline-size: 100%; }
+	/* Every link fills its row, except a .button, which keeps its own width
+	   here as it does in a dropdown's panel. */
+	.nav > ul[popover]:popover-open :is(a:where(:not(.button)), .dropdown > button) { inline-size: 100%; }
 	.nav > ul[popover] > [data-close] {
 		position: absolute;
 		inset-block-start: var(--yeti-space-sm);
@@ -318,7 +320,9 @@
 	   the panel's text and, as the panel's own links do, the variant's hover
 	   and current tints, not the dropdown's tokens, so the tree looks like the
 	   list it sits in. The color is set once on the group and inherited, so
-	   the current and ancestor rules below are not outranked by a link rule. */
+	   the current and ancestor rules below are not outranked by a link rule.
+	   A .button in a group is not a row, so it keeps its own look, as it does
+	   in a dropdown's panel. */
 	.nav > ul[popover]:popover-open .dropdown > a + button:not([aria-expanded]) { display: none; }
 	.nav > ul[popover]:popover-open .dropdown:has(> a + button:not([aria-expanded])) > a {
 		display: flex;
@@ -343,7 +347,7 @@
 		overflow: visible;
 		opacity: 1;
 	}
-	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child) {
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a:where(:not(.button)), .dropdown > button:first-child) {
 		display: flex;
 		align-items: center;
 		inline-size: 100%;
@@ -352,14 +356,14 @@
 		border-radius: var(--yeti-nav-radius);
 		font-stretch: var(--yeti-stretch-small);
 	}
-	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child):hover {
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a:where(:not(.button)), .dropdown > button:first-child):hover {
 		background-color: var(--_yeti-nav-hover);
 	}
 	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] .dropdown:has([aria-current="page"]) > :is(a, button),
-	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] {
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current]:where(:not(.button)) {
 		color: var(--_yeti-nav-current);
 	}
-	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current] { font-weight: var(--yeti-weight-strong); }
+	.nav > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] a[aria-current]:where(:not(.button)) { font-weight: var(--yeti-weight-strong); }
 
 	/* In a screen panel everything is centred, so a submenu's pages are too:
 	   no indent, and no full-width rows. The hierarchy shows as size instead,
@@ -382,7 +386,7 @@
 		padding-inline-start: 0;
 		font-size: 0.875em;
 	}
-	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a, .dropdown > button:first-child) {
+	.nav[data-panel="screen"] > ul[popover]:popover-open .dropdown:is(:has(> a), :has(> button[aria-expanded])) > [popover] :is(a:where(:not(.button)), .dropdown > button:first-child) {
 		display: inline-flex;
 		inline-size: auto;
 	}
