@@ -113,6 +113,11 @@
       "description": "The default variant's text color."
     },
     {
+      "name": "--yeti-color-primary-line",
+      "public": true,
+      "description": "The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color."
+    },
+    {
       "name": "--yeti-on-primary",
       "public": true,
       "description": "Text on the default variant's color."
@@ -135,6 +140,10 @@
     },
     {
       "name": "--_yeti-variant-text",
+      "public": false
+    },
+    {
+      "name": "--_yeti-variant-line",
       "public": false
     },
     {

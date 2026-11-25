@@ -98,6 +98,7 @@ Attributes that descendants carry, not the root.
 | `--yeti-color-primary-soft` | The default variant's soft stop. |
 | `--yeti-color-primary-strong` | The default variant's strong stop. |
 | `--yeti-color-primary-text` | The default variant's text color. |
+| `--yeti-color-primary-line` | The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color. |
 | `--yeti-on-primary` | Text on the default variant's color. |
 | `--yeti-duration-fast` | How long the alert takes to fade out when alert.js dismisses it. |
 
@@ -109,6 +110,7 @@ Attributes that descendants carry, not the root.
 - `--_yeti-variant-subtle`
 - `--_yeti-variant-strong`
 - `--_yeti-variant-text`
+- `--_yeti-variant-line`
 - `--_yeti-on-variant`
 - `--_yeti-variant-soft`
 

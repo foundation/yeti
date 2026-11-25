@@ -8,7 +8,7 @@
 		block-size: 1em;
 		flex: none;
 		border: var(--yeti-spinner-width) solid var(--_yeti-variant-subtle);
-		border-block-start-color: var(--_yeti-variant);
+		border-block-start-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		border-radius: 50%;
 		animation: yeti-spin var(--yeti-spinner-duration) linear var(--yeti-motion-iterations);
 	}
@@ -16,7 +16,7 @@
 		font-size: var(--_yeti-size-text);
 		vertical-align: -0.15em;
 	}
-	.spinner:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
+	.spinner:not([data-variant]) { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
 	.spinner:not([data-size]) { --_yeti-size-text: var(--yeti-text-md); --_yeti-size-space: var(--yeti-space-sm); }
 
 	/* In a busy button the ring is drawn from the button's own text color,

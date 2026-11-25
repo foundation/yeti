@@ -25,17 +25,19 @@ nav_order: 9
 
 Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus `--yeti-chroma` for how saturated accents are and `--yeti-chroma-neutral` for how much of the neutral hue the greys carry (set it to `0` for true greys). From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
 
-How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue is something you set. A color is something Yeti works out, in both light and dark, from the hue.
+A brand color is the second way in. `--yeti-brand-primary: #ff6a00;` takes any CSS color, and the primary's base step is then that color exactly, with the other steps worked out around it. `--yeti-brand-secondary`, `-success`, `-warning` and `-alert` do the same for their roles. Each is optional, and a role without one stays on its hue. The [color guide](color.md#a-brand-color) says what each step becomes, and why links and lines take a step of their own.
+
+How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue, or a brand color, is something you set. A color is something Yeti works out from it, in both light and dark.
 
 You can still override any derived color directly. `--yeti-color-primary: #0a7;` wins over the derivation for that one role, and every role that reads it, like `--yeti-color-focus`, follows.
 
-Two more families derive from those. The greyscale `--yeti-grey-0` to `--yeti-grey-100`, in tens, mixes the page surface toward the page text, so it follows a theme that sets either pole and flips with the scheme as they do, resolved at `:root` like the hues, so set the poles there. The hued tones `--yeti-color-primary-0` to `-100`, and the same for every hue, take each grey's lightness and put the hue's angle and chroma under it, so moving `--yeti-hue-primary` moves all eleven. Three constants stand outside the derivation and never move: `--yeti-white`, `--yeti-black`, and `--yeti-grey` at 18% reflectance. A class of your own can read any of them:
+Two more families derive from those. The greyscale `--yeti-grey-0` to `--yeti-grey-100`, in tens, mixes the page surface toward the page text, so it follows a theme that sets either pole and flips with the scheme as they do, resolved at `:root` like the hues, so set the poles there. The hued tones `--yeti-color-primary-0` to `-100`, and the same for every hue, take each grey's lightness and put the hue's angle and chroma under it, so moving `--yeti-hue-primary` moves all eleven, and a brand color moves them the same way. Three constants stand outside the derivation and never move: `--yeti-white`, `--yeti-black`, and `--yeti-grey` at 18% reflectance. A class of your own can read any of them:
 
 ```css
 .promo { background-color: var(--yeti-color-primary-20); color: var(--yeti-color-primary-90); }
 ```
 
-Two things to know about where you set tokens. Hues, chroma, and the scale inputs only take effect on `:root`, because Yeti computes every derived token there. Forcing a color scheme, and overriding a derived token such as `--yeti-color-primary`, work on any element, so to give one section a different accent, set its derived colors on that section rather than its hue.
+Two things to know about where you set tokens. The scale inputs, the neutral hue and `--yeti-chroma-neutral` only take effect on `:root`, because Yeti computes every derived token there. The accent inputs, the five accent hues, the brand colors and `--yeti-chroma`, take effect on `:root` and on an element marked `data-palette`, which works the accents out again for everything inside it. That is the way to give one section a different accent; the [color guide](color.md#a-palette-for-one-part-of-a-page) covers it. Forcing a color scheme, and overriding a derived token such as `--yeti-color-primary`, work on any element.
 
 ## Reading an oklch value
 
@@ -129,18 +131,21 @@ A site's own layers work too, but they can't sit between Yeti's. A top-level `@l
 
 Beyond the hues, chroma, and scale already covered above, each component publishes a few tokens of its own as its skin surface: `--yeti-button-radius`, `--yeti-card-padding`, `--yeti-badge-radius`, and the rest are listed on the [Tokens](../tokens.md) page. Setting those, rather than editing a component's CSS, is what makes a theme portable: it is data, not code, so it survives an upgrade to a newer Yeti untouched.
 
-A small theme can change a lot. This one shifts the accent hue, opens up the corners, and turns buttons into pills:
+A small theme can change a lot. This one gives the primary a brand color and tints the greys to match, opens up the corners, and turns buttons into pills:
 
 ```css
 :root {
-	--yeti-hue-primary: 30;
+	--yeti-brand-primary: #ff6a00;
+	--yeti-hue-neutral: 45;
 	--yeti-radius-md: 1rem;
 	--yeti-radius-lg: 1.5rem;
 	--yeti-button-radius: var(--yeti-radius-full);
 }
 ```
 
-One check every theme should make: a link is text. The default link color is the primary at its base step, which reads on the page for the hues Yeti ships but not for a light brand color. If your primary is light, point the links at the hue's text step:
+A brand color changes its own role and nothing else. Surfaces, text and borders take their faint tint from `--yeti-hue-neutral`, which follows `--yeti-hue-primary`, a number, and not the brand color. So a theme with a brand color sets `--yeti-hue-neutral` to a hue near the brand's, `45` for this orange, or `--yeti-chroma-neutral: 0` for true greys. Without either, the greys keep the tint of `--yeti-hue-primary`, a hint of blue by default.
+
+One check every theme should make: a link is text, so it has to read on the page. With a brand color that happens by itself: a link takes the line step, the brand's hue made readable on the page. A theme that sets a light primary directly, `--yeti-color-primary: #ffd400`, has no line step, so its links are that light color. Give the color as `--yeti-brand-primary` instead, or point the links at the hue's text step:
 
 ```css
 :root {

@@ -34,6 +34,7 @@ On children:
 - data-border on * (boolean) — Draw a border of the border width, in the border color. Works on any element; it is a box's most common marker, which is why it is listed here.
 - data-paint on *: primary | secondary | success | warning | alert | neutral | white | black | grey | grey-0 | grey-10 | grey-20 | grey-30 | grey-40 | grey-50 | grey-60 | grey-70 | grey-80 | grey-90 | grey-100 — Fill this element with a color by name: a hue at its base step with the text made for it, a constant, or a step of the greyscale. Up to grey-40 the text stays the page text; from grey-50 it becomes the page surface.
 - data-text on *: primary | secondary | success | warning | alert | neutral | white | black | grey | grey-0 | grey-10 | grey-20 | grey-30 | grey-40 | grey-50 | grey-60 | grey-70 | grey-80 | grey-90 | grey-100 — Color this element's words by name, from the same list. On an element that is also painted it wins over the automatic text color.
+- data-palette on * (boolean) — Starts a new palette: the color inputs set on this element re-derive the five hue roles and their tones for everything inside it.
 
 ### When to use it
 
@@ -1322,6 +1323,7 @@ Tokens:
 - --yeti-color-primary-soft — The default variant's soft stop.
 - --yeti-color-primary-strong — The default variant's strong stop.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 - --yeti-on-primary — Text on the default variant's color.
 - --yeti-duration-fast — How long the alert takes to fade out when alert.js dismisses it.
 
@@ -1543,6 +1545,7 @@ Tokens:
 - --yeti-color-primary-soft — The default variant's soft stop.
 - --yeti-color-primary-strong — The default variant's strong stop.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 - --yeti-on-primary — Text on the default variant's color.
 - --yeti-text-md — Text size when data-size is absent.
 - --yeti-space-sm — The space step when data-size is absent.
@@ -2234,6 +2237,7 @@ Tokens:
 - --yeti-control-surface — Background of the control.
 - --yeti-control-chevron — The select's chevron image.
 - --yeti-color-alert — Border of an invalid control.
+- --yeti-color-alert-line — Border of an invalid control. It has a value only when the alert role has a brand color; without one the border falls back to the alert's base step.
 - --yeti-color-primary — The default variant's color, when data-variant is absent.
 - --yeti-color-primary-subtle — The default variant's tint.
 - --yeti-color-primary-soft — The default variant's soft stop.
@@ -2732,6 +2736,7 @@ Tokens:
 - --yeti-color-primary-soft — The default variant's soft stop.
 - --yeti-color-primary-strong — The default variant's strong stop.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 - --yeti-on-primary — Text on the default variant's color.
 - --yeti-text-md — The text step when data-size is absent; the ring's diameter follows it.
 - --yeti-space-sm — The space step when data-size is absent.
@@ -3004,6 +3009,7 @@ Tokens:
 - --yeti-color-primary-soft — The default variant's soft stop.
 - --yeti-color-primary-strong — The default variant's strong stop.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 - --yeti-on-primary — Text on the default variant's color.
 
 Accessibility contract:
@@ -3076,6 +3082,7 @@ Tokens:
 - --yeti-color-primary-soft — The default variant's soft stop.
 - --yeti-color-primary-strong — The default variant's strong stop.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 - --yeti-on-primary — Text on the default variant's color.
 - --yeti-space-xs — Gap between tabs.
 - --yeti-weight-strong — Weight of a tab's label.
@@ -3164,6 +3171,7 @@ Tokens:
 - --yeti-color-primary — The default variant's color, when data-variant is absent.
 - --yeti-color-primary-subtle — The default variant's hover tint.
 - --yeti-color-primary-text — The default variant's text color.
+- --yeti-color-primary-line — The default variant's line color for edges and underlines. It has a value only when the primary has a brand color; without one the rule reading it falls back to the variant's color.
 
 Accessibility contract:
 Required: aria-label | aria-labelledby
@@ -3625,35 +3633,45 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-hue-neutral (hue): var(--yeti-hue-primary) — Hue that faintly tints surfaces, text, and borders. Follows the primary hue unless set.
 - --yeti-chroma (hue): 0.15 — Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues.
 - --yeti-chroma-neutral (hue): 0.02 — How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0 makes them true greys; much above 0.04 and the page reads as tinted.
-- --yeti-color-primary (color): ladder base of the primary hue — The brand color: buttons, links, focus.
+- --yeti-brand-primary (hue): unset — Optional primary brand color, any color. When set, the primary base step is this color exactly and the other primary steps and tones are worked out from it; when not set, --yeti-hue-primary is used.
+- --yeti-brand-secondary (hue): unset — Optional secondary brand color, any color. When set, the secondary base step is this color exactly and the other secondary steps and tones are worked out from it; when not set, --yeti-hue-secondary is used.
+- --yeti-brand-success (hue): unset — Optional success brand color, any color. When set, the success base step is this color exactly and the other success steps and tones are worked out from it; when not set, --yeti-hue-success is used.
+- --yeti-brand-warning (hue): unset — Optional warning brand color, any color. When set, the warning base step is this color exactly and the other warning steps and tones are worked out from it; when not set, --yeti-hue-warning is used.
+- --yeti-brand-alert (hue): unset — Optional alert brand color, any color. When set, the alert base step is this color exactly and the other alert steps and tones are worked out from it; when not set, --yeti-hue-alert is used.
+- --yeti-color-primary (color): ladder base of the primary hue — The brand color: buttons and other fills. Links and the focus ring use it too, unless the primary has a brand color, when they take the line step.
 - --yeti-color-primary-subtle (color): ladder subtle — Tinted background; hover on surfaces, selection.
 - --yeti-color-primary-soft (color): ladder soft — Borders and dividers in the primary hue.
 - --yeti-color-primary-strong (color): ladder strong — Hover and active state of the primary color.
 - --yeti-color-primary-text (color): ladder text — Primary-hued text on plain surfaces.
+- --yeti-color-primary-line (color): no value; with a brand color, the brand's hue held readable on the page — Has a value only when the primary role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-primary.
 - --yeti-on-primary (color): near-white in light, near-black in dark — Text placed on --yeti-color-primary.
 - --yeti-color-secondary (color): ladder base of the secondary hue — Secondary accent.
 - --yeti-color-secondary-subtle (color): ladder subtle — Tinted background in the secondary hue.
 - --yeti-color-secondary-soft (color): ladder soft — Borders in the secondary hue.
 - --yeti-color-secondary-strong (color): ladder strong — Hover and active state of the secondary color.
 - --yeti-color-secondary-text (color): ladder text — Secondary-hued text on plain surfaces.
+- --yeti-color-secondary-line (color): no value; with a brand color, the brand's hue held readable on the page — Has a value only when the secondary role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-secondary.
 - --yeti-on-secondary (color): near-white in light, near-black in dark — Text placed on --yeti-color-secondary.
 - --yeti-color-success (color): ladder base of the success hue — Positive state.
 - --yeti-color-success-subtle (color): ladder subtle — Tinted background for success messages.
 - --yeti-color-success-soft (color): ladder soft — Borders for success messages.
 - --yeti-color-success-strong (color): ladder strong — Hover and active state of the success color.
 - --yeti-color-success-text (color): ladder text — Success-hued text on plain surfaces.
+- --yeti-color-success-line (color): no value; with a brand color, the brand's hue held readable on the page — Has a value only when the success role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-success.
 - --yeti-on-success (color): near-white in light, near-black in dark — Text placed on --yeti-color-success.
 - --yeti-color-warning (color): ladder base of the warning hue — Caution state.
 - --yeti-color-warning-subtle (color): ladder subtle — Tinted background for warnings.
 - --yeti-color-warning-soft (color): ladder soft — Borders for warnings.
 - --yeti-color-warning-strong (color): ladder strong — Hover and active state of the warning color.
 - --yeti-color-warning-text (color): ladder text — Warning-hued text on plain surfaces.
+- --yeti-color-warning-line (color): no value; with a brand color, the brand's hue held readable on the page — Has a value only when the warning role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-warning.
 - --yeti-on-warning (color): near-white in light, near-black in dark — Text placed on --yeti-color-warning.
 - --yeti-color-alert (color): ladder base of the alert hue — Error and danger state.
 - --yeti-color-alert-subtle (color): ladder subtle — Tinted background for errors.
 - --yeti-color-alert-soft (color): ladder soft — Borders for errors.
 - --yeti-color-alert-strong (color): ladder strong — Hover and active state of the alert color.
 - --yeti-color-alert-text (color): ladder text — Alert-hued text on plain surfaces.
+- --yeti-color-alert-line (color): no value; with a brand color, the brand's hue held readable on the page — Has a value only when the alert role has a brand color: the brand's hue made dark or light enough to read on the page. Links, rules and outline borders read it with a fallback to the base step, --yeti-color-alert.
 - --yeti-on-alert (color): near-white in light, near-black in dark — Text placed on --yeti-color-alert.
 - --yeti-color-neutral-subtle (color): ladder subtle — Neutral tint for badges and quiet fills.
 - --yeti-color-neutral-soft (color): ladder soft — Neutral fill for hover states.
@@ -3669,9 +3687,9 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-color-border (color): L 0.88 light, 0.30 dark — Default border and divider.
 - --yeti-color-border-strong (color): L 0.75 light, 0.40 dark — Emphasised border: focused inputs, blockquote rule.
 - --yeti-color-scrim (color): the surface at 85% — A wash over content so something on top of it can be read: a caption over a picture, a veil over a form. Thinned surface, so it dims with the theme rather than tinting.
-- --yeti-color-focus (color): var(--yeti-color-primary) — Focus ring color.
-- --yeti-link-color (color): var(--yeti-color-primary) — Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. A theme whose primary is too light to read as text points this at the hue's text step, --yeti-color-primary-text.
-- --yeti-link-color-hover (color): var(--yeti-color-primary-strong) — Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links.
+- --yeti-color-focus (color): var(--yeti-color-primary-line, var(--yeti-color-primary)) — Focus ring color.
+- --yeti-link-color (color): var(--yeti-color-primary-line, var(--yeti-color-primary)) — Text color of a link at rest. Read with a fallback, so a section's own primary still colors its links. With a brand color the fallback is the line step, so a light brand color still gives links that read on the page.
+- --yeti-link-color-hover (color): var(--yeti-color-primary-strong); with a brand color, the primary text step — Text color of a link under the pointer. Read with a fallback, so a section's own primary still colors its links. With a brand color the fallback is the text step, since the strong step of a light brand color is a light fill.
 - --yeti-divider-line (layout): var(--yeti-border-width) solid var(--yeti-color-border) — The rule beside the text in a divider layout, written as a border.
 - --yeti-leaders-line (layout): 2px dotted var(--yeti-color-text-muted) — The line between a name and a value in a leaders layout, written as a border.
 - --yeti-cover-height (layout): 100dvh — Minimum block size of a cover layout or a filled stack. Set to auto for one that is only as tall as its content.
@@ -3889,11 +3907,53 @@ Each hue gets five steps and a partner for text placed on it:
 
 </div>
 
-The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand. How much of a hint is `--yeti-chroma-neutral`, `0.02` by default; set it to `0` and every one of them is a true grey. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand. How much of a hint is `--yeti-chroma-neutral`, `0.02` by default; set it to `0` and every one of them is a true grey. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default, or its line step when the primary has a brand color. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+
+### A brand color
+
+A hue is an angle, and most brands are not. When a brand has a color of its own, give it to Yeti as it is. Each of the five accent roles takes one: `--yeti-brand-primary`, `--yeti-brand-secondary`, `--yeti-brand-success`, `--yeti-brand-warning` and `--yeti-brand-alert`. Each is optional and stands on its own, so you can set the primary and leave the other four on their hues. Any CSS color works, and `light-dark()` gives a different color in each scheme. Use an opaque one: the base step is the color as you give it, and the contrast promises below are for a color you cannot see through. Set them on `:root`, like the hues.
+
+```css
+:root {
+	--yeti-brand-primary: #ff6a00;
+	--yeti-brand-secondary: light-dark(#0b1f4b, #8aa2d4);
+}
+```
+
+A brand color sets the base step exactly, and Yeti works out the rest of the role around it:
+
+<div class="scroller" role="region" aria-label="The steps with a brand color" tabindex="0" markdown="1">
+
+| Token | With a brand color |
+| --- | --- |
+| `--yeti-color-primary` | the brand color exactly: a solid button, a solid badge, a progress bar, a checked box |
+| `--yeti-on-primary` | black or white, whichever reads on the brand color |
+| `--yeti-color-primary-strong` | the hover fill, moved away from the text on it: darker under white text, lighter under black. A very dark brand color lightens and a very light one darkens instead, so the hover still shows |
+| `--yeti-color-primary-subtle`, `-soft`, `-text` | the ladder's lightness under the brand's hue. Their chroma is the brand's own, capped at `--yeti-chroma`, so a pastel brand gives quiet tints and a neon one is held back |
+| `--yeti-color-primary-0` to `-100` | each grey's lightness under the brand's hue, with the chroma capped the same way |
+| `--yeti-color-primary-line` | the brand's hue, dark enough to read on the page, or in dark mode light enough |
+
+</div>
+
+The line step is the one a hue does not need. A fill carries its own text, so it can be any color: the text on it is picked to read. A link, a focus ring or a border sits on the page, so it has to read there. Yeti's base lightness does both jobs, which is why a hue has no line step. A yellow brand color can fill a button but cannot be a link on white. So with a brand color, what is drawn on the page takes the line step: links, the focus ring, a tab's underline, an outline button's border, an alert's and a card's border, a spinner's arc and `data-text`. The fills keep the brand color. The line step holds at least 4.5:1 against the page surface in both schemes.
+
+The line step has a value only when its role has a brand color. Everything that reads it falls back to the base step, and your own CSS should read it the same way:
+
+```css
+.pull-quote {
+	border-inline-start: 4px solid var(--yeti-color-primary-line, var(--yeti-color-primary));
+}
+```
+
+A theme can set the line step itself, and that wins. Without a brand color, nothing changes: a site that sets only hues, or nothing, gets exactly the colors it had.
+
+A brand color is not checked. The hue inputs are registered as numbers, so a hue that is not a number falls back to its default. A brand color can be any color, so it cannot be registered, and a value that is not a color, `--yeti-brand-primary: banana`, breaks that role's colors.
+
+The page's greys do not follow a brand color. Surfaces, text and borders take their tint from `--yeti-hue-neutral`, a number; the [theming guide](theming.md#make-a-theme) shows how to match it.
 
 ### Text on color
 
-Two of the six steps exist only so that words read. `--yeti-on-primary` is what goes *on* the base color: it is near white in light mode, where the base is dark enough to carry it, and near black in dark mode, where the base is lifted to carry that instead. `--yeti-color-primary-text` is the hue *as* text on the page, pushed far enough from the surface to be read at body size. Reach for `on-` when you paint something the hue and put words on it; reach for `-text` when the words themselves are the hue.
+Two of the six steps exist only so that words read. `--yeti-on-primary` is what goes *on* the base color: it is near white in light mode, where the base is dark enough to carry it, and near black in dark mode, where the base is lifted to carry that instead. With a brand color it is black or white, whichever reads on that color. `--yeti-color-primary-text` is the hue *as* text on the page, pushed far enough from the surface to be read at body size. Reach for `on-` when you paint something the hue and put words on it; reach for `-text` when the words themselves are the hue.
 
 These are promises, not intentions. The browser tests check them at every hue angle in steps of thirty degrees, in both schemes:
 
@@ -3905,7 +3965,21 @@ These are promises, not intentions. The browser tests check them at every hue an
 | `-text` of every hue on the page surface | 4.5:1 |
 | page text on every `-subtle` tint | 7:1 |
 
-A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved. A theme that sets a derived color directly, `--yeti-color-primary: #0a7`, takes the promise into its own hands for that role.
+A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved.
+
+A brand color keeps its own set. The browser tests check these over a grid of brand colors from black to white, in both schemes:
+
+| Pair | Holds at least |
+| --- | --- |
+| `on-` text on the brand color | 4.5:1 |
+| `on-` text on the `-strong` hover fill | 4.5:1 |
+| the `-line` step on the page surface | 4.5:1 |
+| `-text` on `-subtle` | 4.5:1 |
+| `-text` on `-soft` | 4.5:1 |
+
+Page text on a `-subtle` tint still reaches 7:1.
+
+A theme that sets a derived color directly, `--yeti-color-primary: #0a7`, takes the promise into its own hands for that role. With no brand color for that role, its links and lines follow that color, as before.
 
 ### Color that means something
 
@@ -4019,7 +4093,36 @@ Any other element says all three:
 }
 ```
 
-Two things to know. The inputs, the hues and the chroma, only take effect on the root, because the ladder is computed there; so are the greys and the tones. A derived color, `--yeti-color-primary` or `--yeti-color-surface`, can be set on any element, and every role that reads it there follows; the greys do not, because they were mixed at the root from the poles the root had. If a section needs its own greys, force its scheme rather than its surface.
+Two things to know. The accent inputs, the five accent hues, the brand colors and `--yeti-chroma`, take effect only where the ladder is computed: on the root, and on an element marked `data-palette`, below. The neutral hue and its chroma, the page roles and the greys are worked out on the root alone. A derived color, `--yeti-color-primary` or `--yeti-color-surface`, can be set on any element, and every role that reads it there follows; the greys do not, because they were mixed at the root from the poles the root had. If a section needs its own greys, force its scheme rather than its surface.
+
+### A palette for one part of a page
+
+Every color is worked out once, on the root, so a hue or a brand color set on a section changes nothing inside it. Mark the section with `data-palette` and the colors are worked out again there. The color inputs set on that element, a brand color, a hue or `--yeti-chroma`, re-derive the five accent roles and their tones for everything inside it. The components follow with nothing else to set: `data-variant="primary"` inside the region is the region's primary, and so are its links and lines.
+
+```html demo sm
+<div class="stack" data-gap="md">
+	<div class="cluster" data-gap="sm">
+		<button class="button" type="button">The page</button>
+		<button class="button" type="button" data-emphasis="medium">The page</button>
+		<button class="button" type="button" data-emphasis="low">The page</button>
+	</div>
+	<section class="cluster" data-gap="sm" data-palette style="--yeti-brand-primary: #e4002b">
+		<button class="button" type="button">A region</button>
+		<button class="button" type="button" data-emphasis="medium">A region</button>
+		<button class="button" type="button" data-emphasis="low">A region</button>
+	</section>
+</div>
+```
+
+A region inherits the page's inputs and changes only what it sets, so a region that sets `--yeti-brand-success` alone keeps the page's primary. Regions nest, and an inner region's colors stop at its edge. On a page with a brand color, a region goes back to the hue with `--yeti-brand-primary: initial`. A bare form control inside a region, a checkbox or a range with no class, takes the region's primary.
+
+A region changes the accents and nothing else:
+
+- The neutral role, the greys and the page surfaces stay the page's. For a darker section, force its scheme, as above.
+- The focus ring stays the page's, so it looks the same everywhere on the page.
+- A step set directly on the root, `--yeti-color-primary: #0a7`, does not reach a region, because the region works every step out again from the inputs. Give the color as an input instead, a hue or a brand color, which does reach a region, or set the step on the region too.
+
+A section without `data-palette` can still set a derived color on itself, and what reads it there follows. One limit: when the page has a brand color, a section that sets only `--yeti-color-primary` does not recolor its links and lines, because the page's line step still has a value and they read that first. Such a section sets `--yeti-color-primary-line` too, or uses `data-palette` with a brand color of its own.
 
 ### In your own CSS
 
@@ -4053,17 +4156,19 @@ That pair flips with the scheme, follows the brand hue, and keeps its contrast, 
 
 Color inputs are hues: `--yeti-hue-primary`, `-secondary`, `-success`, `-warning`, `-alert`, and `-neutral`, plus `--yeti-chroma` for how saturated accents are and `--yeti-chroma-neutral` for how much of the neutral hue the greys carry (set it to `0` for true greys). From those, Yeti derives every color role at runtime: `--yeti-color-primary`, its `-subtle`, `-soft`, `-strong`, and `-text` variants, `--yeti-on-primary` for text placed on it, and the page roles `--yeti-color-surface`, `-text`, `-border`, and their variants.
 
-How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue is something you set. A color is something Yeti works out, in both light and dark, from the hue.
+A brand color is the second way in. `--yeti-brand-primary: #ff6a00;` takes any CSS color, and the primary's base step is then that color exactly, with the other steps worked out around it. `--yeti-brand-secondary`, `-success`, `-warning` and `-alert` do the same for their roles. Each is optional, and a role without one stays on its hue. The [color guide](color.md#a-brand-color) says what each step becomes, and why links and lines take a step of their own.
+
+How to use those colors once they exist, on a component, on a painted section, or from a class of your own, is the [color guide](color.md); this page is about moving the inputs. That is why hues and colors have different group names. A hue, or a brand color, is something you set. A color is something Yeti works out from it, in both light and dark.
 
 You can still override any derived color directly. `--yeti-color-primary: #0a7;` wins over the derivation for that one role, and every role that reads it, like `--yeti-color-focus`, follows.
 
-Two more families derive from those. The greyscale `--yeti-grey-0` to `--yeti-grey-100`, in tens, mixes the page surface toward the page text, so it follows a theme that sets either pole and flips with the scheme as they do, resolved at `:root` like the hues, so set the poles there. The hued tones `--yeti-color-primary-0` to `-100`, and the same for every hue, take each grey's lightness and put the hue's angle and chroma under it, so moving `--yeti-hue-primary` moves all eleven. Three constants stand outside the derivation and never move: `--yeti-white`, `--yeti-black`, and `--yeti-grey` at 18% reflectance. A class of your own can read any of them:
+Two more families derive from those. The greyscale `--yeti-grey-0` to `--yeti-grey-100`, in tens, mixes the page surface toward the page text, so it follows a theme that sets either pole and flips with the scheme as they do, resolved at `:root` like the hues, so set the poles there. The hued tones `--yeti-color-primary-0` to `-100`, and the same for every hue, take each grey's lightness and put the hue's angle and chroma under it, so moving `--yeti-hue-primary` moves all eleven, and a brand color moves them the same way. Three constants stand outside the derivation and never move: `--yeti-white`, `--yeti-black`, and `--yeti-grey` at 18% reflectance. A class of your own can read any of them:
 
 ```css
 .promo { background-color: var(--yeti-color-primary-20); color: var(--yeti-color-primary-90); }
 ```
 
-Two things to know about where you set tokens. Hues, chroma, and the scale inputs only take effect on `:root`, because Yeti computes every derived token there. Forcing a color scheme, and overriding a derived token such as `--yeti-color-primary`, work on any element, so to give one section a different accent, set its derived colors on that section rather than its hue.
+Two things to know about where you set tokens. The scale inputs, the neutral hue and `--yeti-chroma-neutral` only take effect on `:root`, because Yeti computes every derived token there. The accent inputs, the five accent hues, the brand colors and `--yeti-chroma`, take effect on `:root` and on an element marked `data-palette`, which works the accents out again for everything inside it. That is the way to give one section a different accent; the [color guide](color.md#a-palette-for-one-part-of-a-page) covers it. Forcing a color scheme, and overriding a derived token such as `--yeti-color-primary`, work on any element.
 
 ### Reading an oklch value
 
@@ -4157,18 +4262,21 @@ A site's own layers work too, but they can't sit between Yeti's. A top-level `@l
 
 Beyond the hues, chroma, and scale already covered above, each component publishes a few tokens of its own as its skin surface: `--yeti-button-radius`, `--yeti-card-padding`, `--yeti-badge-radius`, and the rest are listed on the [Tokens](../tokens.md) page. Setting those, rather than editing a component's CSS, is what makes a theme portable: it is data, not code, so it survives an upgrade to a newer Yeti untouched.
 
-A small theme can change a lot. This one shifts the accent hue, opens up the corners, and turns buttons into pills:
+A small theme can change a lot. This one gives the primary a brand color and tints the greys to match, opens up the corners, and turns buttons into pills:
 
 ```css
 :root {
-	--yeti-hue-primary: 30;
+	--yeti-brand-primary: #ff6a00;
+	--yeti-hue-neutral: 45;
 	--yeti-radius-md: 1rem;
 	--yeti-radius-lg: 1.5rem;
 	--yeti-button-radius: var(--yeti-radius-full);
 }
 ```
 
-One check every theme should make: a link is text. The default link color is the primary at its base step, which reads on the page for the hues Yeti ships but not for a light brand color. If your primary is light, point the links at the hue's text step:
+A brand color changes its own role and nothing else. Surfaces, text and borders take their faint tint from `--yeti-hue-neutral`, which follows `--yeti-hue-primary`, a number, and not the brand color. So a theme with a brand color sets `--yeti-hue-neutral` to a hue near the brand's, `45` for this orange, or `--yeti-chroma-neutral: 0` for true greys. Without either, the greys keep the tint of `--yeti-hue-primary`, a hint of blue by default.
+
+One check every theme should make: a link is text, so it has to read on the page. With a brand color that happens by itself: a link takes the line step, the brand's hue made readable on the page. A theme that sets a light primary directly, `--yeti-color-primary: #ffd400`, has no line step, so its links are that light color. Give the color as `--yeti-brand-primary` instead, or point the links at the hue's text step:
 
 ```css
 :root {

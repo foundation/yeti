@@ -12,6 +12,7 @@
 		--_yeti-variant: var(--yeti-color-primary);
 		--_yeti-variant-subtle: var(--yeti-color-primary-subtle);
 		--_yeti-variant-text: var(--yeti-color-primary-text);
+		--_yeti-variant-line: var(--yeti-color-primary-line);
 	}
 	.toc:not([data-size]) { --_yeti-size-text: var(--yeti-text-md); --_yeti-size-space: var(--yeti-space-sm); }
 	.toc > ul {
@@ -52,7 +53,7 @@
 		color: var(--yeti-color-text);
 	}
 	.toc a[aria-current] {
-		border-inline-start-color: var(--_yeti-variant);
+		border-inline-start-color: var(--_yeti-variant-line, var(--_yeti-variant));
 		color: var(--_yeti-variant-text);
 		font-weight: var(--yeti-weight-strong);
 	}

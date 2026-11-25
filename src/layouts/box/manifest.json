@@ -54,6 +54,12 @@
       "vocabulary": "paint",
       "on": "*",
       "description": "Color this element's words by name, from the same list. On an element that is also painted it wins over the automatic text color."
+    },
+    {
+      "name": "data-palette",
+      "type": "boolean",
+      "on": "*",
+      "description": "Starts a new palette: the color inputs set on this element re-derive the five hue roles and their tones for everything inside it."
     }
   ],
   "tokens": [

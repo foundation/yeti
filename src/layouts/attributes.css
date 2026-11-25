@@ -271,23 +271,28 @@
 	[data-columns="6"] { --_yeti-column-cap: calc((100% - 5 * var(--_yeti-gap)) / 6); --_yeti-column-count: 6; }
 
 	/* data-variant: a hue's ladder, for components. A component sets its own
-	   default with .name:not([data-variant]), so nothing inherits a parent's. */
-	[data-variant="primary"] { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-on-variant: var(--yeti-on-primary); }
-	[data-variant="secondary"] { --_yeti-variant: var(--yeti-color-secondary); --_yeti-variant-subtle: var(--yeti-color-secondary-subtle); --_yeti-variant-soft: var(--yeti-color-secondary-soft); --_yeti-variant-strong: var(--yeti-color-secondary-strong); --_yeti-variant-text: var(--yeti-color-secondary-text); --_yeti-on-variant: var(--yeti-on-secondary); }
-	[data-variant="success"] { --_yeti-variant: var(--yeti-color-success); --_yeti-variant-subtle: var(--yeti-color-success-subtle); --_yeti-variant-soft: var(--yeti-color-success-soft); --_yeti-variant-strong: var(--yeti-color-success-strong); --_yeti-variant-text: var(--yeti-color-success-text); --_yeti-on-variant: var(--yeti-on-success); }
-	[data-variant="warning"] { --_yeti-variant: var(--yeti-color-warning); --_yeti-variant-subtle: var(--yeti-color-warning-subtle); --_yeti-variant-soft: var(--yeti-color-warning-soft); --_yeti-variant-strong: var(--yeti-color-warning-strong); --_yeti-variant-text: var(--yeti-color-warning-text); --_yeti-on-variant: var(--yeti-on-warning); }
-	[data-variant="alert"] { --_yeti-variant: var(--yeti-color-alert); --_yeti-variant-subtle: var(--yeti-color-alert-subtle); --_yeti-variant-soft: var(--yeti-color-alert-soft); --_yeti-variant-strong: var(--yeti-color-alert-strong); --_yeti-variant-text: var(--yeti-color-alert-text); --_yeti-on-variant: var(--yeti-on-alert); }
+	   default with .name:not([data-variant]), so nothing inherits a parent's.
+	   The line has a value only when the role has a brand color, and every
+	   reader falls back to the variant itself. Neutral, black and white have
+	   no brand color, and set the line to initial rather than leaving it out:
+	   custom properties inherit, and a neutral badge inside a primary alert
+	   would otherwise draw its lines in the alert's. */
+	[data-variant="primary"] { --_yeti-variant: var(--yeti-color-primary); --_yeti-variant-subtle: var(--yeti-color-primary-subtle); --_yeti-variant-soft: var(--yeti-color-primary-soft); --_yeti-variant-strong: var(--yeti-color-primary-strong); --_yeti-variant-text: var(--yeti-color-primary-text); --_yeti-variant-line: var(--yeti-color-primary-line); --_yeti-on-variant: var(--yeti-on-primary); }
+	[data-variant="secondary"] { --_yeti-variant: var(--yeti-color-secondary); --_yeti-variant-subtle: var(--yeti-color-secondary-subtle); --_yeti-variant-soft: var(--yeti-color-secondary-soft); --_yeti-variant-strong: var(--yeti-color-secondary-strong); --_yeti-variant-text: var(--yeti-color-secondary-text); --_yeti-variant-line: var(--yeti-color-secondary-line); --_yeti-on-variant: var(--yeti-on-secondary); }
+	[data-variant="success"] { --_yeti-variant: var(--yeti-color-success); --_yeti-variant-subtle: var(--yeti-color-success-subtle); --_yeti-variant-soft: var(--yeti-color-success-soft); --_yeti-variant-strong: var(--yeti-color-success-strong); --_yeti-variant-text: var(--yeti-color-success-text); --_yeti-variant-line: var(--yeti-color-success-line); --_yeti-on-variant: var(--yeti-on-success); }
+	[data-variant="warning"] { --_yeti-variant: var(--yeti-color-warning); --_yeti-variant-subtle: var(--yeti-color-warning-subtle); --_yeti-variant-soft: var(--yeti-color-warning-soft); --_yeti-variant-strong: var(--yeti-color-warning-strong); --_yeti-variant-text: var(--yeti-color-warning-text); --_yeti-variant-line: var(--yeti-color-warning-line); --_yeti-on-variant: var(--yeti-on-warning); }
+	[data-variant="alert"] { --_yeti-variant: var(--yeti-color-alert); --_yeti-variant-subtle: var(--yeti-color-alert-subtle); --_yeti-variant-soft: var(--yeti-color-alert-soft); --_yeti-variant-strong: var(--yeti-color-alert-strong); --_yeti-variant-text: var(--yeti-color-alert-text); --_yeti-variant-line: var(--yeti-color-alert-line); --_yeti-on-variant: var(--yeti-on-alert); }
 	/* danger is the alert ladder under a name that is not also a component,
 	   so an alert that is an alert does not read data-variant="alert". */
-	[data-variant="danger"] { --_yeti-variant: var(--yeti-color-alert); --_yeti-variant-subtle: var(--yeti-color-alert-subtle); --_yeti-variant-soft: var(--yeti-color-alert-soft); --_yeti-variant-strong: var(--yeti-color-alert-strong); --_yeti-variant-text: var(--yeti-color-alert-text); --_yeti-on-variant: var(--yeti-on-alert); }
-	[data-variant="neutral"] { --_yeti-variant: var(--yeti-color-neutral); --_yeti-variant-subtle: var(--yeti-color-neutral-subtle); --_yeti-variant-soft: var(--yeti-color-neutral-soft); --_yeti-variant-strong: var(--yeti-color-neutral-strong); --_yeti-variant-text: var(--yeti-color-neutral-text); --_yeti-on-variant: var(--yeti-on-neutral); }
+	[data-variant="danger"] { --_yeti-variant: var(--yeti-color-alert); --_yeti-variant-subtle: var(--yeti-color-alert-subtle); --_yeti-variant-soft: var(--yeti-color-alert-soft); --_yeti-variant-strong: var(--yeti-color-alert-strong); --_yeti-variant-text: var(--yeti-color-alert-text); --_yeti-variant-line: var(--yeti-color-alert-line); --_yeti-on-variant: var(--yeti-on-alert); }
+	[data-variant="neutral"] { --_yeti-variant: var(--yeti-color-neutral); --_yeti-variant-subtle: var(--yeti-color-neutral-subtle); --_yeti-variant-soft: var(--yeti-color-neutral-soft); --_yeti-variant-strong: var(--yeti-color-neutral-strong); --_yeti-variant-text: var(--yeti-color-neutral-text); --_yeti-variant-line: initial; --_yeti-on-variant: var(--yeti-on-neutral); }
 
 	/* black and white: the two constants as a ladder, for a control on a
 	   painted band that must stay ink or paper whatever the scheme. Neither
 	   follows the hue or flips. The washes are translucent so the quiet
 	   emphases tint whatever surface they sit on. */
-	[data-variant="black"] { --_yeti-variant: var(--yeti-black); --_yeti-variant-subtle: oklch(0 0 0 / 0.08); --_yeti-variant-soft: oklch(0 0 0 / 0.18); --_yeti-variant-strong: oklch(0.25 0 0); --_yeti-variant-text: var(--yeti-black); --_yeti-on-variant: var(--yeti-white); }
-	[data-variant="white"] { --_yeti-variant: var(--yeti-white); --_yeti-variant-subtle: oklch(1 0 0 / 0.12); --_yeti-variant-soft: oklch(1 0 0 / 0.24); --_yeti-variant-strong: oklch(0.88 0 0); --_yeti-variant-text: var(--yeti-white); --_yeti-on-variant: var(--yeti-black); }
+	[data-variant="black"] { --_yeti-variant: var(--yeti-black); --_yeti-variant-subtle: oklch(0 0 0 / 0.08); --_yeti-variant-soft: oklch(0 0 0 / 0.18); --_yeti-variant-strong: oklch(0.25 0 0); --_yeti-variant-text: var(--yeti-black); --_yeti-variant-line: initial; --_yeti-on-variant: var(--yeti-white); }
+	[data-variant="white"] { --_yeti-variant: var(--yeti-white); --_yeti-variant-subtle: oklch(1 0 0 / 0.12); --_yeti-variant-soft: oklch(1 0 0 / 0.24); --_yeti-variant-strong: oklch(0.88 0 0); --_yeti-variant-text: var(--yeti-white); --_yeti-variant-line: initial; --_yeti-on-variant: var(--yeti-black); }
 
 	/* data-size on components: a text step and the space step one below it */
 	[data-size="sm"] { --_yeti-size-text: var(--yeti-text-sm); --_yeti-size-space: var(--yeti-space-xs); }
@@ -461,11 +466,11 @@
 	[data-paint="grey-90"] { background-color: var(--yeti-grey-90); color: var(--yeti-color-surface); }
 	[data-paint="grey-100"] { background-color: var(--yeti-grey-100); color: var(--yeti-color-surface); }
 
-	[data-text="primary"] { color: var(--yeti-color-primary); }
-	[data-text="secondary"] { color: var(--yeti-color-secondary); }
-	[data-text="success"] { color: var(--yeti-color-success); }
-	[data-text="warning"] { color: var(--yeti-color-warning); }
-	[data-text="alert"] { color: var(--yeti-color-alert); }
+	[data-text="primary"] { color: var(--yeti-color-primary-line, var(--yeti-color-primary)); }
+	[data-text="secondary"] { color: var(--yeti-color-secondary-line, var(--yeti-color-secondary)); }
+	[data-text="success"] { color: var(--yeti-color-success-line, var(--yeti-color-success)); }
+	[data-text="warning"] { color: var(--yeti-color-warning-line, var(--yeti-color-warning)); }
+	[data-text="alert"] { color: var(--yeti-color-alert-line, var(--yeti-color-alert)); }
 	[data-text="neutral"] { color: var(--yeti-color-neutral); }
 	[data-text="white"] { color: var(--yeti-white); }
 	[data-text="black"] { color: var(--yeti-black); }

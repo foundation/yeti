@@ -14,6 +14,14 @@
 		accent-color: var(--yeti-color-primary);
 	}
 
+	/* accent-color inherits as a color already worked out on html, so a
+	   data-palette region sets it again for its bare controls to take the
+	   region's primary. A site that sets accent-color on html sets it on
+	   [data-palette] too, since this rule replaces it inside a region. */
+	[data-palette] {
+		accent-color: var(--yeti-color-primary);
+	}
+
 	/* Type size lives on body, not html, so rem keeps the visitor's root
 	   default and every rem-based token resolves the same on every element. */
 	body {
@@ -50,14 +58,20 @@
 		font-weight: var(--yeti-weight-bold);
 	}
 
+	/* A link is a line: it takes the primary's line step, which has a value
+	   only with a brand color and keeps a light one readable, and the base
+	   step otherwise, read here so a section's own primary colors its links.
+	   Under the pointer it takes the brand's text step, since with a light
+	   brand color the strong step is a light fill; without a brand color
+	   that has no value and the hover is the strong step, as before. */
 	a {
-		color: var(--yeti-link-color, var(--yeti-color-primary));
+		color: var(--yeti-link-color, var(--yeti-color-primary-line, var(--yeti-color-primary)));
 		text-decoration: underline;
 		text-decoration-skip-ink: auto;
 		text-underline-offset: 0.15em;
 	}
 	a:hover {
-		color: var(--yeti-link-color-hover, var(--yeti-color-primary-strong));
+		color: var(--yeti-link-color-hover, var(--_yeti-b-primary-text, var(--yeti-color-primary-strong)));
 	}
 
 	/* The skip link: the first link in the body, jumping past the furniture to
