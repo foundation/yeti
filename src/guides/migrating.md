@@ -57,6 +57,7 @@ Version 6 had a class for each of these. Most of them are the browser's job, and
 | `.table`, `.hover`, `.stack` | `table` with `data-hover`, `data-striped`; a `scroller` for width | the stacking table is gone, a table stays a table |
 | `.top-bar` | `nav` | collapses behind a toggle at its own threshold |
 | `.title-bar` with `.off-canvas` | `nav` with `data-panel="drawer"` | the drawer is the nav's own panel |
+| `.off-canvas` holding anything but the site's links | `dialog` with `data-panel="drawer"` | a modal dialog pinned to an edge, from `data-placement` |
 | `.menu`, `.menu.vertical` | a `cluster` or `stack` of links; `nav` for a site menu | a menu is a list of links |
 | `.dropdown-pane` | `dropdown` | a popover, so no script and no z-index |
 | `.dropdown.menu` submenus | nested `dropdown`s inside a `nav` item | any depth; `data-grouped` for sections under headings |

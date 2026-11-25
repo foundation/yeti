@@ -39,4 +39,81 @@
 		.dialog[open] { opacity: 0; translate: 0 1rem; }
 		.dialog[open]::backdrop { opacity: 0; }
 	}
+
+	/* Drawer: the same modal dialog, pinned to an edge of the screen. A side
+	   drawer is the screen's height and data-max's width, and always leaves a
+	   strip of backdrop to tap. A top or bottom one is the screen's width and
+	   its content's height. A long drawer scrolls as one piece, and the scroll
+	   stops at its edge rather than moving the page behind. Against these
+	   insets the browser's auto margin comes to nothing, so the drawer needs
+	   no margin of its own. */
+	.dialog[data-panel="drawer"] {
+		--_yeti-off: -100% 0;
+		inset-block: 0;
+		inset-inline: 0 auto;
+		inline-size: min(var(--_yeti-max), 100% - var(--yeti-space-xl));
+		max-inline-size: none;
+		block-size: 100dvh;
+		max-block-size: none;
+		border-radius: 0;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+	.dialog[data-panel="drawer"]:not([data-max]) { --_yeti-max: var(--yeti-width-sm); }
+	.dialog[data-panel="drawer"][data-placement="end"] { inset-inline: auto 0; }
+	.dialog[data-panel="drawer"]:is([data-placement="top"], [data-placement="bottom"]) {
+		inset-inline: 0;
+		inline-size: 100%;
+		block-size: auto;
+		max-block-size: calc(100dvh - var(--yeti-space-xl));
+	}
+	.dialog[data-panel="drawer"][data-placement="top"] { inset-block: 0 auto; --_yeti-off: 0 -100%; }
+	.dialog[data-panel="drawer"][data-placement="bottom"] {
+		inset-block: auto 0;
+		--_yeti-off: 0 100%;
+		padding-block-end: max(var(--yeti-dialog-padding), env(safe-area-inset-bottom));
+	}
+	/* The inset is logical, but translate is physical, so a side drawer that
+	   comes from the right is the end one left to right and the start one
+	   right to left. */
+	.dialog[data-panel="drawer"]:is([data-placement="end"]:dir(ltr), :not([data-placement="end"], [data-placement="top"], [data-placement="bottom"]):dir(rtl)) { --_yeti-off: 100% 0; }
+
+	/* Open, it is a column, so a short drawer's footer sits at the bottom. A
+	   long one's scrolls with the content, and the padding keeps it apart. */
+	.dialog[data-panel="drawer"][open] { display: flex; flex-direction: column; }
+	.dialog[data-panel="drawer"] > footer { margin-block-start: auto; padding-block-start: var(--yeti-space-md); }
+
+	/* It slides in from its own edge and back out, on the dialog's own
+	   transition, and does not fade. */
+	.dialog[data-panel="drawer"]:not([open]) { opacity: 1; translate: var(--_yeti-off); }
+	@starting-style {
+		.dialog[data-panel="drawer"][open] { opacity: 1; translate: var(--_yeti-off); }
+	}
+
+	/* The close button: a control-sized square in the top end corner, the
+	   alert's look. It is positioned, so it takes no room in the flow, and the
+	   heading after it keeps clear of it. It closes with the native
+	   command="close"; Yeti adds only the look. */
+	.dialog > button[data-close] {
+		appearance: none;
+		position: absolute;
+		inset-block-start: var(--yeti-space-sm);
+		inset-inline-end: var(--yeti-space-sm);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: var(--yeti-control-size);
+		block-size: var(--yeti-control-size);
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: var(--yeti-control-radius);
+		background-color: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+	.dialog > button[data-close]:hover { background-color: color-mix(in oklch, currentColor 12%, transparent); }
+	.dialog > button[data-close] + * { margin-block-start: 0; }
+	.dialog > button[data-close] + :is(h1, h2, h3, h4, h5, h6) { padding-inline-end: var(--yeti-control-size); }
 }
