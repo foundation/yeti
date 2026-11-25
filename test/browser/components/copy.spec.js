@@ -46,7 +46,7 @@ const turn = (page) => page.evaluate(() => new Promise((resolve) => setTimeout(r
 
 test.describe('copy button', () => {
 	// Runs in all three engines.
-	test('a click copies the text of the element data-copy names', async ({ page }) => {
+	test('a click copies the text of the element data-target names', async ({ page }) => {
 		await open(page);
 		await record(page);
 		await page.click('#plain');
@@ -95,7 +95,7 @@ test.describe('copy button', () => {
 		expect(await page.evaluate(() => window.__own)).toBe(1);
 	});
 
-	test('data-copied shows its label after a copy and the original comes back', async ({ page }) => {
+	test('data-done shows its label after a copy and the original comes back', async ({ page }) => {
 		await open(page, { clock: true });
 		await record(page);
 		await page.click('#labelled');
@@ -188,7 +188,7 @@ test.describe('copy button', () => {
 		expect(errors).toEqual([]);
 	});
 
-	test('a data-copy that names no element writes nothing and throws nothing', async ({ page }) => {
+	test('a data-target that names no element writes nothing and throws nothing', async ({ page }) => {
 		const errors = await open(page);
 		await record(page);
 		await page.click('#missing');
@@ -196,6 +196,17 @@ test.describe('copy button', () => {
 		expect(await written(page)).toEqual([]);
 		expect(await events(page)).toEqual([]);
 		expect(await text(page, 'missing')).toBe('Copy nothing');
+		expect(errors).toEqual([]);
+	});
+
+	test('a copy button with no data-target writes nothing and throws nothing', async ({ page }) => {
+		const errors = await open(page);
+		await record(page);
+		await page.click('#untargeted');
+		await turn(page);
+		expect(await written(page)).toEqual([]);
+		expect(await events(page)).toEqual([]);
+		expect(await text(page, 'untargeted')).toBe('Copy what');
 		expect(errors).toEqual([]);
 	});
 
@@ -210,7 +221,7 @@ test.describe('copy button', () => {
 		expect(errors).toEqual([]);
 	});
 
-	test('without data-copied the text is copied and the button is left as it was', async ({ page }) => {
+	test('without data-done the text is copied and the button is left as it was', async ({ page }) => {
 		await open(page);
 		await record(page);
 		const node = await page.evaluate(() => { window.__label = document.getElementById('plain').firstChild; return document.getElementById('plain').innerHTML; });
@@ -230,7 +241,8 @@ test.describe('copy button', () => {
 			button.className = 'button';
 			button.type = 'button';
 			button.id = 'late';
-			button.dataset.copy = 'field';
+			button.dataset.action = 'copy';
+			button.dataset.target = 'field';
 			button.textContent = 'Copy late';
 			document.querySelector('main').append(button);
 		});
@@ -240,7 +252,7 @@ test.describe('copy button', () => {
 	});
 
 	test('without the module a click does nothing and throws nothing', async ({ page }) => {
-		await withoutModule(page, 'copy');
+		await withoutModule(page, 'button');
 		const errors = await open(page);
 		await record(page);
 		await page.click('#labelled');
