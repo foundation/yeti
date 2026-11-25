@@ -19,7 +19,7 @@
 		<h2>Buttons that open a panel</h2>
 		<div id="stage">
 			<p><button class="button" type="button" popovertarget="share" id="share-open">Share</button> <a href="#" id="after-share">A link after the button.</a></p>
-			<p><button class="button" type="button" popovertarget="rename" id="rename-open">Rename</button> <button class="button" type="button" id="outside">Outside</button></p>
+			<p><button class="button" type="button" popovertarget="rename" id="rename-open">Rename</button> <button class="button" type="button" id="outside">Outside</button> <button class="button" type="button" popovertarget="outer" id="outer-open">Outer</button></p>
 
 			<div id="placements">
 				<button class="button" type="button" popovertarget="above" id="above-open">Above</button>
@@ -83,6 +83,16 @@
 		<div class="popover" id="low" popover><p>No room below, so it opens above.</p><p>A second line.</p><p>A third line.</p></div>
 		<div class="popover" id="edge" popover><p>This panel would run past the end edge, so it flips to line up with the other side of its button.</p></div>
 		<div class="popover" id="nested" popover><p>Beside the nested button.</p></div>
+		<div class="popover" id="outer" popover>
+			<p>A panel that holds another panel and a dialog.</p>
+			<button class="button" type="button" popovertarget="inner" id="inner-open">Inner</button>
+			<button class="button" type="button" commandfor="inside-dialog" command="show-modal" id="inside-dialog-open">Dialog</button>
+			<div class="popover" id="inner" popover><p>A panel inside a panel.</p></div>
+			<dialog class="dialog" id="inside-dialog" aria-labelledby="inside-dialog-title">
+				<h2 id="inside-dialog-title">A dialog inside a panel</h2>
+				<p>It is centered all the same.</p>
+			</dialog>
+		</div>
 	</main>
 
 	<div class="popover" id="share" popover>

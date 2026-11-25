@@ -8,7 +8,9 @@ It is not a menu. A list of links and actions belongs in a `dropdown`, which tur
 
 The panel is a native popover. The button carries `popovertarget` with the panel's id, and the panel carries `popover` and the class. The browser opens it, puts it in the top layer, closes it on Escape or a click outside, and keeps the button's expanded state current. No script is needed.
 
-The button that opens the panel is its anchor, so there is no wrapper and no anchor name. The panel can sit anywhere in the page, and a page can hold many. The browser also puts the panel straight after its button in the tab order, wherever it sits in the markup.
+The button that opens the panel is its anchor, so there is no wrapper and no anchor name. The panel can sit anywhere in the page, and a page can hold many. In Chromium and Firefox the browser also puts the panel straight after its button in the tab order, wherever it sits in the markup. WebKit was not measured, because its Tab key skips links and buttons by default.
+
+A panel opened by script has no button to sit beside unless you pass one as `source`: `panel.showPopover({ source: button })`.
 
 ```html
 <button class="button" type="button" popovertarget="share">Share</button>
@@ -20,7 +22,7 @@ The button that opens the panel is its anchor, so there is no wrapper and no anc
 </div>
 ```
 
-What it holds is ordinary flow content. Links look like links and buttons like buttons, and its children are spaced the way an `article` spaces them. The panel fades in and closes at once.
+What it holds is ordinary flow content. Links look like links and buttons like buttons, and the panel spaces its own children: the medium space between siblings, and the smaller heading space after a heading. The panel fades in and closes at once.
 
 The panel's background is `--yeti-popover-surface`, its corner is `--yeti-popover-radius`, and its padding is `--yeti-popover-padding`.
 
@@ -68,4 +70,4 @@ There is no arrow pointing at the button, because an arrow cannot follow the pan
 
 Give the button a name. The browser sets its expanded state from `popovertarget`, so a screen reader hears whether the panel is open. Escape closes the panel and returns focus to the button.
 
-Tab moves from the button into the panel and, from the panel's last control, on to whatever follows the button. That holds wherever the panel sits in the markup. A screen reader reading the page in order still meets the panel where it sits, so keep it close to its button, and inside the same landmark.
+In Chromium and Firefox, Tab moves from the button into the panel and, from the panel's last control, on to whatever follows the button, wherever the panel sits in the markup. WebKit was not measured, because its Tab key skips links and buttons by default. A screen reader reading the page in order still meets the panel where it sits, so keep it close to its button, and inside the same landmark.

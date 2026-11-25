@@ -146,6 +146,31 @@ test.describe('popover', () => {
 		}
 	});
 
+	// A panel's flow spacing reaches its direct children, and a nested panel
+	// or a dialog after a paragraph is one of them. Its own margin must win,
+	// or the flow space is added to its gap or pushes it off center.
+	test('a panel inside another panel keeps the same gap from its own button', async ({ page }) => {
+		await open(page);
+		const gap = await token(page, '--yeti-space-xs');
+		await show(page, 'outer');
+		const { panel, button } = await show(page, 'inner');
+		expect(await isOpen(page, 'outer')).toBe(true);
+		near(panel.top, button.bottom + gap, 'top');
+		near(panel.left, button.left, 'left');
+	});
+
+	test('a dialog inside a panel, after a paragraph, still opens centered', async ({ page }) => {
+		await open(page);
+		await show(page, 'outer');
+		await page.click('#inside-dialog-open');
+		await settle(page, '#inside-dialog');
+		expect(await page.evaluate(() => document.getElementById('inside-dialog').matches(':modal'))).toBe(true);
+		const box = await rect(page, '#inside-dialog');
+		const view = await page.evaluate(() => ({ width: document.documentElement.clientWidth, height: document.documentElement.clientHeight }));
+		near(box.left + box.width / 2, view.width / 2, 'inline center');
+		near(box.top + box.height / 2, view.height / 2, 'block center');
+	});
+
 	test('a long panel is the xs width, data-max widens it, and a phone keeps a margin each side', async ({ page }) => {
 		await open(page);
 		const long = await show(page, 'long');

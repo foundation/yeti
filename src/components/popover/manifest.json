@@ -107,7 +107,7 @@
         "action": "Closes the panel and returns focus to its button."
       }
     ],
-    "notes": "The button needs a name, and the browser sets its expanded state from popovertarget. The browser puts the panel straight after its button in the tab order, wherever the panel sits in the markup. A panel is not modal: the page behind stays usable, and a click outside closes it. For a panel that holds a form, make it a dialog element with aria-labelledby naming its heading, so a screen reader announces a named dialog and autofocus on a field works. Do not open it on hover, and keep a menu of links in a dropdown."
+    "notes": "The button needs a name, and the browser sets its expanded state from popovertarget. In Chromium and Firefox the browser puts the panel straight after its button in the tab order, wherever the panel sits in the markup; WebKit was not measured, because its Tab key skips links and buttons by default. A panel is not modal: the page behind stays usable, and a click outside closes it. For a panel that holds a form, make it a dialog element with aria-labelledby naming its heading, so a screen reader announces a named dialog and autofocus on a field works. Do not open it on hover, and keep a menu of links in a dropdown."
   },
   "js": null,
   "support": {

@@ -29,9 +29,12 @@
 	   reset has zeroed every child's margin, so the panel spaces its own
 	   children with the base layer's two rules. A dialog is one of those
 	   containers; these rules set the same values on the same property, so a
-	   dialog panel is spaced once, and the same as a div. */
-	.popover > * + * { margin-block-start: var(--yeti-space-md); }
-	.popover > :is(h1, h2, h3, h4, h5, h6) + * { margin-block-start: var(--yeti-heading-space-after); }
+	   dialog panel is spaced once, and the same as a div. The panel is
+	   wrapped in :where() so these rules weigh less than a root's own
+	   margin: a panel or a dialog nested as a later child keeps its auto
+	   margin, and with it its gap or its centering. */
+	:where(.popover) > * + * { margin-block-start: var(--yeti-space-md); }
+	:where(.popover) > :is(h1, h2, h3, h4, h5, h6) + * { margin-block-start: var(--yeti-heading-space-after); }
 
 	/* Arriving fades in. Leaving is instant, since nothing transitions the
 	   closed state and the user agent hides it at once. */
