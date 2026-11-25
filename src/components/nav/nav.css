@@ -103,6 +103,18 @@
 		text-decoration: none;
 		cursor: pointer;
 	}
+	/* An icon in a bar link or trigger, a direct svg or img, sits before its
+	   label at the size a button gives one. A bare svg with only a viewBox
+	   has no size of its own, so without this it would have no box in the
+	   bar. The bottom bar puts the icon above its label instead (below). */
+	.nav > ul[popover] > li > :is(a, button:first-child) > :is(svg, img),
+	.nav > ul[popover] > li > .dropdown > :is(a, button):first-child > :is(svg, img) {
+		flex: none;
+		inline-size: 1em;
+		block-size: 1em;
+		margin-inline-end: var(--yeti-space-xs);
+		object-fit: contain;
+	}
 	/* The current page's fill, off unless a theme sets it. It reaches what the
 	   current color below reaches: the page's own link, and the top-level
 	   parent that holds the page. It comes before the hover rule on purpose.

@@ -1622,6 +1622,141 @@ test.describe('nav', () => {
 			await expect(page.locator('#m-history')).toBeHidden();
 		});
 
+		// Watches every frame from now on for focus that has fallen to the page.
+		const watchFocus = (page) => page.evaluate(() => {
+			window.fell = 0;
+			const watch = () => { if (document.activeElement === document.body) window.fell += 1; requestAnimationFrame(watch); };
+			requestAnimationFrame(watch);
+		});
+		const focused = (page) => page.evaluate(() => document.activeElement.id || document.activeElement.tagName);
+
+		test('focus on the More button goes to the last link in the bar when More is hidden again, with its panel closed or open', async ({ page }) => {
+			for (const opened of [false, true]) {
+				await openMore(page, 700);
+				await settles(page, { hidden: false });
+				if (opened) {
+					await page.click('#m-more-trigger');
+					await settle(page, '#m-more-menu');
+				}
+				await page.focus('#m-more-trigger');
+				await watchFocus(page);
+				await stage(page, 1000);
+				await settles(page, wide);
+				await expect.poll(() => focused(page), String(opened)).toBe('m-news-link');
+				await frames(page);
+				expect(await focused(page), String(opened)).toBe('m-news-link');
+				expect(await page.evaluate(() => window.fell), String(opened)).toBe(0);
+			}
+		});
+
+		test('a brand that grows after load moves links into More, and one that shrinks again lets them back', async ({ page }) => {
+			await openMore(page, 700);
+			await settles(page, { hidden: false });
+			const before = await where(page);
+			// A logo that arrives late: the brand is 150px wider, and the nav is not.
+			await page.evaluate(() => { document.getElementById('more-brand').style.paddingInlineEnd = '150px'; });
+			await expect.poll(async () => {
+				const now = await where(page);
+				const fits = await page.evaluate(() => {
+					const nav = document.getElementById('more-nav');
+					const edge = nav.getBoundingClientRect().right + 0.5;
+					return nav.scrollWidth <= nav.clientWidth && document.getElementById('more-actions').getBoundingClientRect().right <= edge;
+				});
+				return fits && now.more.length > before.more.length && [...now.bar, ...now.more].join() === ids.join();
+			}).toBe(true);
+			await page.evaluate(() => { document.getElementById('more-brand').style.paddingInlineEnd = ''; });
+			await settles(page, before);
+		});
+
+		test('a font that arrives narrower than its fallback lets back a link that now fits', async ({ page }) => {
+			// The page's fonts are ready only when the test says so.
+			await page.addInitScript(() => {
+				let release;
+				const ready = new Promise((resolve) => { release = resolve; });
+				window.releaseFonts = () => release(document.fonts);
+				Object.defineProperty(document.fonts, 'ready', { get: () => ready });
+			});
+			await openMore(page, 920);
+			await settles(page, { hidden: false });
+			const before = await where(page);
+			// The moved links' labels shrink while they are in More, as they would
+			// when the real font is narrower than the fallback.
+			await page.evaluate((moved) => {
+				for (const id of moved) document.querySelector(`#${id} > a, #${id} > button, #${id} button`).firstChild.textContent = 'x';
+			}, before.more);
+			await frames(page);
+			expect(await where(page)).toEqual(before);
+			await page.evaluate(() => window.releaseFonts());
+			await expect.poll(async () => (await where(page)).more.length).toBeLessThan(before.more.length);
+			const after = await where(page);
+			expect([...after.bar, ...after.more]).toEqual(ids);
+		});
+
+		test('closing the nav\'s panel after it was widened past the threshold while open decides the bar for its new width', async ({ page }) => {
+			await openMore(page, 400);
+			// The nav is the same size with its panel open or closed, so only the
+			// panel's closing can tell the module to decide again.
+			await page.addStyleTag({ content: '#more-nav { min-block-size: 8rem; } #more-brand, #more-actions { flex: none; } #more-menu :is(a, button) { white-space: nowrap; }' });
+			await settles(page, { bar: ids, hidden: true });
+			await page.click('#more-toggle');
+			await settle(page, '#more-menu');
+			await stage(page, 700);
+			await frames(page);
+			// Nothing moves while the panel is open.
+			expect((await where(page)).more).toEqual([]);
+			await page.evaluate(() => document.getElementById('more-menu').hidePopover());
+			await settles(page, { hidden: false, box: true });
+			expect((await where(page)).more.length).toBeGreaterThan(0);
+		});
+
+		// An icon's box, its link's, and where the link's label starts.
+		const icon = (page, id) => page.evaluate((i) => {
+			const link = document.getElementById(i);
+			// The space token where the link is, since it may scale with the text.
+			const probe = document.createElement('span');
+			probe.style.cssText = 'position:absolute;inline-size:var(--yeti-space-xs)';
+			link.append(probe);
+			const space = probe.getBoundingClientRect().width;
+			probe.remove();
+			const svg = link.querySelector(':scope > svg').getBoundingClientRect();
+			const range = document.createRange();
+			range.selectNodeContents(link.lastChild);
+			const label = range.getBoundingClientRect();
+			const box = link.getBoundingClientRect();
+			return { svg: { left: svg.left, right: svg.right, top: svg.top, bottom: svg.bottom, width: svg.width, height: svg.height }, label: { left: label.left, top: label.top }, link: { left: box.left, right: box.right }, em: parseFloat(getComputedStyle(link).fontSize), space };
+		}, id);
+
+		test('an icon in a link is above its label in the bottom bar, and beside it, before it and 1em square, in the top bar and in More\'s panel', async ({ page }) => {
+			await page.setViewportSize({ width: 400, height: 700 });
+			await openMore(page, 400);
+			await page.evaluate(() => { document.getElementById('bar-nav').hidden = false; });
+			await expect.poll(() => where(page, 'bar-menu', 'b-more')).toEqual(expect.objectContaining({ hidden: false, more: bottom.slice(4) }));
+			// In the bottom bar: one line tall, centred above the label.
+			const inBar = await icon(page, 'b-1');
+			expect(inBar.svg.height).toBeGreaterThan(0);
+			expect(inBar.svg.bottom).toBeLessThanOrEqual(inBar.label.top + 0.5);
+			expect((inBar.svg.left + inBar.svg.right) / 2).toBeCloseTo((inBar.link.left + inBar.link.right) / 2, 0);
+			// Moved into More: a row, with the icon before the label.
+			await page.click('#b-more-trigger');
+			await settle(page, '#b-more-menu');
+			for (const id of ['b-5', 'b-8']) {
+				const row = await icon(page, id);
+				expect(row.svg.width, id).toBeCloseTo(row.em, 0);
+				expect(row.svg.height, id).toBeCloseTo(row.em, 0);
+				expect(row.label.left - row.svg.right, id).toBeCloseTo(row.space, 0);
+			}
+			await page.keyboard.press('Escape');
+			// Above the threshold: the top bar, the icon before the label.
+			await page.setViewportSize({ width: 1000, height: 700 });
+			await stage(page, 1000);
+			await expect.poll(() => style(page, '#bar-menu', 'position')).toBe('static');
+			const top = await icon(page, 'b-1');
+			expect(top.svg.width).toBeCloseTo(top.em, 0);
+			expect(top.svg.height).toBeCloseTo(top.em, 0);
+			expect(top.label.left - top.svg.right).toBeCloseTo(top.space, 0);
+			expect(Math.abs(top.svg.top - top.label.top)).toBeLessThan(top.em);
+		});
+
 		test('has no accessibility violations, wide, with More shown and open, and behind the toggle', async ({ page }) => {
 			await openMore(page, 1000);
 			expect(await axe(page)).toEqual([]);

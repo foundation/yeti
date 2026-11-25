@@ -62,8 +62,8 @@ test('the count may be none, leaving only More', () => {
 test('More\'s own width is part of the decision, so a count that fits only without More is not chosen', () => {
 	// Three fit without More at 320, but not at 319; with More only two fit.
 	assert.equal(inBar([100, 100, 100], 10, 60, 319), 2);
-	// And deciding again in the room that count leaves gives the same count.
-	assert.equal(inBar([100, 100, 100], 10, 60, 319), inBar([100, 100, 100], 10, 60, 319));
+	// At 320 all three fit without More, so More's width does not count.
+	assert.equal(inBar([100, 100, 100], 10, 60, 320), 3);
 });
 
 test('a bottom bar keeps five items or fewer, and with more keeps four and More', () => {
