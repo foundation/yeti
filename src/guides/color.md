@@ -29,7 +29,7 @@ Each hue gets five steps and a partner for text placed on it:
 
 </div>
 
-The page itself has its own roles at the neutral hue, low in chroma so they read as grey with a hint of the brand. How much of a hint is `--yeti-chroma-neutral`, `0.02` by default; set it to `0` and every one of them is a true grey. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default, or its line step when the primary has a brand color. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
+The page itself has its own roles, and by default every one of them is a true grey. A theme can give them a hint of a hue: `--yeti-chroma-neutral` is how much of a hint, `0` by default and about `0.02` for a faint tint, and `--yeti-hue-neutral` is the hue, which follows the primary hue unless set. The roles are `--yeti-color-surface` and its `-raised` and `-sunken` steps, `--yeti-color-text` and `-text-muted`, `--yeti-color-border` and `-border-strong`, a `-scrim` for washing over a picture, and `-focus`, which is the primary by default, or its line step when the primary has a brand color. Every one of these is a token you can read from your own CSS and a role a theme can set outright.
 
 ## A brand color
 
@@ -71,7 +71,7 @@ A theme can set the line step itself, and that wins. Without a brand color, noth
 
 A brand color is not checked. The hue inputs are registered as numbers, so a hue that is not a number falls back to its default. A brand color can be any color, so it cannot be registered, and a value that is not a color, `--yeti-brand-primary: banana`, breaks that role's colors.
 
-The page's greys do not follow a brand color. Surfaces, text and borders take their tint from `--yeti-hue-neutral`, a number; the [theming guide](theming.md#make-a-theme) shows how to match it.
+The page's greys do not follow a brand color, and do not need to: surfaces, text and borders are true greys by default. A theme that tints them sets the tint's hue itself, as the [theming guide](theming.md#make-a-theme) shows.
 
 ## Text on color
 

@@ -19,14 +19,15 @@
 	/* --yeti-hue-primary: 250; */
 	/* The second hue, for a secondary accent; 300 is violet. */
 	/* --yeti-hue-secondary: 300; */
-	/* The faint tint in surfaces, text and borders; follows the brand hue. */
+	/* The greys are true greys. To tint surfaces, text and borders, raise
+	   this; 0.02 is a faint tint. */
+	/* --yeti-chroma-neutral: 0; */
+	/* The hue of that tint; follows the brand hue. Shows only with a tint. */
 	/* --yeti-hue-neutral: var(--yeti-hue-primary); */
-	/* How much of that tint the greys carry: 0 is a true grey. */
-	/* --yeti-chroma-neutral: 0.02; */
 	/* How saturated the accents are: 0 is grey, 0.15 clear, above 0.2 may clip. */
 	/* --yeti-chroma: 0.15; */
 	/* A brand color for the primary, any CSS color, in place of its hue. Not
-	   set by default; the greys keep following --yeti-hue-neutral. */
+	   set by default. */
 	/* --yeti-brand-primary: #ff6a00; */
 	/* A brand color for the secondary, in place of its hue. */
 	/* --yeti-brand-secondary: #0b1f4b; */

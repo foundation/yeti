@@ -50,7 +50,7 @@
 @property --yeti-hue-warning { syntax: "<number>"; inherits: true; initial-value: 80; }
 @property --yeti-hue-alert { syntax: "<number>"; inherits: true; initial-value: 25; }
 @property --yeti-chroma { syntax: "<number>"; inherits: true; initial-value: 0.15; }
-@property --yeti-chroma-neutral { syntax: "<number>"; inherits: true; initial-value: 0.02; }
+@property --yeti-chroma-neutral { syntax: "<number>"; inherits: true; initial-value: 0; }
 
 @layer yeti.base {
 	:root {
@@ -68,7 +68,10 @@
 		--yeti-hue-alert: 25;
 		--yeti-hue-neutral: var(--yeti-hue-primary);
 		--yeti-chroma: 0.15;
-		--yeti-chroma-neutral: 0.02;
+		/* 0: the greys are true greys, which sit under any brand color. A
+		   theme that wants them tinted raises this, to about 0.02, and the
+		   tint is the neutral hue. */
+		--yeti-chroma-neutral: 0;
 
 		/* Internal ladder. Tune here, not in the roles below. */
 		--_yeti-l-subtle-light: 0.95; --_yeti-l-subtle-dark: 0.25;
@@ -87,14 +90,15 @@
 		--yeti-color-neutral-text: light-dark(oklch(var(--_yeti-l-text-light) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(var(--_yeti-l-text-dark) var(--yeti-chroma-neutral) var(--yeti-hue-neutral)));
 		--yeti-on-neutral: light-dark(var(--_yeti-on-light), var(--_yeti-on-dark));
 
-		/* Page roles from the neutral hue at low chroma */
-		--yeti-color-surface: light-dark(oklch(0.99 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.13 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #f2fdff */
-		--yeti-color-surface-raised: light-dark(oklch(0.97 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.17 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ebf7ff */
-		--yeti-color-surface-sunken: light-dark(oklch(0.94 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.10 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #e1edf8 */
-		--yeti-color-text: light-dark(oklch(0.15 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.93 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #050c13 */
-		--yeti-color-text-muted: light-dark(oklch(0.45 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.70 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #4d5660 */
-		--yeti-color-border: light-dark(oklch(0.88 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.30 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ced9e5 */
-		--yeti-color-border-strong: light-dark(oklch(0.75 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.40 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #a5afba */
+		/* Page roles: true greys by default, tinted with the neutral hue when
+		   a theme raises --yeti-chroma-neutral */
+		--yeti-color-surface: light-dark(oklch(0.99 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.13 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #fcfcfc */
+		--yeti-color-surface-raised: light-dark(oklch(0.97 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.17 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #f5f5f5 */
+		--yeti-color-surface-sunken: light-dark(oklch(0.94 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.10 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #ebebeb */
+		--yeti-color-text: light-dark(oklch(0.15 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.93 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #0b0b0b */
+		--yeti-color-text-muted: light-dark(oklch(0.45 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.70 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #555555 */
+		--yeti-color-border: light-dark(oklch(0.88 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.30 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #d7d7d7 */
+		--yeti-color-border-strong: light-dark(oklch(0.75 var(--yeti-chroma-neutral) var(--yeti-hue-neutral)), oklch(0.40 var(--yeti-chroma-neutral) var(--yeti-hue-neutral))); /* #aeaeae */
 		/* The wash that goes over content so something on top of it can be read:
 		   a caption over a picture, a veil over a form. The surface, thinned,
 		   so it takes the theme with it and dims rather than tints. */

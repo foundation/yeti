@@ -50,15 +50,16 @@ for (const scheme of ['light', 'dark']) {
 			expect(await ratio(page, '#primary')).toBeGreaterThanOrEqual(4.5);
 		});
 
-		test('--yeti-chroma-neutral sets how much hue the greys carry, and zero makes them true greys', async ({ page }) => {
+		test('the greys are true greys by default, and --yeti-chroma-neutral gives them a tint', async ({ page }) => {
 			const spread = ([r, g, b]) => Math.max(r, g, b) - Math.min(r, g, b);
-			const [tinted] = await pair(page, '#page');
-			expect(spread(tinted)).toBeGreaterThan(1);
-			await page.evaluate(() => document.documentElement.style.setProperty('--yeti-chroma-neutral', '0'));
 			const [bg, fg] = await pair(page, '#page');
 			// One step of rounding is all that is left between the channels.
 			expect(spread(bg)).toBeLessThanOrEqual(1);
 			expect(spread(fg)).toBeLessThanOrEqual(1);
+			expect(await ratio(page, '#page')).toBeGreaterThanOrEqual(7);
+			await page.evaluate(() => document.documentElement.style.setProperty('--yeti-chroma-neutral', '0.02'));
+			const [tinted] = await pair(page, '#page');
+			expect(spread(tinted)).toBeGreaterThan(1);
 			expect(await ratio(page, '#page')).toBeGreaterThanOrEqual(7);
 		});
 
