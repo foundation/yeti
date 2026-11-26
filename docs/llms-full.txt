@@ -3725,7 +3725,7 @@ Every public custom property, with its group and default. A theme is a file that
 - --yeti-hue-warning (hue): 80 — Warning hue; 80 is amber.
 - --yeti-hue-alert (hue): 25 — Alert hue; 25 is red.
 - --yeti-hue-neutral (hue): var(--yeti-hue-primary) — Hue of the tint in surfaces, text, and borders, which shows only when --yeti-chroma-neutral is above 0. Follows the primary hue unless set.
-- --yeti-chroma (hue): 0.15 — Accent saturation. Lower for a calmer palette; 0.2 and above may clip on very saturated hues.
+- --yeti-chroma (hue): 0.15 — Accent saturation. Lower for a calmer palette. Above 0.15 the base and hover steps go a little darker in light mode, so the text on them still reads; contrast holds up to 0.3.
 - --yeti-chroma-neutral (hue): 0 — How much of the neutral hue the greys carry: surfaces, text, borders and the neutral roles. 0, the default, makes them true greys; 0.02 is a faint tint; much above 0.04 and the page reads as tinted.
 - --yeti-brand-primary (hue): unset — Optional primary brand color, any color. When set, the primary base step is this color exactly and the other primary steps and tones are worked out from it; when not set, --yeti-hue-primary is used.
 - --yeti-brand-secondary (hue): unset — Optional secondary brand color, any color. When set, the secondary base step is this color exactly and the other secondary steps and tones are worked out from it; when not set, --yeti-hue-secondary is used.
@@ -4154,13 +4154,15 @@ Put a strong red beside a soft blue and the red looks more important, whether yo
 </div>
 ```
 
-`--yeti-chroma` is one number for a site's whole temperament: near `0.05` it is quiet, and at the default `0.15` it is clear. Going higher costs contrast, for the reason below.
+`--yeti-chroma` is one number for a site's whole temperament: near `0.05` it is quiet, and at the default `0.15` it is clear. Going higher has a cost, for the reason below.
 
 One number does not mean every step gets all of it. A pale tint at full chroma is a highlighter pen, and words have to sit on it. So the base and strong steps take all of the chroma, the soft step 70% of it, the subtle step 40%, and words in the hue 80%.
 
 Screens set a limit too. How colorful a color can be depends on its hue and its lightness, and the edge is uneven: at the base step's 0.52, an ordinary screen can show violet far past `0.15`, while teal stops near `0.09` and amber near `0.11`. Past the edge the browser shows the nearest color it can, so teal looks quieter than the others and may shift a little. A wide-gamut screen shows more.
 
-That edge is why `0.15` is a good place to stop. The color a screen falls back to is a little brighter, so the words on it lose contrast. At `0.15` the weakest hue, near teal, holds about 4.6:1 in light mode. At `0.2` it is about 4.2:1, under what body text needs. If you raise the chroma, check your own hue. At `0.08` or lower, the base step of every hue fits on an ordinary screen, so all six match.
+That edge is why `0.15` is the default. The color a screen falls back to is a little brighter, so the words on it lose contrast. At `0.15` the weakest hue, near teal, holds about 4.6:1 in light mode. At `0.2` and the same lightness it would hold about 4.2:1, under what body text needs.
+
+So above `0.15` Yeti gives up a little lightness to keep the words. In light mode the base step and its hover step go darker by 0.004 for each 0.01 of chroma: at `0.25` the base sits at 0.48 and not 0.52. Every hue then holds 4.5:1 up to a chroma of `0.3`. Past that, check your own hue. At `0.08` or lower, the base step of every hue fits on an ordinary screen, so all six match.
 
 ### Hue is the brand decision
 
@@ -4268,7 +4270,9 @@ The page's greys do not follow a brand color, and do not need to: surfaces, text
 
 Two of the six steps exist only so that words read. `--yeti-on-primary` is what goes *on* the base color: it is near white in light mode, where the base is dark enough to carry it, and near black in dark mode, where the base is lifted to carry that instead. With a brand color it is black or white, whichever reads on that color. `--yeti-color-primary-text` is the hue *as* text on the page, pushed far enough from the surface to be read at body size. Reach for `on-` when you paint something the hue and put words on it; reach for `-text` when the words themselves are the hue.
 
-These are promises, not intentions. The browser tests check them at every hue angle in steps of thirty degrees, in both schemes:
+These are promises, not intentions. The browser tests check them at every hue angle, at chromas from `0.05` to `0.3`, in both schemes:
+
+<div class="scroller" role="region" aria-label="The contrast each pair holds" tabindex="0" markdown="1">
 
 | Pair | Holds at least |
 | --- | --- |
@@ -4278,9 +4282,13 @@ These are promises, not intentions. The browser tests check them at every hue an
 | `-text` of every hue on the page surface | 4.5:1 |
 | page text on every `-subtle` tint | 7:1 |
 
-A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved.
+</div>
 
-A brand color keeps its own set. The browser tests check these over a grid of brand colors from black to white, in both schemes:
+A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved. A theme that raises the chroma keeps them up to `0.3`, because the base step [goes darker to make room](#chroma-is-how-loud).
+
+A brand color keeps its own set. The browser tests check these over a grid of brand colors from black to white, in both schemes, at the default chroma and at `0.25`:
+
+<div class="scroller" role="region" aria-label="The contrast each pair holds with a brand color" tabindex="0" markdown="1">
 
 | Pair | Holds at least |
 | --- | --- |
@@ -4289,6 +4297,8 @@ A brand color keeps its own set. The browser tests check these over a grid of br
 | the `-line` step on the page surface | 4.5:1 |
 | `-text` on `-subtle` | 4.5:1 |
 | `-text` on `-soft` | 4.5:1 |
+
+</div>
 
 Page text on a `-subtle` tint still reaches 7:1.
 
@@ -4629,10 +4639,14 @@ Yeti leaves that rule to you for two reasons. Cross-document view transitions ar
 
 What Yeti does supply is the timing:
 
+<div class="scroller" role="region" aria-label="The timing tokens" tabindex="0" markdown="1">
+
 | Token | Default | |
 | --- | --- | --- |
 | `--yeti-page-duration` | `200ms` | How long the crossfade takes |
 | `--yeti-page-ease` | `ease` | The curve it runs on |
+
+</div>
 
 The animation itself stays the browser's. Its crossfade already blends the two snapshots correctly, which a hand-written pair of opacity keyframes does not: those dip through the page background halfway unless they also carry `mix-blend-mode`. Yeti changes when it runs, not what it does.
 

@@ -184,6 +184,8 @@ A module finds its own elements and is safe on a page that has none of them. Lea
 
 A module says what it did. Each dispatches one `CustomEvent` on the component's own element, bubbling and composed, so a single listener on `document` hears every instance on the page:
 
+<div class="scroller" role="region" aria-label="The events each module dispatches" tabindex="0" markdown="1">
+
 | Event | Dispatched on | Detail |
 | --- | --- | --- |
 | `yeti:close` | the `.alert`, before it is removed | none |
@@ -193,6 +195,8 @@ A module says what it did. Each dispatches one `CustomEvent` on the component's 
 | `yeti:slide` | the `.carousel` | `{ index, slide }` |
 | `yeti:invalid` | the `form`, when a submit is refused | `{ controls }` |
 | `yeti:current` | the `.toc`, when the mark moves | `{ link, heading }` |
+
+</div>
 
 ```html
 <script type="module">

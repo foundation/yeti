@@ -109,6 +109,8 @@ There is a fourth tool, and it is fourth on purpose: `data-show` and `data-hide`
 
 ## Who reads which width
 
+<div class="scroller" role="region" aria-label="Which attribute reads which width" tabindex="0" markdown="1">
+
 | Attribute | On | What the width means |
 | --- | --- | --- |
 | `data-threshold` | `columns`, `hero`, `nav`, `pagination` | at or above it, the wide form |
@@ -117,5 +119,7 @@ There is a fourth tool, and it is fourth on purpose: `data-show` and `data-hide`
 | `data-min` | `grid`, `masonry` | the narrowest a column may be before one drops, or `none`, which leaves the count to `data-columns` |
 | `data-show` | anything inside a `container` or another size container | shown from the stop up |
 | `data-hide` | anything inside a `container` or another size container | hidden from the stop up |
+
+</div>
 
 The values are the eight stops above, `none` aside, and every one of them is a token: `--yeti-width-sm` is `24rem` until a theme says otherwise.

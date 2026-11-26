@@ -37,10 +37,14 @@ Yeti leaves that rule to you for two reasons. Cross-document view transitions ar
 
 What Yeti does supply is the timing:
 
+<div class="scroller" role="region" aria-label="The timing tokens" tabindex="0" markdown="1">
+
 | Token | Default | |
 | --- | --- | --- |
 | `--yeti-page-duration` | `200ms` | How long the crossfade takes |
 | `--yeti-page-ease` | `ease` | The curve it runs on |
+
+</div>
 
 The animation itself stays the browser's. Its crossfade already blends the two snapshots correctly, which a hand-written pair of opacity keyframes does not: those dip through the page background halfway unless they also carry `mix-blend-mode`. Yeti changes when it runs, not what it does.
 
