@@ -223,6 +223,29 @@ test('generateDocs reads docs.md from the component folder', () => {
 	assert.ok(fs.readFileSync(path.join(root, 'docs/rail.md'), 'utf8').includes('## Why this name'));
 });
 
+test('an html demo block in a component\'s docs.md is a live figure named after its heading', () => {
+	const docs = '## Wide\n\nProse.\n\n```html demo md\n<div class="rail"><p>One</p></div>\n```\n\n```html\n<p>Stays code.</p>\n```\n';
+	const root = makeTree(validTree({ 'src/layouts/rail/docs.md': docs }));
+	const r = generateDocs({ root, demoStylesheet: ['/site/yeti.css'] });
+	assert.deepEqual(r.errors, []);
+	const page = fs.readFileSync(path.join(root, 'docs/rail.md'), 'utf8');
+	assert.ok(page.includes('<figure class="demo" data-height="md">'), 'the block is a demo figure');
+	assert.ok(page.includes('data-preview="Wide"'), 'the frame is named after the section');
+	// The page's own Example and the prose demo are both framed with the host's stylesheet.
+	assert.equal(page.split('/site/yeti.css').length - 1, 2);
+	assert.ok(page.includes('```html\n<p>Stays code.</p>\n```'), 'a plain block is still a code block');
+});
+
+test('a bad demo fence in a component\'s docs.md is reported at its line, and that page is not written', () => {
+	const root = makeTree(validTree({ 'src/layouts/rail/docs.md': '## Wide\n\n```html demo huge\n<p>a</p>\n```\n' }));
+	const r = generateDocs({ root });
+	assert.equal(r.errors.length, 1);
+	assert.ok(r.errors[0].file.endsWith(path.join('src', 'layouts', 'rail', 'docs.md')));
+	assert.equal(r.errors[0].line, 3);
+	assert.match(r.errors[0].message, /unknown token huge/);
+	assert.ok(!fs.existsSync(path.join(root, 'docs/rail.md')));
+});
+
 test('a recipe renders into the Recipes group', () => {
 	const page = renderPage({ manifest: validManifest({ name: 'duo', kind: 'recipe', class: 'duo' }), exampleHtml: '<div class="duo"><p>a</p><p>b</p></div>\n', navOrder: 1 });
 	assert.ok(page.includes('nav_group: "Recipes"'));

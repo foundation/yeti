@@ -68,6 +68,9 @@ export function escapeAttribute(text) {
 	return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// What a demo frame loads when the caller names no stylesheet of its own.
+const DEFAULT_DEMO_STYLESHEET = '/yeti/yeti.css';
+
 // The example twice: framed, so it renders live with only Yeti's stylesheet
 // inside; and fenced, so a renderer that strips iframes, GitHub among them,
 // still shows the code. The blank lines are load-bearing: a raw HTML block
@@ -142,7 +145,7 @@ function range(child) {
 	return `${min} to ${max}`;
 }
 
-export function renderPage({ manifest: m, exampleHtml, navOrder, docsMd = '', demoStylesheet = '/yeti/yeti.css' }) {
+export function renderPage({ manifest: m, exampleHtml, navOrder, docsMd = '', demoStylesheet = DEFAULT_DEMO_STYLESHEET }) {
 	const title = titleCase(m.name);
 	const dir = KIND_TO_DIR[m.kind];
 	const out = [];
@@ -374,7 +377,10 @@ export function headingText(text) {
 	return text.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/`/g, '').trim();
 }
 
-/** Every `html demo` block replaced by its figure; every other block passed through as it is. */
+/**
+ * Every `html demo` block replaced by its figure; every other block passed through as it is.
+ * Used for a guide and for a component's docs.md alike.
+ */
 export function renderGuideDemos(markdown, { file, title, stylesheet }) {
 	const lines = markdown.split('\n');
 	const out = [];
@@ -436,7 +442,7 @@ export function renderGuideDemos(markdown, { file, title, stylesheet }) {
 // prose, the attribute markers and the fenced examples, and the rendered page
 // carries the mark saying so, the filled table and, from here on, the demo
 // figures. Nothing under docs/ is a source any more.
-export function renderGuide({ markdown, source, file, table, merged, demoStylesheet = '/yeti/yeti.css' }) {
+export function renderGuide({ markdown, source, file, table, merged, demoStylesheet = DEFAULT_DEMO_STYLESHEET }) {
 	// The demos are rendered first, from the source exactly as it was written, so
 	// a bad info string is reported at the line the author will find it on: the
 	// table pass inserts about forty lines above the layouts guide's last two
@@ -508,6 +514,7 @@ export function generateDocs({ root, demoStylesheet, outDir }) {
 	const written = [];
 	// Ordered within the nav group, not the kind, or two pages in one group
 	// would each think they were first.
+	const proseErrors = [];
 	const byGroup = {};
 	for (const entry of entries) (byGroup[groupOf(entry.manifest)] ??= []).push(entry);
 	for (const group of Object.values(byGroup)) {
@@ -515,9 +522,22 @@ export function generateDocs({ root, demoStylesheet, outDir }) {
 		group.forEach((entry, i) => {
 			const exampleHtml = fs.readFileSync(path.join(entry.dir, 'example.html'), 'utf8');
 			const docsMdFile = path.join(entry.dir, 'docs.md');
-			const docsMd = fs.existsSync(docsMdFile) ? fs.readFileSync(docsMdFile, 'utf8') : '';
+			// A component's prose takes the same `html demo` blocks a guide
+			// does, so a section can show the thing it describes and not only
+			// its markup. Each is named after the section heading above it;
+			// the page's own Example already carries the component's name.
+			const prose = fs.existsSync(docsMdFile)
+				? renderGuideDemos(fs.readFileSync(docsMdFile, 'utf8'), { file: docsMdFile, title: titleCase(entry.manifest.name), stylesheet: demoStylesheet ?? DEFAULT_DEMO_STYLESHEET })
+				: { markdown: '', errors: [] };
+			// A bad fence leaves this page unwritten, as it does a guide: the
+			// run fails either way, and a page with a broken demo is worse
+			// than last run's page.
+			if (prose.errors.length) {
+				proseErrors.push(...prose.errors);
+				return;
+			}
 			const file = path.join(docsDir, `${entry.name}.md`);
-			fs.writeFileSync(file, renderPage({ manifest: entry.manifest, exampleHtml, navOrder: i + 1, docsMd, demoStylesheet }));
+			fs.writeFileSync(file, renderPage({ manifest: entry.manifest, exampleHtml, navOrder: i + 1, docsMd: prose.markdown, demoStylesheet }));
 			written.push(file);
 		});
 	}
@@ -584,7 +604,7 @@ export function generateDocs({ root, demoStylesheet, outDir }) {
 			deleted.push(file);
 		}
 	}
-	return { written, deleted, errors: guideErrors };
+	return { written, deleted, errors: [...proseErrors, ...guideErrors] };
 }
 
 /** True only when the generated mark is the first thing after the front matter block. */
