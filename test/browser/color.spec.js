@@ -74,16 +74,51 @@ for (const scheme of ['light', 'dark']) {
 		});
 	});
 
-	test(`hue sweep holds contrast in ${scheme}`, async ({ page }) => {
+	// Every hue angle, at each chroma: what the two themes ship (0.05 and
+	// 0.12 sit under the default and read better than it), the default, and
+	// as far above it as a theme might go. The weakest hue is near teal, 190,
+	// which a sweep in steps of thirty degrees stepped over. One evaluate per
+	// chroma returns every pair of colors, so 360 angles cost one round trip.
+	test(`every hue holds contrast at every chroma in ${scheme}`, async ({ page }) => {
 		await page.emulateMedia({ colorScheme: scheme });
 		await page.addInitScript(PAGE_HELPERS);
 		await page.goto('/test/browser/fixtures/hues.html');
-		for (let hue = 0; hue < 360; hue += 30) {
-			await page.evaluate((h) => document.documentElement.style.setProperty('--yeti-hue-primary', String(h)), hue);
-			expect(await ratio(page, '#primary'), `on-primary at hue ${hue}`).toBeGreaterThanOrEqual(4.5);
-			expect(await ratio(page, '#primary-text'), `primary-text at hue ${hue}`).toBeGreaterThanOrEqual(4.5);
-			expect(await ratio(page, '#page'), `surface at hue ${hue}`).toBeGreaterThanOrEqual(7);
-			expect(await ratio(page, '#primary-on-surface'), `primary on surface at hue ${hue}`).toBeGreaterThanOrEqual(4.5);
+		const PAIRS = { '#primary': 4.5, '#primary-text': 4.5, '#page': 7, '#primary-on-surface': 4.5, '#primary-subtle': 7 };
+		for (const chroma of [0.05, 0.15, 0.2, 0.25, 0.3]) {
+			const rows = await page.evaluate(([c, selectors]) => {
+				const root = document.documentElement;
+				root.style.setProperty('--yeti-chroma', String(c));
+				const out = [];
+				for (let hue = 0; hue < 360; hue += 1) {
+					root.style.setProperty('--yeti-hue-primary', String(hue));
+					out.push(selectors.map((s) => [window.__yeti.bg(s), window.__yeti.fg(s)]));
+				}
+				return out;
+			}, [chroma, Object.keys(PAIRS)]);
+			expect(rows.length).toBe(360);
+			Object.entries(PAIRS).forEach(([selector, least], i) => {
+				const ratios = rows.map((row) => contrast(...row[i]));
+				const weakest = Math.min(...ratios);
+				expect(weakest, `${selector} at chroma ${chroma}, weakest at hue ${ratios.indexOf(weakest)}`).toBeGreaterThanOrEqual(least);
+			});
 		}
+	});
+
+	// A region works its accents out again from its own inputs, so a chroma
+	// raised on the region alone has to reach the base step there too. Teal
+	// at 0.25 is the pair that drops to 3.9:1 at the ladder's own lightness.
+	test(`a data-palette region that raises the chroma keeps its contrast in ${scheme}`, async ({ page }) => {
+		await page.emulateMedia({ colorScheme: scheme });
+		await page.addInitScript(PAGE_HELPERS);
+		await page.goto('/test/browser/fixtures/hues.html');
+		await page.evaluate(() => {
+			const region = document.createElement('div');
+			region.setAttribute('data-palette', '');
+			region.style.cssText = '--yeti-chroma: 0.25; --yeti-hue-primary: 190';
+			region.append(document.getElementById('primary'), document.getElementById('primary-on-surface'));
+			document.querySelector('main').append(region);
+		});
+		expect(await ratio(page, '#primary')).toBeGreaterThanOrEqual(4.5);
+		expect(await ratio(page, '#primary-on-surface')).toBeGreaterThanOrEqual(4.5);
 	});
 }

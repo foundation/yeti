@@ -175,29 +175,35 @@ test('with a brand color set, the base step is the brand color', async ({ page }
 	}
 });
 
-test('3E: over a grid of brand colors, text and lines keep their contrast', async ({ page }) => {
-	const rows = await sweep(page, {
-		base: 'var(--yeti-color-primary)',
-		strong: 'var(--yeti-color-primary-strong)',
-		on: 'var(--yeti-on-primary)',
-		line: 'var(--yeti-color-primary-line)',
-		subtle: 'var(--yeti-color-primary-subtle)',
-		soft: 'var(--yeti-color-primary-soft)',
-		text: 'var(--yeti-color-primary-text)',
-		surface: 'var(--yeti-color-surface)',
-	});
-	const low = [];
-	for (const v of rows) {
-		const pairs = { 'on/base': [v.on, v.base], 'on/strong': [v.on, v.strong], 'line/surface': [v.line, v.surface], 'text/subtle': [v.text, v.subtle], 'text/soft': [v.text, v.soft] };
-		for (const [name, [a, b]] of Object.entries(pairs)) {
-			if (!a || !b) { low.push(`${v.scheme} ${v.color} ${name} did not resolve`); continue; }
-			const r = ratio(a, b);
-			if (r < 4.5) low.push(`${v.scheme} ${v.color} ${name} ${r.toFixed(3)}`);
+// The default chroma, and one a theme might raise it to. The tints and the
+// text and line steps take the brand's chroma up to --yeti-chroma, so a
+// higher one lets a neon brand color through at full strength.
+for (const chroma of [0.15, 0.25]) {
+	test(`3E: over a grid of brand colors, text and lines keep their contrast at chroma ${chroma}`, async ({ page }) => {
+		await setRoot(page, '--yeti-chroma', String(chroma));
+		const rows = await sweep(page, {
+			base: 'var(--yeti-color-primary)',
+			strong: 'var(--yeti-color-primary-strong)',
+			on: 'var(--yeti-on-primary)',
+			line: 'var(--yeti-color-primary-line)',
+			subtle: 'var(--yeti-color-primary-subtle)',
+			soft: 'var(--yeti-color-primary-soft)',
+			text: 'var(--yeti-color-primary-text)',
+			surface: 'var(--yeti-color-surface)',
+		});
+		const low = [];
+		for (const v of rows) {
+			const pairs = { 'on/base': [v.on, v.base], 'on/strong': [v.on, v.strong], 'line/surface': [v.line, v.surface], 'text/subtle': [v.text, v.subtle], 'text/soft': [v.text, v.soft] };
+			for (const [name, [a, b]] of Object.entries(pairs)) {
+				if (!a || !b) { low.push(`${v.scheme} ${v.color} ${name} did not resolve`); continue; }
+				const r = ratio(a, b);
+				if (r < 4.5) low.push(`${v.scheme} ${v.color} ${name} ${r.toFixed(3)}`);
+			}
 		}
-	}
-	expect(rows.length).toBe(GRID.length * 2);
-	expect(low).toEqual([]);
-});
+		expect(rows.length).toBe(GRID.length * 2);
+		expect(low).toEqual([]);
+	});
+}
 
 test('the hover step shows and moves the right way', async ({ page }) => {
 	const rows = await sweep(page, { base: 'var(--yeti-color-primary)', strong: 'var(--yeti-color-primary-strong)' });

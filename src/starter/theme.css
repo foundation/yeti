@@ -24,7 +24,7 @@
 	/* --yeti-chroma-neutral: 0; */
 	/* The hue of that tint; follows the brand hue. Shows only with a tint. */
 	/* --yeti-hue-neutral: var(--yeti-hue-primary); */
-	/* How saturated the accents are: 0 is grey, 0.15 clear, above 0.2 may clip. */
+	/* How saturated the accents are: 0 is grey, 0.15 clear. Above 0.15 the base step goes a little darker in light mode so text on it still reads. */
 	/* --yeti-chroma: 0.15; */
 	/* A brand color for the primary, any CSS color, in place of its hue. Not
 	   set by default. */
