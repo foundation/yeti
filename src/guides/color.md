@@ -8,7 +8,9 @@ nav_order: 8
 
 # Color
 
-<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page starts with why it is built that way, and then how to use it. The <a href="theming.md">theming guide</a> is how to change it.</p>
+<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page starts with why it is built that way, and then how to use it.</p>
+
+The [theming guide](theming.md) is how to change it.
 
 ## A color is three answers
 
