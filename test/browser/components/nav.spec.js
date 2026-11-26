@@ -1364,7 +1364,11 @@ test.describe('nav', () => {
 	});
 
 	test.describe('More', () => {
-		const openMore = async (page, width = 1000) => {
+		// Wide enough for all eight links in any system font. The Mac's fits them
+		// from 958px; the wider one on the CI's Linux needs over 1000, which was
+		// this suite's wide width, so there two links stayed in More.
+		const WIDE = 1200;
+		const openMore = async (page, width = WIDE) => {
 			const response = await page.goto('/test/browser/fixtures/components/nav-more.html');
 			expect(response.status()).toBe(200);
 			await stage(page, width);
@@ -1390,12 +1394,16 @@ test.describe('nav', () => {
 		const frames = (page) => page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
 		test('a wide nav keeps every link in the bar, and More has no box', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
+			// The module decides when the nav's size is first reported, a frame
+			// after load; read before that, every link is in the bar whatever
+			// it would decide.
+			await frames(page);
 			expect(await where(page)).toEqual(wide);
 		});
 
 		test('narrowed above the threshold, the links that do not fit move into More, in order, and the bar is one line inside the nav', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await stage(page, 700);
 			await settles(page, { hidden: false, box: true });
 			const { bar, more } = await where(page);
@@ -1417,23 +1425,23 @@ test.describe('nav', () => {
 		test('widened again, every link is back in the bar in order and More is hidden and empty', async ({ page }) => {
 			await openMore(page, 700);
 			await settles(page, { hidden: false });
-			await stage(page, 1000);
+			await stage(page, WIDE);
 			await settles(page, wide);
 		});
 
 		test('narrowing or widening in steps ends where one step does, and a resize that changes nothing moves nothing', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await stage(page, 640);
 			await settles(page, { hidden: false });
 			const once = await where(page);
-			await stage(page, 1000);
+			await stage(page, WIDE);
 			await settles(page, wide);
-			for (const width of [950, 900, 850, 800, 750, 700, 640]) {
+			for (const width of [1000, 950, 900, 850, 800, 750, 700, 640]) {
 				await stage(page, width);
 				await frames(page);
 			}
 			await settles(page, once);
-			for (const width of [700, 750, 800, 850, 900, 950, 1000]) {
+			for (const width of [700, 750, 800, 850, 900, 950, 1000, WIDE]) {
 				await stage(page, width);
 				await frames(page);
 			}
@@ -1505,7 +1513,7 @@ test.describe('nav', () => {
 		});
 
 		test('focus on a link that moves into More goes to the More button, and on one that comes back stays on it; never on the page', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await page.focus('#m-news-link');
 			// From here on, every frame is checked.
 			await page.evaluate(() => {
@@ -1520,7 +1528,7 @@ test.describe('nav', () => {
 			await page.keyboard.press('Enter');
 			await settle(page, '#m-more-menu');
 			await page.focus('#m-news-link');
-			await stage(page, 1000);
+			await stage(page, WIDE);
 			await settles(page, wide);
 			expect(await page.evaluate(() => document.activeElement.id)).toBe('m-news-link');
 			expect(await isOpen(page, 'm-more-menu')).toBe(false);
@@ -1570,8 +1578,8 @@ test.describe('nav', () => {
 
 		test('without the module More has no box at any width, and every link stays in the list', async ({ page }) => {
 			await withoutModule(page, 'nav');
-			await openMore(page, 1000);
-			for (const width of [1000, 700, 400]) {
+			await openMore(page, WIDE);
+			for (const width of [WIDE, 700, 400]) {
 				await stage(page, width);
 				await frames(page);
 				expect(await where(page), String(width)).toEqual(wide);
@@ -1582,7 +1590,7 @@ test.describe('nav', () => {
 			const errors = [];
 			page.on('pageerror', (error) => errors.push(String(error)));
 			page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await page.evaluate(() => {
 				window.touched = 0;
 				new MutationObserver((records) => { window.touched += records.length; }).observe(document.getElementById('plain-nav'), { subtree: true, childList: true, attributes: true });
@@ -1594,7 +1602,7 @@ test.describe('nav', () => {
 				document.getElementById('m-pricing-link').textContent = 'Plans and pricing';
 				document.getElementById('more-brand').textContent = 'The Copper Pan Company';
 			});
-			for (const width of [700, 400, 1000, 640]) {
+			for (const width of [700, 400, WIDE, 640]) {
 				await stage(page, width);
 				await frames(page);
 			}
@@ -1640,7 +1648,7 @@ test.describe('nav', () => {
 				}
 				await page.focus('#m-more-trigger');
 				await watchFocus(page);
-				await stage(page, 1000);
+				await stage(page, WIDE);
 				await settles(page, wide);
 				await expect.poll(() => focused(page), String(opened)).toBe('m-news-link');
 				await frames(page);
@@ -1747,8 +1755,8 @@ test.describe('nav', () => {
 			}
 			await page.keyboard.press('Escape');
 			// Above the threshold: the top bar, the icon before the label.
-			await page.setViewportSize({ width: 1000, height: 700 });
-			await stage(page, 1000);
+			await page.setViewportSize({ width: 1280, height: 700 });
+			await stage(page, WIDE);
 			await expect.poll(() => style(page, '#bar-menu', 'position')).toBe('static');
 			const top = await icon(page, 'b-1');
 			expect(top.svg.width).toBeCloseTo(top.em, 0);
@@ -1758,7 +1766,7 @@ test.describe('nav', () => {
 		});
 
 		test('an img with its own width and height keeps that size in a top-bar link and in a panel row', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await settles(page, wide);
 			// An avatar or a logo: an img with width and height attributes.
 			await page.evaluate(() => {
@@ -1779,7 +1787,7 @@ test.describe('nav', () => {
 		});
 
 		test('an icon-only link in the top bar has no space after its icon', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			await settles(page, wide);
 			await page.evaluate(() => {
 				const link = document.getElementById('m-home-link');
@@ -1793,7 +1801,7 @@ test.describe('nav', () => {
 		});
 
 		test('has no accessibility violations, wide, with More shown and open, and behind the toggle', async ({ page }) => {
-			await openMore(page, 1000);
+			await openMore(page, WIDE);
 			expect(await axe(page)).toEqual([]);
 			await stage(page, 700);
 			await settles(page, { hidden: false });

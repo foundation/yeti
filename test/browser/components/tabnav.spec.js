@@ -250,6 +250,10 @@ test.describe('tabnav', () => {
 		const faded = await supports(page, 'animation-timeline: scroll()');
 		const ltr = await style(page, '#tn-long > ul', 'mask-image');
 		await page.evaluate(() => { document.getElementById('stage').dir = 'rtl'; });
+		// In a system font wider than the Mac's, such as the CI's on Linux, even
+		// the short row is wider than 320px, and Chromium starts it scrolled to
+		// the current link. The first link is at the right at the row's start.
+		await scrollTo(page, '#tn > ul', 'start');
 		const [short, code] = await Promise.all([rect(page, '#tn > ul'), rect(page, '#tn-code')]);
 		expect(Math.abs(code.right - short.right)).toBeLessThanOrEqual(0.5);
 		expect(await listScrolls(page, '#tn-long > ul')).toBe(true);
