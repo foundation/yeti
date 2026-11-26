@@ -65,6 +65,12 @@ One list of links, two modes. The list carries `popover` and the button carries 
 
 `data-panel` chooses the shape of the open list. `sheet`, the default, hangs under the bar at the full width. `drawer` slides in from the start edge as a column with the page dimmed behind it. `screen` fills the viewport with the links large and centred. `bar` is not a panel that opens: it puts the links in a row along the bottom of the screen, and has a section of its own below. Where anchor positioning exists the sheet sits exactly under the bar; elsewhere it starts at the top of the viewport and covers the bar, and Escape or a click outside still closes it. A close item, an `li` carrying `data-close` with a button that hides the popover, sits in the panel's top end corner and disappears in the bar; `screen` needs one, since there is no outside to click.
 
+<figure class="demo" data-height="md" data-width="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot; data-threshold=&quot;sm&quot; data-panel=&quot;drawer&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;button type=&quot;button&quot; popovertarget=&quot;menu&quot; aria-label=&quot;Menu&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 4h12M2 8h12M2 12h12&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;&#10;	&lt;ul id=&quot;menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li data-close&gt;&lt;button type=&quot;button&quot; popovertarget=&quot;menu&quot; popovertargetaction=&quot;hide&quot; aria-label=&quot;Close&quot;&gt;×&lt;/button&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Docs&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Blog&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="nav" aria-label="Site" data-threshold="sm" data-panel="drawer">
 	<a href="#" data-brand>Yeti</a>
@@ -76,6 +82,9 @@ One list of links, two modes. The list carries `popover` and the button carries 
 	</ul>
 </nav>
 ```
+
+</details>
+</figure>
 
 A panel that is open stays a panel until it is dismissed, whatever the nav's width; widening past the threshold does not return the links to the bar on its own. Escape or a click outside closes the panel, and only then do the links return to the bar. `data-threshold` is the attribute `columns` uses, so a nav and the columns under it can switch at the same width.
 
@@ -121,17 +130,28 @@ Many phone designs keep the main links in a row along the bottom of the screen, 
 
 Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, an `svg` icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. An `img` keeps its own size there, so give it a `width` and a `height` that suit both places. There is no toggle in this mode, so you can leave it out:
 
+<figure class="demo" data-height="md" data-width="sm">
+<div data-preview="A bar at the bottom of the screen"><iframe title="A bar at the bottom of the screen, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot; data-panel=&quot;bar&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;ul id=&quot;bar-menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 8l6-6 6 6M4 7v7h8V7&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;/svg&gt;Home&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;circle cx=&quot;7&quot; cy=&quot;7&quot; r=&quot;5&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;path d=&quot;M11 11l4 4&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;/svg&gt;Search&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 9l2-6h8l2 6v4H2zM2 9h4l1 2h2l1-2h4&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;/svg&gt;Inbox&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;circle cx=&quot;8&quot; cy=&quot;5&quot; r=&quot;3&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;path d=&quot;M2 15c0-3 3-5 6-5s6 2 6 5&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot;/&gt;&lt;/svg&gt;Account&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="nav" aria-label="Site" data-panel="bar">
-	<a href="/" data-brand>Yeti</a>
-	<ul id="menu" popover role="list">
-		<li><a href="/" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Home</a></li>
-		<li><a href="/search/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Search</a></li>
-		<li><a href="/inbox/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Inbox</a></li>
-		<li><a href="/account/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Account</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<ul id="bar-menu" popover role="list">
+		<li><a href="#" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 9l2-6h8l2 6v4H2zM2 9h4l1 2h2l1-2h4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Inbox</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a></li>
 	</ul>
 </nav>
 ```
+
+</details>
+</figure>
+
+Drag the demo's frame wider and the links go back to the top bar.
 
 The label is the link's name, so the icon is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. The current page's link is marked as it is in the top bar, with the same color and weight.
 
@@ -157,36 +177,44 @@ A fixed bar is placed against the screen only while no ancestor of the nav has a
 
 A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
 
+<figure class="demo" data-height="md">
+<div data-preview="Submenus"><iframe title="Submenus, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot; data-panel=&quot;drawer&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;button type=&quot;button&quot; popovertarget=&quot;sub-menu&quot; aria-label=&quot;Menu&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 4h12M2 8h12M2 12h12&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;&#10;	&lt;ul id=&quot;sub-menu&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;a href=&quot;#&quot;&gt;About&lt;/a&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;sub-menu-about&quot; aria-label=&quot;About pages&quot;&gt;&lt;/button&gt;&#10;			&lt;ul id=&quot;sub-menu-about&quot; popover role=&quot;list&quot;&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;History&lt;/a&gt;&lt;/li&gt;&#10;				&lt;li class=&quot;dropdown&quot;&gt;&#10;					&lt;a href=&quot;#&quot;&gt;Team&lt;/a&gt;&#10;					&lt;button type=&quot;button&quot; popovertarget=&quot;sub-menu-about-team&quot; aria-label=&quot;Team pages&quot;&gt;&lt;/button&gt;&#10;					&lt;ul id=&quot;sub-menu-about-team&quot; popover role=&quot;list&quot;&gt;&#10;						&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Joe&lt;/a&gt;&lt;/li&gt;&#10;					&lt;/ul&gt;&#10;				&lt;/li&gt;&#10;			&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot;&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;sub-menu-more&quot;&gt;More&lt;/button&gt;&#10;			&lt;ul id=&quot;sub-menu-more&quot; popover role=&quot;list&quot;&gt;&#10;				&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Changelog&lt;/a&gt;&lt;/li&gt;&#10;			&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="nav" aria-label="Site" data-panel="drawer">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/">Home</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="sub-menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="sub-menu" popover role="list">
+		<li><a href="#">Home</a></li>
 		<li class="dropdown">
-			<a href="/about/">About</a>
-			<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
-			<ul id="menu-about" popover role="list">
-				<li><a href="/about/history/">History</a></li>
+			<a href="#">About</a>
+			<button type="button" popovertarget="sub-menu-about" aria-label="About pages"></button>
+			<ul id="sub-menu-about" popover role="list">
+				<li><a href="#">History</a></li>
 				<li class="dropdown">
-					<a href="/about/team/">Team</a>
-					<button type="button" popovertarget="menu-about-team" aria-label="Team pages"></button>
-					<ul id="menu-about-team" popover role="list">
-						<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					<a href="#">Team</a>
+					<button type="button" popovertarget="sub-menu-about-team" aria-label="Team pages"></button>
+					<ul id="sub-menu-about-team" popover role="list">
+						<li><a href="#" aria-current="page">Joe</a></li>
 					</ul>
 				</li>
 			</ul>
 		</li>
 		<li class="dropdown">
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list">
-				<li><a href="/changelog/">Changelog</a></li>
+			<button type="button" popovertarget="sub-menu-more">More</button>
+			<ul id="sub-menu-more" popover role="list">
+				<li><a href="#">Changelog</a></li>
 			</ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
+
+</details>
+</figure>
 
 In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight. A grouped dropdown's heading keeps its strong weight and only changes color.
 
@@ -210,23 +238,36 @@ A bar with many links runs out of room before it reaches its threshold, and its 
 
 You write the More item yourself, as the last item of the list, hidden. A close item, if the nav has one, may come after it:
 
+<figure class="demo" data-height="md" data-width="lg">
+<div data-preview="Links that do not fit: a More menu"><iframe title="Links that do not fit: a More menu, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;nav&quot; aria-label=&quot;Site&quot;&gt;&#10;	&lt;a href=&quot;#&quot; data-brand&gt;Yeti&lt;/a&gt;&#10;	&lt;button type=&quot;button&quot; popovertarget=&quot;more-list&quot; aria-label=&quot;Menu&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 16 16&quot;&gt;&lt;path d=&quot;M2 4h12M2 8h12M2 12h12&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;&#10;	&lt;ul id=&quot;more-list&quot; popover role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Docs&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Guides&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Components&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Layouts&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Examples&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Blog&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Pricing&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Changelog&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Community&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li class=&quot;dropdown&quot; data-more hidden&gt;&#10;			&lt;button type=&quot;button&quot; popovertarget=&quot;more-list-more&quot;&gt;More&lt;/button&gt;&#10;			&lt;ul id=&quot;more-list-more&quot; popover role=&quot;list&quot;&gt;&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="nav" aria-label="Site">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/docs/">Docs</a></li>
-		<li><a href="/guides/">Guides</a></li>
-		<li><a href="/blog/">Blog</a></li>
-		<li><a href="/pricing/">Pricing</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="more-list" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="more-list" popover role="list">
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">Guides</a></li>
+		<li><a href="#">Components</a></li>
+		<li><a href="#">Layouts</a></li>
+		<li><a href="#">Examples</a></li>
+		<li><a href="#">Blog</a></li>
+		<li><a href="#">Pricing</a></li>
+		<li><a href="#">Changelog</a></li>
+		<li><a href="#">Community</a></li>
 		<li class="dropdown" data-more hidden>
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list"></ul>
+			<button type="button" popovertarget="more-list-more">More</button>
+			<ul id="more-list-more" popover role="list"></ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
+
+</details>
+</figure>
 
 The label and the id are yours, so you can write the label in your page's language. The script creates no markup. It needs `nav.js`. Without it the More item stays hidden and the nav works exactly as it does without one.
 

@@ -47,6 +47,12 @@ A tab list of buttons over their panels. The CSS styles the list and marks the s
 
 Load the module and it pairs every tab with the panel its `aria-controls` names, shows one, hides the rest, and takes over the keyboard: arrows move selection, Home and End jump to the ends, and only the selected tab is in the tab order, so Tab leaves the list rather than walking it. A link into a hidden panel opens its tab: on load and on every `hashchange` the module looks for the URL's fragment inside a panel and, if it finds one, selects that panel's tab and brings the target into view, without moving keyboard focus to the tab. Tabs may nest inside another tab's panel: each set keeps its own selection and its own arrow keys, and a link into the inner set opens every enclosing panel on the way. `data-emphasis="high"` fills the selected tab with the variant instead of underlining it, its top corners (or, in a vertical list, the corners away from the divider) rounded like any other filled control.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;tabs&quot; data-emphasis=&quot;high&quot;&gt;&#10;	&lt;div role=&quot;tablist&quot; aria-label=&quot;Report&quot;&gt;&#10;		&lt;button type=&quot;button&quot; role=&quot;tab&quot; id=&quot;t-summary&quot; aria-controls=&quot;p-summary&quot; aria-selected=&quot;true&quot;&gt;Summary&lt;/button&gt;&#10;		&lt;button type=&quot;button&quot; role=&quot;tab&quot; id=&quot;t-detail&quot; aria-controls=&quot;p-detail&quot;&gt;Detail&lt;/button&gt;&#10;	&lt;/div&gt;&#10;	&lt;section role=&quot;tabpanel&quot; id=&quot;p-summary&quot; aria-labelledby=&quot;t-summary&quot;&gt;&lt;p&gt;Summary panel.&lt;/p&gt;&lt;/section&gt;&#10;	&lt;section role=&quot;tabpanel&quot; id=&quot;p-detail&quot; aria-labelledby=&quot;t-detail&quot; hidden&gt;&lt;p&gt;Detail panel.&lt;/p&gt;&lt;/section&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="tabs" data-emphasis="high">
 	<div role="tablist" aria-label="Report">
@@ -58,6 +64,15 @@ Load the module and it pairs every tab with the panel its `aria-controls` names,
 </div>
 ```
 
+</details>
+</figure>
+
+<figure class="demo" data-height="sm">
+<div data-preview="How it works (2)"><iframe title="How it works (2), live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;tabs&quot; data-orientation=&quot;vertical&quot;&gt;&#10;	&lt;div role=&quot;tablist&quot; aria-label=&quot;Settings&quot;&gt;&#10;		&lt;button type=&quot;button&quot; role=&quot;tab&quot; id=&quot;t-general&quot; aria-controls=&quot;p-general&quot;&gt;General&lt;/button&gt;&#10;		&lt;button type=&quot;button&quot; role=&quot;tab&quot; id=&quot;t-keys&quot; aria-controls=&quot;p-keys&quot;&gt;API keys&lt;/button&gt;&#10;	&lt;/div&gt;&#10;	&lt;section role=&quot;tabpanel&quot; id=&quot;p-general&quot; aria-labelledby=&quot;t-general&quot;&gt;&lt;p&gt;General settings.&lt;/p&gt;&lt;/section&gt;&#10;	&lt;section role=&quot;tabpanel&quot; id=&quot;p-keys&quot; aria-labelledby=&quot;t-keys&quot;&gt;&lt;p&gt;Your API keys.&lt;/p&gt;&lt;/section&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="tabs" data-orientation="vertical">
 	<div role="tablist" aria-label="Settings">
@@ -68,6 +83,9 @@ Load the module and it pairs every tab with the panel its `aria-controls` names,
 	<section role="tabpanel" id="p-keys" aria-labelledby="t-keys"><p>Your API keys.</p></section>
 </div>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

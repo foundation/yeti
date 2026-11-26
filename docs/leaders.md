@@ -47,16 +47,31 @@ Each child of `leaders` is a row. Its first child is the name and its second is 
 
 The rows can be any elements, so a contents page is a list. `role="list"` takes the list's markers off:
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;ol class=&quot;leaders&quot; role=&quot;list&quot;&gt;&#10;	&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Starters&lt;/a&gt;&lt;span&gt;12&lt;/span&gt;&lt;/li&gt;&#10;	&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Mains&lt;/a&gt;&lt;span&gt;18&lt;/span&gt;&lt;/li&gt;&#10;&lt;/ol&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <ol class="leaders" role="list">
-	<li><a href="#starters">Starters</a><span>12</span></li>
-	<li><a href="#mains">Mains</a><span>18</span></li>
+	<li><a href="#">Starters</a><span>12</span></li>
+	<li><a href="#">Mains</a><span>18</span></li>
 </ol>
 ```
+
+</details>
+</figure>
 
 A row with no value draws no line. The second child is always the value, so a row with a description but no price keeps an empty element in that place, with nothing inside it, not even a space: `<h3>Market fish</h3><strong></strong><p>Ask what came in today.</p>`. A long name wraps, and the line and the value stay on its last line. The line never gets shorter than 1.5rem, so a name that would fill the row wraps sooner to leave room for it.
 
 Anything after the value sits below the row at the full width, which is where a dish's description goes:
+
+<figure class="demo" data-height="sm">
+<div data-preview="How it works (2)"><iframe title="How it works (2), live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;leaders&quot; data-gap=&quot;md&quot;&gt;&#10;	&lt;article&gt;&#10;		&lt;h3&gt;Trout&lt;/h3&gt;&#10;		&lt;strong&gt;$21&lt;/strong&gt;&#10;		&lt;p&gt;With brown butter and almonds.&lt;/p&gt;&#10;	&lt;/article&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <div class="leaders" data-gap="md">
@@ -67,6 +82,9 @@ Anything after the value sits below the row at the full width, which is where a 
 	</article>
 </div>
 ```
+
+</details>
+</figure>
 
 A row can stand alone. `data-row` makes the element the row itself, for a name and a price among other content, with no wrapper around it:
 

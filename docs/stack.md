@@ -62,12 +62,21 @@ The gap is the stack's, but one child can ask for a different gap before it. `da
 
 `data-rule` on the stack draws a line between each pair of children, the border width in the border color, in the middle of the gap; the gap itself does not change, and `data-space` moves the line with it. A legend, a settings list, a run of plan features: anywhere rows want separating without boxing. The line is a `::before` on each child after the first, so a child that already draws its own `::before` keeps its own and loses the line. The line is lost too on a child that clips its overflow, a card, a frame, an accordion or a progress bar, and on a replaced element such as an image, which has no `::before` to draw. A child that is itself a stack still has its line placed by the ruled stack's gap, but a ruled stack directly inside another ruled stack places its line by its own gap, the same limit `data-space` has; give it a plain wrapper.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;dl class=&quot;stack&quot; data-rule data-gap=&quot;sm&quot;&gt;&#10;	&lt;div class=&quot;cluster&quot; data-justify=&quot;between&quot;&gt;&lt;dt&gt;Distance&lt;/dt&gt;&lt;dd data-numeric&gt;14.2 km&lt;/dd&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;cluster&quot; data-justify=&quot;between&quot;&gt;&lt;dt&gt;Ascent&lt;/dt&gt;&lt;dd data-numeric&gt;1,120 m&lt;/dd&gt;&lt;/div&gt;&#10;&lt;/dl&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <dl class="stack" data-rule data-gap="sm">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
 	<div class="cluster" data-justify="between"><dt>Ascent</dt><dd data-numeric>1,120 m</dd></div>
 </dl>
 ```
+
+</details>
+</figure>
 
 A child carrying `data-sticky` stays at `--yeti-sticky-offset` from the top of the scrollport while the rest of the stack scrolls past it, and keeps the full width of the column while it does. A stack stretches its children sideways, and sideways is not the direction a sticky child moves in, so nothing has to be taken away for it to work — which is not true in a row, where the same marker costs the child the row's height.
 

@@ -45,12 +45,21 @@ Two or more buttons that belong together: a form's submit and cancel, a set of v
 
 Loose is a wrapping flex row at `data-gap`. `data-affix` removes the gap, squares the inner corners, and overlaps each border with the next so the seam is one line wide. A focused member is lifted above its neighbours and draws its focus ring inside its own border, where it cannot cross the seam onto the members either side. An affixed group is one control, so it never wraps onto a second row: short of room, its members narrow and their labels wrap inside them.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;buttons&quot; role=&quot;group&quot; aria-label=&quot;Form actions&quot;&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;submit&quot;&gt;Save&lt;/button&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;button&quot; data-emphasis=&quot;low&quot;&gt;Cancel&lt;/button&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="buttons" role="group" aria-label="Form actions">
 	<button class="button" type="submit">Save</button>
 	<button class="button" type="button" data-emphasis="low">Cancel</button>
 </div>
 ```
+
+</details>
+</figure>
 
 A segmented control, one choice of several, is an affixed group of `label.button` members wrapping radios that share one name, inside a `fieldset` whose `legend` names it. The checked one is filled, the arrow keys move the choice, and it submits with the form, all with no script. The fieldset is the named group here, so the div inside it needs no role or label of its own.
 

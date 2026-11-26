@@ -95,25 +95,34 @@ A parent that is not a page has no link. Its button is the label, as in the firs
 
 Any item in a list panel can be a dropdown itself, a split parent or a label, and the same shape repeats at every depth. A submenu flies out beside its own row, toward the inline end (the right in a left-to-right page, the left in a right-to-left one), level with the row's top. Where it would run off the screen it flips to the other side. Where anchor positioning is missing the browser centres every panel, as it does for one level.
 
+<figure class="demo" data-height="md">
+<div data-preview="Submenus"><iframe title="Submenus, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;ul role=&quot;list&quot;&gt;&#10;	&lt;li class=&quot;dropdown&quot;&gt;&#10;		&lt;a href=&quot;#&quot;&gt;About&lt;/a&gt;&#10;		&lt;button type=&quot;button&quot; popovertarget=&quot;menu-/about/&quot; aria-label=&quot;About pages&quot;&gt;&lt;/button&gt;&#10;		&lt;ul id=&quot;menu-/about/&quot; popover role=&quot;list&quot;&gt;&#10;			&lt;li&gt;&lt;a href=&quot;#&quot;&gt;History&lt;/a&gt;&lt;/li&gt;&#10;			&lt;li class=&quot;dropdown&quot;&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Team&lt;/a&gt;&#10;				&lt;button type=&quot;button&quot; popovertarget=&quot;menu-/about/team/&quot; aria-label=&quot;Team pages&quot;&gt;&lt;/button&gt;&#10;				&lt;ul id=&quot;menu-/about/team/&quot; popover role=&quot;list&quot;&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Joe&lt;/a&gt;&lt;/li&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Ana&lt;/a&gt;&lt;/li&gt;&#10;				&lt;/ul&gt;&#10;			&lt;/li&gt;&#10;		&lt;/ul&gt;&#10;	&lt;/li&gt;&#10;&lt;/ul&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <ul role="list">
 	<li class="dropdown">
-		<a href="/about/">About</a>
+		<a href="#">About</a>
 		<button type="button" popovertarget="menu-/about/" aria-label="About pages"></button>
 		<ul id="menu-/about/" popover role="list">
-			<li><a href="/about/history/">History</a></li>
+			<li><a href="#">History</a></li>
 			<li class="dropdown">
-				<a href="/about/team/">Team</a>
+				<a href="#">Team</a>
 				<button type="button" popovertarget="menu-/about/team/" aria-label="Team pages"></button>
 				<ul id="menu-/about/team/" popover role="list">
-					<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
-					<li><a href="/about/team/ana/">Ana</a></li>
+					<li><a href="#" aria-current="page">Joe</a></li>
+					<li><a href="#">Ana</a></li>
 				</ul>
 			</li>
 		</ul>
 	</li>
 </ul>
 ```
+
+</details>
+</figure>
 
 Escape closes the innermost open panel and returns focus to its button. A click outside closes the whole chain. Opening a submenu closes any sibling submenu that was open. All three are the browser's own handling of nested popovers, so there is no script to load for them.
 
@@ -127,32 +136,41 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 `data-grouped` on a dropdown lays its panel out as columns instead of flyouts. Each second-level item that is a split parent becomes a small, strong heading, still a link to its own page, with its pages listed under it, and its button is hidden. Use it for a section with a few groups of pages that a reader should see at once.
 
+<figure class="demo" data-height="md">
+<div data-preview="Grouped"><iframe title="Grouped, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;ul role=&quot;list&quot;&gt;&#10;	&lt;li class=&quot;dropdown&quot; data-grouped&gt;&#10;		&lt;a href=&quot;#&quot;&gt;Products&lt;/a&gt;&#10;		&lt;button type=&quot;button&quot; popovertarget=&quot;menu-products&quot; aria-label=&quot;Products pages&quot;&gt;&lt;/button&gt;&#10;		&lt;ul id=&quot;menu-products&quot; popover role=&quot;list&quot;&gt;&#10;			&lt;li class=&quot;dropdown&quot;&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Design&lt;/a&gt;&#10;				&lt;button type=&quot;button&quot; popovertarget=&quot;menu-products-design&quot; aria-label=&quot;Design pages&quot;&gt;&lt;/button&gt;&#10;				&lt;ul id=&quot;menu-products-design&quot; popover role=&quot;list&quot;&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Sketch&lt;/a&gt;&lt;/li&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Print&lt;/a&gt;&lt;/li&gt;&#10;				&lt;/ul&gt;&#10;			&lt;/li&gt;&#10;			&lt;li class=&quot;dropdown&quot;&gt;&#10;				&lt;a href=&quot;#&quot;&gt;Build&lt;/a&gt;&#10;				&lt;button type=&quot;button&quot; popovertarget=&quot;menu-products-build&quot; aria-label=&quot;Build pages&quot;&gt;&lt;/button&gt;&#10;				&lt;ul id=&quot;menu-products-build&quot; popover role=&quot;list&quot;&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Code&lt;/a&gt;&lt;/li&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Deploy&lt;/a&gt;&lt;/li&gt;&#10;				&lt;/ul&gt;&#10;			&lt;/li&gt;&#10;		&lt;/ul&gt;&#10;	&lt;/li&gt;&#10;&lt;/ul&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <ul role="list">
 	<li class="dropdown" data-grouped>
-		<a href="/products/">Products</a>
+		<a href="#">Products</a>
 		<button type="button" popovertarget="menu-products" aria-label="Products pages"></button>
 		<ul id="menu-products" popover role="list">
 			<li class="dropdown">
-				<a href="/products/design/">Design</a>
+				<a href="#">Design</a>
 				<button type="button" popovertarget="menu-products-design" aria-label="Design pages"></button>
 				<ul id="menu-products-design" popover role="list">
-					<li><a href="/products/design/sketch/">Sketch</a></li>
-					<li><a href="/products/design/print/">Print</a></li>
+					<li><a href="#">Sketch</a></li>
+					<li><a href="#">Print</a></li>
 				</ul>
 			</li>
 			<li class="dropdown">
-				<a href="/products/build/">Build</a>
+				<a href="#">Build</a>
 				<button type="button" popovertarget="menu-products-build" aria-label="Build pages"></button>
 				<ul id="menu-products-build" popover role="list">
-					<li><a href="/products/build/code/">Code</a></li>
-					<li><a href="/products/build/deploy/">Deploy</a></li>
+					<li><a href="#">Code</a></li>
+					<li><a href="#">Deploy</a></li>
 				</ul>
 			</li>
 		</ul>
 	</li>
 </ul>
 ```
+
+</details>
+</figure>
 
 Each heading still has its button and its panel's id, although the grouped panel hides the button. Write them anyway: the manifest requires both, and a nav's open panel shows the same sections as groups, where the button opens and closes each one.
 
@@ -174,6 +192,12 @@ The module closes only a panel it opened itself. A panel you opened with Enter o
 
 With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as a section of a grouped panel, so it is never lifted out of its column.
 
+<figure class="demo" data-height="md">
+<div data-preview="Opening on hover"><iframe title="Opening on hover, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;dropdown&quot; data-trigger=&quot;hover&quot;&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;button&quot; popovertarget=&quot;products&quot; data-emphasis=&quot;low&quot;&gt;Products&lt;/button&gt;&#10;	&lt;div id=&quot;products&quot; popover&gt;&#10;		&lt;a href=&quot;#&quot;&gt;Overview&lt;/a&gt;&#10;		&lt;a href=&quot;#&quot;&gt;Pricing&lt;/a&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="dropdown" data-trigger="hover">
 	<button class="button" type="button" popovertarget="products" data-emphasis="low">Products</button>
@@ -182,8 +206,12 @@ With submenus the same rules hold at every level. Leaving the menu for the page 
 		<a href="#">Pricing</a>
 	</div>
 </div>
-<script type="module" src="…/js/hover.js"></script>
 ```
+
+</details>
+</figure>
+
+The demo's frame already loads the module. On your own page, add the script tag above.
 
 This module is a stopgap and says so. The `interestfor` attribute is this feature standardised, and it is in one engine today. When it reaches Baseline the module goes and the attribute maps to it instead.
 

@@ -54,16 +54,25 @@ The list may itself be a `cluster` instead of a plain `ul`, for a row of content
 
 `data-numbered` turns the list into a contents list. Every `ul` resets a CSS counter and every `li` counts, so a nested list picks up where its parent left off and reads `2.1` rather than starting over at `1`. The number sits before the link, in the muted color, with tabular figures, in a box wide enough for a two-figure count or a nested 2.1, so the link text lines up. A title that wraps hangs from the number: its second line starts under its first word, not under the digits.
 
+<figure class="demo" data-height="md">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;toc&quot; aria-label=&quot;Contents&quot; data-numbered&gt;&#10;	&lt;ul role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Getting the files&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;The stylesheet&lt;/a&gt;&#10;			&lt;ul role=&quot;list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Linking it&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&#10;		&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="toc" aria-label="Contents" data-numbered>
 	<ul role="list">
-		<li><a href="#one">Getting the files</a></li>
-		<li><a href="#two">The stylesheet</a>
-			<ul role="list"><li><a href="#linking">Linking it</a></li></ul>
+		<li><a href="#">Getting the files</a></li>
+		<li><a href="#">The stylesheet</a>
+			<ul role="list"><li><a href="#">Linking it</a></li></ul>
 		</li>
 	</ul>
 </nav>
 ```
+
+</details>
+</figure>
 
 ```html
 <nav class="toc" aria-label="On this page" data-variant="secondary" data-size="sm">

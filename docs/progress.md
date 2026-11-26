@@ -48,10 +48,19 @@ Work with a known length: an upload, a wizard's steps, a quota. Leave the value 
 
 The native `progress` element, with its own drawing switched off and a thin rounded track in its place. The filled part is the hue, through the engines' own pseudo-elements, and slides when the value changes. Without a `value` the element is indeterminate: the track takes diagonal stripes that move along it. `data-size` sets the thickness to half of the size's space step.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;progress class=&quot;progress&quot; data-variant=&quot;success&quot; data-size=&quot;lg&quot; value=&quot;3&quot; max=&quot;5&quot; aria-label=&quot;Steps&quot;&gt;3 of 5&lt;/progress&gt;&#10;&lt;progress class=&quot;progress&quot; aria-label=&quot;Loading&quot;&gt;Loading&lt;/progress&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <progress class="progress" data-variant="success" data-size="lg" value="3" max="5" aria-label="Steps">3 of 5</progress>
 <progress class="progress" aria-label="Loading">Loading</progress>
 ```
+
+</details>
+</figure>
 
 ## Reading progress
 

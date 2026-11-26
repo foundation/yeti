@@ -65,6 +65,12 @@ Add `data-panel="drawer"`, and pick the edge with `data-placement`: `start` (the
 
 A long drawer scrolls as one piece. The footer sits at the bottom when the content is short, and scrolls with the content when it is long.
 
+<figure class="demo" data-height="lg">
+<div data-preview="A drawer"><iframe title="A drawer, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;button class=&quot;button&quot; type=&quot;button&quot; commandfor=&quot;filters&quot; command=&quot;show-modal&quot;&gt;Filters&lt;/button&gt;&#10;&#10;&lt;dialog class=&quot;dialog&quot; id=&quot;filters&quot; data-panel=&quot;drawer&quot; data-placement=&quot;end&quot; aria-labelledby=&quot;filters-title&quot;&gt;&#10;	&lt;button type=&quot;button&quot; data-close aria-label=&quot;Close&quot; commandfor=&quot;filters&quot; command=&quot;close&quot;&gt;×&lt;/button&gt;&#10;	&lt;h2 id=&quot;filters-title&quot;&gt;Filters&lt;/h2&gt;&#10;	&lt;p&gt;Choose what to show.&lt;/p&gt;&#10;	&lt;footer&gt;&#10;		&lt;form method=&quot;dialog&quot;&gt;&lt;button class=&quot;button&quot; type=&quot;submit&quot; data-emphasis=&quot;medium&quot;&gt;Cancel&lt;/button&gt;&lt;/form&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot;&gt;Apply&lt;/button&gt;&#10;	&lt;/footer&gt;&#10;&lt;/dialog&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <button class="button" type="button" commandfor="filters" command="show-modal">Filters</button>
 
@@ -78,6 +84,9 @@ A long drawer scrolls as one piece. The footer sits at the bottom when the conte
 	</footer>
 </dialog>
 ```
+
+</details>
+</figure>
 
 ## A close button
 

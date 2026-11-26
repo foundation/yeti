@@ -63,15 +63,24 @@ The links sit in one row and their text never wraps. A rule in `--yeti-tabs-bord
 
 `data-variant` picks the hue, primary by default. `data-emphasis="high"` fills the marked link with the variant, as a solid chip with rounded top corners.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;tabnav&quot; aria-label=&quot;Account&quot; data-variant=&quot;secondary&quot; data-emphasis=&quot;high&quot;&gt;&#10;	&lt;ul role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Profile&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Keys&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Billing&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="tabnav" aria-label="Account" data-variant="secondary" data-emphasis="high">
 	<ul role="list">
-		<li><a href="/account/profile/" aria-current="page">Profile</a></li>
-		<li><a href="/account/keys/">Keys</a></li>
-		<li><a href="/account/billing/">Billing</a></li>
+		<li><a href="#" aria-current="page">Profile</a></li>
+		<li><a href="#">Keys</a></li>
+		<li><a href="#">Billing</a></li>
 	</ul>
 </nav>
 ```
+
+</details>
+</figure>
 
 When the links do not fit, the row scrolls sideways inside itself. The page does not, even when the `tabnav` sits in a flex or grid row. The rule stays put while the links move.
 

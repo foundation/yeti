@@ -34,9 +34,18 @@ A wait with no known end: a page section still fetching, a search running. When 
 
 A one-em ring: a border in the hue's subtle step with the top edge in the hue, turning once per `--yeti-spinner-duration`. `data-size` sets the em through the text step, so a spinner sits in a line of text at that text's size. A button with `aria-busy="true"` draws the same ring after its label from its own text color, so it reads on a filled button and an outlined one alike.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;button class=&quot;button&quot; aria-busy=&quot;true&quot; aria-disabled=&quot;true&quot;&gt;Saving&lt;/button&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <button class="button" aria-busy="true" aria-disabled="true">Saving</button>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

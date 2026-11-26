@@ -92,6 +92,12 @@ Set by hand, it is a number rather than a percentage: `style="--yeti-range-value
 
 Give a form that loads it `novalidate`. Without that attribute the browser opens its own bubble on the first invalid control and never fires a submit event at all, so the module never runs and the page gets the bubble instead of its own error text. An error element you fill in yourself is never overwritten; an empty one is the slot the module writes into.
 
+<figure class="demo" data-height="md">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;form class=&quot;stack&quot; data-gap=&quot;md&quot; novalidate&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;signup-email&quot;&gt;Email&lt;/label&gt;&#10;		&lt;input id=&quot;signup-email&quot; type=&quot;email&quot; required aria-describedby=&quot;signup-email-error&quot;&gt;&#10;		&lt;p id=&quot;signup-email-error&quot; data-error&gt;&lt;/p&gt;&#10;	&lt;/div&gt;&#10;	&lt;button class=&quot;button&quot; type=&quot;submit&quot;&gt;Sign up&lt;/button&gt;&#10;&lt;/form&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <form class="stack" data-gap="md" novalidate>
 	<div class="field">
@@ -102,6 +108,9 @@ Give a form that loads it `novalidate`. Without that attribute the browser opens
 	<button class="button" type="submit">Sign up</button>
 </form>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

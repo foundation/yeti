@@ -34,15 +34,33 @@ A word or a number that labels something else: a status beside a title, a count 
 
 An inline box one step smaller than the text around it, with a pill corner by default. `data-emphasis="medium"`, the default, is a subtle tint of the hue with the hue's darker text, quiet enough to repeat down a list. `high` fills the badge for the one state that must stand out; `low` is the text alone.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;h3&gt;Release notes &lt;span class=&quot;badge&quot; data-emphasis=&quot;high&quot;&gt;New&lt;/span&gt;&lt;/h3&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <h3>Release notes <span class="badge" data-emphasis="high">New</span></h3>
 ```
 
+</details>
+</figure>
+
 On a painted band use `data-variant="black"` or `"white"`, the two constants, which read the same in both schemes.
+
+<figure class="demo" data-height="sm">
+<div data-preview="How it works (2)"><iframe title="How it works (2), live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;box&quot; data-paint=&quot;primary&quot;&gt;Build status &lt;span class=&quot;badge&quot; data-variant=&quot;white&quot;&gt;Passing&lt;/span&gt;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <div class="box" data-paint="primary">Build status <span class="badge" data-variant="white">Passing</span></div>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

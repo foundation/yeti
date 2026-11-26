@@ -43,11 +43,20 @@ Between bands of a landing page, where a straight line between two backgrounds l
 
 The cut is taken from the section itself, not added on top: a slant is a `clip-path` polygon, a curve or wave a mask made of a solid body and a shaped strip along the cut edge. Because the section's own background is what is cut, the page, the previous section, or an image behind it shows through, with no extra element. `data-edge` picks the edge, `data-size` the depth, `data-flip` mirrors a slant or a wave for the next section down. The seam adds the depth of the cut as space after or before the content, so give the section its padding as usual and nothing sits in the cut.
 
+<figure class="demo" data-height="md">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;section class=&quot;seam&quot; data-shape=&quot;slant&quot; data-edge=&quot;both&quot; data-flip data-size=&quot;lg&quot; style=&quot;background: var(--yeti-color-secondary-subtle); padding: var(--yeti-space-xl)&quot;&gt;&#10;	&lt;h2&gt;Slanted top and bottom&lt;/h2&gt;&#10;&lt;/section&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <section class="seam" data-shape="slant" data-edge="both" data-flip data-size="lg" style="background: var(--yeti-color-secondary-subtle); padding: var(--yeti-space-xl)">
 	<h2>Slanted top and bottom</h2>
 </section>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

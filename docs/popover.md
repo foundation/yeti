@@ -66,6 +66,12 @@ By default the panel opens below its button, lined up with the button's start ed
 
 Where there is no room on that side, the panel flips to the other. Where it would run past the end of the screen, it lines up with the button's other edge instead, and it shifts to stay on the screen when neither fits.
 
+<figure class="demo" data-height="sm">
+<div data-preview="Placement"><iframe title="Placement, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;button class=&quot;button&quot; type=&quot;button&quot; popovertarget=&quot;hint&quot;&gt;What is this?&lt;/button&gt;&#10;&#10;&lt;div class=&quot;popover&quot; id=&quot;hint&quot; popover data-placement=&quot;end&quot;&gt;&#10;	&lt;p&gt;Your plan renews on the first of each month.&lt;/p&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <button class="button" type="button" popovertarget="hint">What is this?</button>
 
@@ -73,6 +79,9 @@ Where there is no room on that side, the panel flips to the other. Where it woul
 	<p>Your plan renews on the first of each month.</p>
 </div>
 ```
+
+</details>
+</figure>
 
 Where anchor positioning is missing the browser centers the panel on the screen. It still opens, closes and reads correctly.
 
@@ -83,6 +92,12 @@ The panel is as wide as its content, up to `data-max`, from the width scale. The
 ## A panel that holds a form
 
 Make the panel a `dialog` element when it holds a form. A screen reader then announces a named dialog, and `autofocus` on a field works. It is still not modal: the page behind stays usable, and a click outside closes it.
+
+<figure class="demo" data-height="md">
+<div data-preview="A panel that holds a form"><iframe title="A panel that holds a form, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;button class=&quot;button&quot; type=&quot;button&quot; popovertarget=&quot;rename&quot;&gt;Rename&lt;/button&gt;&#10;&#10;&lt;dialog class=&quot;popover&quot; id=&quot;rename&quot; popover aria-labelledby=&quot;rename-title&quot;&gt;&#10;	&lt;h3 id=&quot;rename-title&quot;&gt;Rename&lt;/h3&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;rename-name&quot;&gt;Name&lt;/label&gt;&#10;		&lt;input id=&quot;rename-name&quot; type=&quot;text&quot; autofocus&gt;&#10;	&lt;/div&gt;&#10;&lt;/dialog&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <button class="button" type="button" popovertarget="rename">Rename</button>
@@ -95,6 +110,9 @@ Make the panel a `dialog` element when it holds a form. A screen reader then ann
 	</div>
 </dialog>
 ```
+
+</details>
+</figure>
 
 ## What it is not
 

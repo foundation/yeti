@@ -46,6 +46,12 @@ A button is at least the control height, and a large one grows by the same step 
 
 Two values of `data-variant` are not hues: `black` and `white`. They do not follow the theme and do not flip with the scheme, which is what a button on a painted band needs, where the band's own hue would vanish into itself. They keep every state: black steps to a dark grey under the pointer, its outline and text forms wash with a translucent black, and white mirrors it.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;section class=&quot;box&quot; data-paint=&quot;warning&quot;&gt;&#10;	&lt;h2&gt;Start the season early&lt;/h2&gt;&#10;	&lt;a class=&quot;button&quot; href=&quot;#&quot; data-variant=&quot;black&quot;&gt;Book a place&lt;/a&gt;&#10;&lt;/section&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <section class="box" data-paint="warning">
 	<h2>Start the season early</h2>
@@ -53,12 +59,26 @@ Two values of `data-variant` are not hues: `black` and `white`. They do not foll
 </section>
 ```
 
+</details>
+</figure>
+
+<figure class="demo" data-height="sm">
+<div data-preview="How it works (2)"><iframe title="How it works (2), live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;p&gt;&#10;	&lt;a class=&quot;button&quot; href=&quot;#&quot; data-variant=&quot;secondary&quot; data-emphasis=&quot;medium&quot; data-size=&quot;lg&quot;&gt;&#10;		&lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;M5 12h14m-6-6 6 6-6 6&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&#10;		Read the docs&#10;	&lt;/a&gt;&#10;&lt;/p&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
-<a class="button" href="/docs" data-variant="secondary" data-emphasis="medium" data-size="lg">
-	<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-	Read the docs
-</a>
+<p>
+	<a class="button" href="#" data-variant="secondary" data-emphasis="medium" data-size="lg">
+		<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+		Read the docs
+	</a>
+</p>
 ```
+
+</details>
+</figure>
 
 A toggle needs no script when it is a native input. Put the class on a `label` wrapping a `radio` or `checkbox`: the input is hidden from sight but stays in Tab order, the label is filled while the input is checked, exactly as a pressed button is, draws the focus ring when the input has it, and dims when the input is disabled. The checked state submits with a form and, for radios sharing a name, the arrow keys move it. A real `<button aria-pressed>` looks the same, but moving `aria-pressed` from one button to the next is your script's job.
 

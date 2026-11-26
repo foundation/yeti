@@ -49,6 +49,12 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 
 `data-slides` sets how many slides are visible at once, and each slide takes an equal share of the track less the gaps. Smooth scrolling comes from a token, `--yeti-carousel-scroll`, rather than from the reset, because a components-layer declaration would otherwise outrank it; the token itself collapses to `auto` under `prefers-reduced-motion`, so the preference still reaches the track. The track itself carries `tabindex="0"` and a name, because a region that scrolls has to be reachable from the keyboard; once it has focus, the arrow keys scroll it.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;section class=&quot;carousel&quot; data-slides=&quot;2&quot; aria-roledescription=&quot;carousel&quot; aria-label=&quot;Quotes&quot;&gt;&#10;	&lt;div data-track role=&quot;group&quot; aria-label=&quot;Slides&quot; tabindex=&quot;0&quot;&gt;&#10;		&lt;blockquote id=&quot;quote-1&quot; data-slide&gt;&lt;p&gt;It just worked.&lt;/p&gt;&lt;/blockquote&gt;&#10;		&lt;blockquote id=&quot;quote-2&quot; data-slide&gt;&lt;p&gt;No build step.&lt;/p&gt;&lt;/blockquote&gt;&#10;		&lt;blockquote id=&quot;quote-3&quot; data-slide&gt;&lt;p&gt;Nothing to learn.&lt;/p&gt;&lt;/blockquote&gt;&#10;	&lt;/div&gt;&#10;	&lt;ol data-dots role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&quot;visually-hidden&quot;&gt;Quote 1&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&quot;visually-hidden&quot;&gt;Quote 2&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&quot;visually-hidden&quot;&gt;Quote 3&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ol&gt;&#10;&lt;/section&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <section class="carousel" data-slides="2" aria-roledescription="carousel" aria-label="Quotes">
 	<div data-track role="group" aria-label="Slides" tabindex="0">
@@ -57,12 +63,15 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 		<blockquote id="quote-3" data-slide><p>Nothing to learn.</p></blockquote>
 	</div>
 	<ol data-dots role="list">
-		<li><a href="#quote-1"><span class="visually-hidden">Quote 1</span></a></li>
-		<li><a href="#quote-2"><span class="visually-hidden">Quote 2</span></a></li>
-		<li><a href="#quote-3"><span class="visually-hidden">Quote 3</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 1</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 2</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 3</span></a></li>
 	</ol>
 </section>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

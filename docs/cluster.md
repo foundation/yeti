@@ -53,6 +53,12 @@ A cluster is a wrapping flex row with a `gap`. `data-justify` distributes the it
 
 A term and its value on one line, parted to the two ends, is a cluster with `data-justify="between"`. A `div` may wrap a `dt` and its `dd`, so a whole legend is a `dl` that is a `stack` whose rows are clusters; add `data-rule` to the stack for a line between them and `data-numeric` to the values so the digits line up.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;dl class=&quot;stack&quot; data-gap=&quot;xs&quot;&gt;&#10;	&lt;div class=&quot;cluster&quot; data-justify=&quot;between&quot;&gt;&lt;dt&gt;Distance&lt;/dt&gt;&lt;dd data-numeric&gt;14.2 km&lt;/dd&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;cluster&quot; data-justify=&quot;between&quot;&gt;&lt;dt&gt;Ascent&lt;/dt&gt;&lt;dd data-numeric&gt;1,120 m&lt;/dd&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;cluster&quot; data-justify=&quot;between&quot;&gt;&lt;dt&gt;Time&lt;/dt&gt;&lt;dd data-numeric&gt;5 h 30&lt;/dd&gt;&lt;/div&gt;&#10;&lt;/dl&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <dl class="stack" data-gap="xs">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
@@ -61,9 +67,18 @@ A term and its value on one line, parted to the two ends, is a cluster with `dat
 </dl>
 ```
 
+</details>
+</figure>
+
 ## A column when it is narrow
 
 `data-threshold` takes a width, `3xs` to `2xl`, and turns the cluster into a column of full-width items whenever its own width is below that size; at or above it, the cluster is the wrapping row again. It is for a row of actions or filters that sits in a sidebar or a stacked region, where a ragged wrap reads worse than a clean column.
+
+<figure class="demo" data-height="md" data-width="xs">
+<div data-preview="A column when it is narrow"><iframe title="A column when it is narrow, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;cluster&quot; data-threshold=&quot;sm&quot; data-gap=&quot;xs&quot;&gt;&#10;	&lt;a class=&quot;button&quot; href=&quot;#&quot;&gt;Save&lt;/a&gt;&#10;	&lt;a class=&quot;button&quot; href=&quot;#&quot; data-emphasis=&quot;medium&quot;&gt;Preview&lt;/a&gt;&#10;	&lt;a class=&quot;button&quot; href=&quot;#&quot; data-emphasis=&quot;low&quot;&gt;Discard&lt;/a&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <div class="cluster" data-threshold="sm" data-gap="xs">
@@ -72,6 +87,9 @@ A term and its value on one line, parted to the two ends, is a cluster with `dat
 	<a class="button" href="#" data-emphasis="low">Discard</a>
 </div>
 ```
+
+</details>
+</figure>
 
 The cluster measures itself to decide, which makes it a size container, and a size container cannot take its width from its content. A thresholded cluster fills the block it is in, so give it one that has a width; a cluster without `data-threshold` is not a container and sizes to its items as before.
 

@@ -44,6 +44,12 @@ Under a list that is split into pages: search results, an archive, a table too l
 
 A row of links, each at least a control's width and height so it is easy to hit, the current page filled with the hue. An ellipsis in a `span` stands for skipped pages. Below `data-threshold`, the pagination's own width, everything but Previous, the current page, and Next is hidden, so the same markup is a full row in a wide column and three targets in a narrow one, with no breakpoint. `data-justify` places the row.
 
+<figure class="demo" data-height="sm" data-width="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;pagination&quot; aria-label=&quot;Pagination&quot; data-justify=&quot;center&quot; data-threshold=&quot;md&quot;&gt;&#10;	&lt;ol role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; rel=&quot;prev&quot;&gt;Previous&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;1&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot;&gt;2&lt;/a&gt;&lt;/li&gt;&#10;		&lt;li&gt;&lt;a href=&quot;#&quot; rel=&quot;next&quot;&gt;Next&lt;/a&gt;&lt;/li&gt;&#10;	&lt;/ol&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="pagination" aria-label="Pagination" data-justify="center" data-threshold="md">
 	<ol role="list">
@@ -54,6 +60,9 @@ A row of links, each at least a control's width and height so it is easy to hit,
 	</ol>
 </nav>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

@@ -40,12 +40,21 @@ A flex row: an optional icon, the message, and an optional close button pushed t
 
 The close button is a `button` carrying `data-close`. Yeti's `alert.js`, loaded once with `<script type="module" src="…/js/alert.js">`, listens on the document: a click fades the alert over the fast duration and removes it. Without the module the button does nothing, so leave it out on pages that do not load the module.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;alert&quot; role=&quot;alert&quot; data-variant=&quot;alert&quot; data-emphasis=&quot;high&quot;&gt;&#10;	&lt;div&gt;&lt;strong&gt;Payment failed.&lt;/strong&gt; The card was declined.&lt;/div&gt;&#10;	&lt;button type=&quot;button&quot; data-close aria-label=&quot;Dismiss&quot;&gt;×&lt;/button&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="alert" role="alert" data-variant="alert" data-emphasis="high">
 	<div><strong>Payment failed.</strong> The card was declined.</div>
 	<button type="button" data-close aria-label="Dismiss">×</button>
 </div>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

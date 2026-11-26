@@ -192,7 +192,7 @@ A cluster is a wrapping flex row with a `gap`. `data-justify` distributes the it
 
 A term and its value on one line, parted to the two ends, is a cluster with `data-justify="between"`. A `div` may wrap a `dt` and its `dd`, so a whole legend is a `dl` that is a `stack` whose rows are clusters; add `data-rule` to the stack for a line between them and `data-numeric` to the values so the digits line up.
 
-```html
+```html demo sm
 <dl class="stack" data-gap="xs">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
 	<div class="cluster" data-justify="between"><dt>Ascent</dt><dd data-numeric>1,120 m</dd></div>
@@ -204,7 +204,7 @@ A term and its value on one line, parted to the two ends, is a cluster with `dat
 
 `data-threshold` takes a width, `3xs` to `2xl`, and turns the cluster into a column of full-width items whenever its own width is below that size; at or above it, the cluster is the wrapping row again. It is for a row of actions or filters that sits in a sidebar or a stacked region, where a ragged wrap reads worse than a clean column.
 
-```html
+```html demo md xs
 <div class="cluster" data-threshold="sm" data-gap="xs">
 	<a class="button" href="#">Save</a>
 	<a class="button" href="#" data-emphasis="medium">Preview</a>
@@ -646,10 +646,10 @@ Each child of `leaders` is a row. Its first child is the name and its second is 
 
 The rows can be any elements, so a contents page is a list. `role="list"` takes the list's markers off:
 
-```html
+```html demo sm
 <ol class="leaders" role="list">
-	<li><a href="#starters">Starters</a><span>12</span></li>
-	<li><a href="#mains">Mains</a><span>18</span></li>
+	<li><a href="#">Starters</a><span>12</span></li>
+	<li><a href="#">Mains</a><span>18</span></li>
 </ol>
 ```
 
@@ -657,7 +657,7 @@ A row with no value draws no line. The second child is always the value, so a ro
 
 Anything after the value sits below the row at the full width, which is where a dish's description goes:
 
-```html
+```html demo sm
 <div class="leaders" data-gap="md">
 	<article>
 		<h3>Trout</h3>
@@ -909,7 +909,7 @@ The gap is the stack's, but one child can ask for a different gap before it. `da
 
 `data-rule` on the stack draws a line between each pair of children, the border width in the border color, in the middle of the gap; the gap itself does not change, and `data-space` moves the line with it. A legend, a settings list, a run of plan features: anywhere rows want separating without boxing. The line is a `::before` on each child after the first, so a child that already draws its own `::before` keeps its own and loses the line. The line is lost too on a child that clips its overflow, a card, a frame, an accordion or a progress bar, and on a replaced element such as an image, which has no `::before` to draw. A child that is itself a stack still has its line placed by the ruled stack's gap, but a ruled stack directly inside another ruled stack places its line by its own gap, the same limit `data-space` has; give it a plain wrapper.
 
-```html
+```html demo sm
 <dl class="stack" data-rule data-gap="sm">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
 	<div class="cluster" data-justify="between"><dt>Ascent</dt><dd data-numeric>1,120 m</dd></div>
@@ -951,7 +951,7 @@ A history, a changelog, the steps of a process, a schedule: entries in order alo
 
 The list is a column of entries at the gap, with a rail down its start edge and a marker on the rail beside each entry. Add `data-alternate` and, once the list's content box is at least `lg` wide, the rail moves to the centre and the entries take turns on either side of it, markers still on the rail; narrower, they fall back to one side. The switch is the list's own width, so a timeline in a sidebar stays single-sided while the same one across a page alternates.
 
-```html
+```html demo sm
 <ol class="timeline" data-gap="md" role="list">
 	<li><time datetime="2026-01-01">January</time><p>Started.</p></li>
 	<li><time datetime="2026-06-01">June</time><p>Shipped.</p></li>
@@ -1227,7 +1227,7 @@ A price with its currency, a distance with its unit, a search box with its butto
 
 A flex row. Every control grows; a `span` becomes a labelled box on the sunken surface; a `button` keeps its own colors. Inner corners are squared and each border overlaps the next by one width, so the seam is a single line. The group sets no size of its own: it reads the field around it, so `data-size` on the field scales the whole row. A focused member rises above its neighbours and draws its focus ring inside its own border rather than outside it, where the ring would cross the seam onto the next member; a text control shows that ring on a click as well as on a Tab, by the browser's own rule for `:focus-visible`.
 
-```html
+```html demo sm
 <div class="field" data-size="lg">
 	<label for="site">Site</label>
 	<div class="affix">
@@ -1241,7 +1241,7 @@ A flex row. Every control grows; a `span` becomes a labelled box on the sunken s
 
 The prefix is not part of the control, so a screen reader will not read it with the value unless you connect them: give the `span` an id and put it in the control's `aria-describedby`, or include the unit in the label ("Price in dollars"). The field's label still points at one control with `for`; when the affix joins two controls, the other one needs its own `aria-label`.
 
-```html
+```html demo sm
 <div class="field">
 	<label for="phone">Phone</label>
 	<div class="affix">
@@ -1294,7 +1294,7 @@ A flex row: an optional icon, the message, and an optional close button pushed t
 
 The close button is a `button` carrying `data-close`. Yeti's `alert.js`, loaded once with `<script type="module" src="…/js/alert.js">`, listens on the document: a click fades the alert over the fast duration and removes it. Without the module the button does nothing, so leave it out on pages that do not load the module.
 
-```html
+```html demo sm
 <div class="alert" role="alert" data-variant="alert" data-emphasis="high">
 	<div><strong>Payment failed.</strong> The card was declined.</div>
 	<button type="button" data-close aria-label="Dismiss">×</button>
@@ -1348,13 +1348,13 @@ A word or a number that labels something else: a status beside a title, a count 
 
 An inline box one step smaller than the text around it, with a pill corner by default. `data-emphasis="medium"`, the default, is a subtle tint of the hue with the hue's darker text, quiet enough to repeat down a list. `high` fills the badge for the one state that must stand out; `low` is the text alone.
 
-```html
+```html demo sm
 <h3>Release notes <span class="badge" data-emphasis="high">New</span></h3>
 ```
 
 On a painted band use `data-variant="black"` or `"white"`, the two constants, which read the same in both schemes.
 
-```html
+```html demo sm
 <div class="box" data-paint="primary">Build status <span class="badge" data-variant="white">Passing</span></div>
 ```
 
@@ -1457,18 +1457,20 @@ A button is at least the control height, and a large one grows by the same step 
 
 Two values of `data-variant` are not hues: `black` and `white`. They do not follow the theme and do not flip with the scheme, which is what a button on a painted band needs, where the band's own hue would vanish into itself. They keep every state: black steps to a dark grey under the pointer, its outline and text forms wash with a translucent black, and white mirrors it.
 
-```html
+```html demo sm
 <section class="box" data-paint="warning">
 	<h2>Start the season early</h2>
 	<a class="button" href="#" data-variant="black">Book a place</a>
 </section>
 ```
 
-```html
-<a class="button" href="/docs" data-variant="secondary" data-emphasis="medium" data-size="lg">
-	<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-	Read the docs
-</a>
+```html demo sm
+<p>
+	<a class="button" href="#" data-variant="secondary" data-emphasis="medium" data-size="lg">
+		<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+		Read the docs
+	</a>
+</p>
 ```
 
 A toggle needs no script when it is a native input. Put the class on a `label` wrapping a `radio` or `checkbox`: the input is hidden from sight but stays in Tab order, the label is filled while the input is checked, exactly as a pressed button is, draws the focus ring when the input has it, and dims when the input is disabled. The checked state submits with a form and, for radios sharing a name, the arrow keys move it. A real `<button aria-pressed>` looks the same, but moving `aria-pressed` from one button to the next is your script's job.
@@ -1573,7 +1575,7 @@ Two or more buttons that belong together: a form's submit and cancel, a set of v
 
 Loose is a wrapping flex row at `data-gap`. `data-affix` removes the gap, squares the inner corners, and overlaps each border with the next so the seam is one line wide. A focused member is lifted above its neighbours and draws its focus ring inside its own border, where it cannot cross the seam onto the members either side. An affixed group is one control, so it never wraps onto a second row: short of room, its members narrow and their labels wrap inside them.
 
-```html
+```html demo sm
 <div class="buttons" role="group" aria-label="Form actions">
 	<button class="button" type="submit">Save</button>
 	<button class="button" type="button" data-emphasis="low">Cancel</button>
@@ -1633,7 +1635,7 @@ A card is a flex column on the raised surface with a border and a radius. A pict
 
 Two things follow from how that query works. Only a card with a picture is a size container, because a size container has no intrinsic width: a card that always was one collapsed to its padding as a cluster item. And anything pressable inside a card sits above a stretched link, so a footer button in a card whose heading carries `data-stretch` still takes the click.
 
-```html
+```html demo lg
 <ul class="grid" data-min="sm" role="list">
 	<li class="card" data-raised>
 		<figure>
@@ -1707,7 +1709,7 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 
 `data-slides` sets how many slides are visible at once, and each slide takes an equal share of the track less the gaps. Smooth scrolling comes from a token, `--yeti-carousel-scroll`, rather than from the reset, because a components-layer declaration would otherwise outrank it; the token itself collapses to `auto` under `prefers-reduced-motion`, so the preference still reaches the track. The track itself carries `tabindex="0"` and a name, because a region that scrolls has to be reachable from the keyboard; once it has focus, the arrow keys scroll it.
 
-```html
+```html demo sm
 <section class="carousel" data-slides="2" aria-roledescription="carousel" aria-label="Quotes">
 	<div data-track role="group" aria-label="Slides" tabindex="0">
 		<blockquote id="quote-1" data-slide><p>It just worked.</p></blockquote>
@@ -1715,9 +1717,9 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 		<blockquote id="quote-3" data-slide><p>Nothing to learn.</p></blockquote>
 	</div>
 	<ol data-dots role="list">
-		<li><a href="#quote-1"><span class="visually-hidden">Quote 1</span></a></li>
-		<li><a href="#quote-2"><span class="visually-hidden">Quote 2</span></a></li>
-		<li><a href="#quote-3"><span class="visually-hidden">Quote 3</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 1</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 2</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 3</span></a></li>
 	</ol>
 </section>
 ```
@@ -1896,7 +1898,7 @@ Add `data-panel="drawer"`, and pick the edge with `data-placement`: `start` (the
 
 A long drawer scrolls as one piece. The footer sits at the bottom when the content is short, and scrolls with the content when it is long.
 
-```html
+```html demo lg
 <button class="button" type="button" commandfor="filters" command="show-modal">Filters</button>
 
 <dialog class="dialog" id="filters" data-panel="drawer" data-placement="end" aria-labelledby="filters-title">
@@ -2019,19 +2021,19 @@ A parent that is not a page has no link. Its button is the label, as in the firs
 
 Any item in a list panel can be a dropdown itself, a split parent or a label, and the same shape repeats at every depth. A submenu flies out beside its own row, toward the inline end (the right in a left-to-right page, the left in a right-to-left one), level with the row's top. Where it would run off the screen it flips to the other side. Where anchor positioning is missing the browser centres every panel, as it does for one level.
 
-```html
+```html demo md
 <ul role="list">
 	<li class="dropdown">
-		<a href="/about/">About</a>
+		<a href="#">About</a>
 		<button type="button" popovertarget="menu-/about/" aria-label="About pages"></button>
 		<ul id="menu-/about/" popover role="list">
-			<li><a href="/about/history/">History</a></li>
+			<li><a href="#">History</a></li>
 			<li class="dropdown">
-				<a href="/about/team/">Team</a>
+				<a href="#">Team</a>
 				<button type="button" popovertarget="menu-/about/team/" aria-label="Team pages"></button>
 				<ul id="menu-/about/team/" popover role="list">
-					<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
-					<li><a href="/about/team/ana/">Ana</a></li>
+					<li><a href="#" aria-current="page">Joe</a></li>
+					<li><a href="#">Ana</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -2051,26 +2053,26 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 `data-grouped` on a dropdown lays its panel out as columns instead of flyouts. Each second-level item that is a split parent becomes a small, strong heading, still a link to its own page, with its pages listed under it, and its button is hidden. Use it for a section with a few groups of pages that a reader should see at once.
 
-```html
+```html demo md
 <ul role="list">
 	<li class="dropdown" data-grouped>
-		<a href="/products/">Products</a>
+		<a href="#">Products</a>
 		<button type="button" popovertarget="menu-products" aria-label="Products pages"></button>
 		<ul id="menu-products" popover role="list">
 			<li class="dropdown">
-				<a href="/products/design/">Design</a>
+				<a href="#">Design</a>
 				<button type="button" popovertarget="menu-products-design" aria-label="Design pages"></button>
 				<ul id="menu-products-design" popover role="list">
-					<li><a href="/products/design/sketch/">Sketch</a></li>
-					<li><a href="/products/design/print/">Print</a></li>
+					<li><a href="#">Sketch</a></li>
+					<li><a href="#">Print</a></li>
 				</ul>
 			</li>
 			<li class="dropdown">
-				<a href="/products/build/">Build</a>
+				<a href="#">Build</a>
 				<button type="button" popovertarget="menu-products-build" aria-label="Build pages"></button>
 				<ul id="menu-products-build" popover role="list">
-					<li><a href="/products/build/code/">Code</a></li>
-					<li><a href="/products/build/deploy/">Deploy</a></li>
+					<li><a href="#">Code</a></li>
+					<li><a href="#">Deploy</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -2098,7 +2100,7 @@ The module closes only a panel it opened itself. A panel you opened with Enter o
 
 With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as a section of a grouped panel, so it is never lifted out of its column.
 
-```html
+```html demo md
 <div class="dropdown" data-trigger="hover">
 	<button class="button" type="button" popovertarget="products" data-emphasis="low">Products</button>
 	<div id="products" popover>
@@ -2106,8 +2108,9 @@ With submenus the same rules hold at every level. Leaving the menu for the page 
 		<a href="#">Pricing</a>
 	</div>
 </div>
-<script type="module" src="…/js/hover.js"></script>
 ```
+
+The demo's frame already loads the module. On your own page, add the script tag above.
 
 This module is a stopgap and says so. The `interestfor` attribute is this feature standardised, and it is in one engine today. When it reaches Baseline the module goes and the attribute maps to it instead.
 
@@ -2208,7 +2211,7 @@ Set by hand, it is a number rather than a percentage: `style="--yeti-range-value
 
 Give a form that loads it `novalidate`. Without that attribute the browser opens its own bubble on the first invalid control and never fires a submit event at all, so the module never runs and the page gets the bubble instead of its own error text. An error element you fill in yourself is never overwritten; an empty one is the slot the module writes into.
 
-```html
+```html demo md
 <form class="stack" data-gap="md" novalidate>
 	<div class="field">
 		<label for="signup-email">Email</label>
@@ -2300,7 +2303,7 @@ One list of links, two modes. The list carries `popover` and the button carries 
 
 `data-panel` chooses the shape of the open list. `sheet`, the default, hangs under the bar at the full width. `drawer` slides in from the start edge as a column with the page dimmed behind it. `screen` fills the viewport with the links large and centred. `bar` is not a panel that opens: it puts the links in a row along the bottom of the screen, and has a section of its own below. Where anchor positioning exists the sheet sits exactly under the bar; elsewhere it starts at the top of the viewport and covers the bar, and Escape or a click outside still closes it. A close item, an `li` carrying `data-close` with a button that hides the popover, sits in the panel's top end corner and disappears in the bar; `screen` needs one, since there is no outside to click.
 
-```html
+```html demo md sm
 <nav class="nav" aria-label="Site" data-threshold="sm" data-panel="drawer">
 	<a href="#" data-brand>Yeti</a>
 	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -2356,17 +2359,19 @@ Many phone designs keep the main links in a row along the bottom of the screen, 
 
 Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, an `svg` icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. An `img` keeps its own size there, so give it a `width` and a `height` that suit both places. There is no toggle in this mode, so you can leave it out:
 
-```html
+```html demo md sm
 <nav class="nav" aria-label="Site" data-panel="bar">
-	<a href="/" data-brand>Yeti</a>
-	<ul id="menu" popover role="list">
-		<li><a href="/" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Home</a></li>
-		<li><a href="/search/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Search</a></li>
-		<li><a href="/inbox/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Inbox</a></li>
-		<li><a href="/account/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Account</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<ul id="bar-menu" popover role="list">
+		<li><a href="#" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 9l2-6h8l2 6v4H2zM2 9h4l1 2h2l1-2h4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Inbox</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a></li>
 	</ul>
 </nav>
 ```
+
+Drag the demo's frame wider and the links go back to the top bar.
 
 The label is the link's name, so the icon is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. The current page's link is marked as it is in the top bar, with the same color and weight.
 
@@ -2392,35 +2397,34 @@ A fixed bar is placed against the screen only while no ancestor of the nav has a
 
 A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
 
-```html
+```html demo md
 <nav class="nav" aria-label="Site" data-panel="drawer">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/">Home</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="sub-menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="sub-menu" popover role="list">
+		<li><a href="#">Home</a></li>
 		<li class="dropdown">
-			<a href="/about/">About</a>
-			<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
-			<ul id="menu-about" popover role="list">
-				<li><a href="/about/history/">History</a></li>
+			<a href="#">About</a>
+			<button type="button" popovertarget="sub-menu-about" aria-label="About pages"></button>
+			<ul id="sub-menu-about" popover role="list">
+				<li><a href="#">History</a></li>
 				<li class="dropdown">
-					<a href="/about/team/">Team</a>
-					<button type="button" popovertarget="menu-about-team" aria-label="Team pages"></button>
-					<ul id="menu-about-team" popover role="list">
-						<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					<a href="#">Team</a>
+					<button type="button" popovertarget="sub-menu-about-team" aria-label="Team pages"></button>
+					<ul id="sub-menu-about-team" popover role="list">
+						<li><a href="#" aria-current="page">Joe</a></li>
 					</ul>
 				</li>
 			</ul>
 		</li>
 		<li class="dropdown">
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list">
-				<li><a href="/changelog/">Changelog</a></li>
+			<button type="button" popovertarget="sub-menu-more">More</button>
+			<ul id="sub-menu-more" popover role="list">
+				<li><a href="#">Changelog</a></li>
 			</ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
 
 In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight. A grouped dropdown's heading keeps its strong weight and only changes color.
@@ -2445,22 +2449,26 @@ A bar with many links runs out of room before it reaches its threshold, and its 
 
 You write the More item yourself, as the last item of the list, hidden. A close item, if the nav has one, may come after it:
 
-```html
+```html demo md lg
 <nav class="nav" aria-label="Site">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/docs/">Docs</a></li>
-		<li><a href="/guides/">Guides</a></li>
-		<li><a href="/blog/">Blog</a></li>
-		<li><a href="/pricing/">Pricing</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="more-list" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="more-list" popover role="list">
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">Guides</a></li>
+		<li><a href="#">Components</a></li>
+		<li><a href="#">Layouts</a></li>
+		<li><a href="#">Examples</a></li>
+		<li><a href="#">Blog</a></li>
+		<li><a href="#">Pricing</a></li>
+		<li><a href="#">Changelog</a></li>
+		<li><a href="#">Community</a></li>
 		<li class="dropdown" data-more hidden>
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list"></ul>
+			<button type="button" popovertarget="more-list-more">More</button>
+			<ul id="more-list-more" popover role="list"></ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
 
 The label and the id are yours, so you can write the label in your page's language. The script creates no markup. It needs `nav.js`. Without it the More item stays hidden and the nav works exactly as it does without one.
@@ -2552,7 +2560,7 @@ Under a list that is split into pages: search results, an archive, a table too l
 
 A row of links, each at least a control's width and height so it is easy to hit, the current page filled with the hue. An ellipsis in a `span` stands for skipped pages. Below `data-threshold`, the pagination's own width, everything but Previous, the current page, and Next is hidden, so the same markup is a full row in a wide column and three targets in a narrow one, with no breakpoint. `data-justify` places the row.
 
-```html
+```html demo sm sm
 <nav class="pagination" aria-label="Pagination" data-justify="center" data-threshold="md">
 	<ol role="list">
 		<li><a href="#" rel="prev">Previous</a></li>
@@ -2631,7 +2639,7 @@ By default the panel opens below its button, lined up with the button's start ed
 
 Where there is no room on that side, the panel flips to the other. Where it would run past the end of the screen, it lines up with the button's other edge instead, and it shifts to stay on the screen when neither fits.
 
-```html
+```html demo sm
 <button class="button" type="button" popovertarget="hint">What is this?</button>
 
 <div class="popover" id="hint" popover data-placement="end">
@@ -2649,7 +2657,7 @@ The panel is as wide as its content, up to `data-max`, from the width scale. The
 
 Make the panel a `dialog` element when it holds a form. A screen reader then announces a named dialog, and `autofocus` on a field works. It is still not modal: the page behind stays usable, and a click outside closes it.
 
-```html
+```html demo md
 <button class="button" type="button" popovertarget="rename">Rename</button>
 
 <dialog class="popover" id="rename" popover aria-labelledby="rename-title">
@@ -2710,7 +2718,7 @@ Work with a known length: an upload, a wizard's steps, a quota. Leave the value 
 
 The native `progress` element, with its own drawing switched off and a thin rounded track in its place. The filled part is the hue, through the engines' own pseudo-elements, and slides when the value changes. Without a `value` the element is indeterminate: the track takes diagonal stripes that move along it. `data-size` sets the thickness to half of the size's space step.
 
-```html
+```html demo sm
 <progress class="progress" data-variant="success" data-size="lg" value="3" max="5" aria-label="Steps">3 of 5</progress>
 <progress class="progress" aria-label="Loading">Loading</progress>
 ```
@@ -2772,7 +2780,7 @@ Between bands of a landing page, where a straight line between two backgrounds l
 
 The cut is taken from the section itself, not added on top: a slant is a `clip-path` polygon, a curve or wave a mask made of a solid body and a shaped strip along the cut edge. Because the section's own background is what is cut, the page, the previous section, or an image behind it shows through, with no extra element. `data-edge` picks the edge, `data-size` the depth, `data-flip` mirrors a slant or a wave for the next section down. The seam adds the depth of the cut as space after or before the content, so give the section its padding as usual and nothing sits in the cut.
 
-```html
+```html demo md
 <section class="seam" data-shape="slant" data-edge="both" data-flip data-size="lg" style="background: var(--yeti-color-secondary-subtle); padding: var(--yeti-space-xl)">
 	<h2>Slanted top and bottom</h2>
 </section>
@@ -2805,7 +2813,7 @@ A wait with no known end: a page section still fetching, a search running. When 
 
 A one-em ring: a border in the hue's subtle step with the top edge in the hue, turning once per `--yeti-spinner-duration`. `data-size` sets the em through the text step, so a spinner sits in a line of text at that text's size. A button with `aria-busy="true"` draws the same ring after its label from its own text color, so it reads on a filled button and an outlined one alike.
 
-```html
+```html demo sm
 <button class="button" aria-busy="true" aria-disabled="true">Saving</button>
 ```
 
@@ -2887,15 +2895,15 @@ To keep one section open at a time, give sibling `details` the same `name`. That
 
 A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fallback to the variant's subtle tint, so setting it to `transparent` turns the fill off without touching the variant.
 
-```html
+```html demo md
 <nav class="subnav" aria-label="Settings" data-variant="secondary">
 	<ul role="list">
 		<li>
 			<details name="settings" open>
 				<summary>Account</summary>
 				<ul role="list">
-					<li><a href="/settings/profile/" aria-current="page">Profile</a></li>
-					<li><a href="/settings/password/">Password</a></li>
+					<li><a href="#" aria-current="page">Profile</a></li>
+					<li><a href="#">Password</a></li>
 				</ul>
 			</details>
 		</li>
@@ -2903,7 +2911,7 @@ A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fa
 			<details name="settings">
 				<summary>Billing</summary>
 				<ul role="list">
-					<li><a href="/settings/plan/">Plan</a></li>
+					<li><a href="#">Plan</a></li>
 				</ul>
 			</details>
 		</li>
@@ -2974,7 +2982,7 @@ Rows and columns of data: prices, results, comparisons. If the content is a list
 
 The class goes on the `table`. Cells get padding from `data-size` and a line beneath each row; the header row gets a stronger rule. `data-striped` tints every other row, `data-hover` the row under the pointer, `data-border` draws every cell. Mark a column of numbers with `data-numeric` on its cells and header: they align to the end with tabular figures, so the digits line up. The marker works on any element, a price or a legend's values, where it gives the figures alone. A comparison, a feature column and a column per plan, reads across best when the columns are equal: `data-fixed` gives every column the same share of the width, whatever it holds. To make the first column wider, give its header cell a width, `<th style="inline-size: 40%">`, and the others share the rest. `data-align="center"` (or `start`, `end`) on a `th` or `td` aligns that cell, and on a `tr` every cell in the row; a cell's own value, or its `data-numeric`, outranks its row's. A tick in a centered cell is an inline `svg`, and the reset makes an `svg` a block, so wrap it in an `icon` or give it `display: inline-block` for the alignment to reach it.
 
-```html
+```html demo sm
 <table class="table" data-fixed aria-label="Plans compared">
 	<thead><tr><th scope="col" style="inline-size: 40%">Feature</th><th scope="col" data-align="center">Free</th><th scope="col" data-align="center">Walker</th></tr></thead>
 	<tbody><tr data-align="center"><th scope="row" data-align="start">Offline maps</th><td>No</td><td>Yes</td></tr></tbody>
@@ -2983,7 +2991,7 @@ The class goes on the `table`. Cells get padding from `data-size` and a line ben
 
 `data-sticky` on the `thead` pins the header row at `--yeti-sticky-offset` while the rows scroll under it; its cells take the surface color so the rows do not show through, and the rule beneath them moves with them. Set the offset to `0` on the `thead` to pin it flush with the top. A table that is wider than its container goes inside a `scroller`, which scrolls it sideways while the table itself stays a table. `data-nowrap` on the table keeps every cell's line; on a single `th` or `td` it keeps just that cell's; either way, put the table in a scroller so the kept line has somewhere to go.
 
-```html
+```html demo md
 <div class="scroller" role="region" aria-label="Quarterly results" tabindex="0">
 	<table class="table" data-size="sm" data-border>
 		<caption>Quarterly results</caption>
@@ -3049,12 +3057,12 @@ The links sit in one row and their text never wraps. A rule in `--yeti-tabs-bord
 
 `data-variant` picks the hue, primary by default. `data-emphasis="high"` fills the marked link with the variant, as a solid chip with rounded top corners.
 
-```html
+```html demo sm
 <nav class="tabnav" aria-label="Account" data-variant="secondary" data-emphasis="high">
 	<ul role="list">
-		<li><a href="/account/profile/" aria-current="page">Profile</a></li>
-		<li><a href="/account/keys/">Keys</a></li>
-		<li><a href="/account/billing/">Billing</a></li>
+		<li><a href="#" aria-current="page">Profile</a></li>
+		<li><a href="#">Keys</a></li>
+		<li><a href="#">Billing</a></li>
 	</ul>
 </nav>
 ```
@@ -3127,7 +3135,7 @@ A tab list of buttons over their panels. The CSS styles the list and marks the s
 
 Load the module and it pairs every tab with the panel its `aria-controls` names, shows one, hides the rest, and takes over the keyboard: arrows move selection, Home and End jump to the ends, and only the selected tab is in the tab order, so Tab leaves the list rather than walking it. A link into a hidden panel opens its tab: on load and on every `hashchange` the module looks for the URL's fragment inside a panel and, if it finds one, selects that panel's tab and brings the target into view, without moving keyboard focus to the tab. Tabs may nest inside another tab's panel: each set keeps its own selection and its own arrow keys, and a link into the inner set opens every enclosing panel on the way. `data-emphasis="high"` fills the selected tab with the variant instead of underlining it, its top corners (or, in a vertical list, the corners away from the divider) rounded like any other filled control.
 
-```html
+```html demo sm
 <div class="tabs" data-emphasis="high">
 	<div role="tablist" aria-label="Report">
 		<button type="button" role="tab" id="t-summary" aria-controls="p-summary" aria-selected="true">Summary</button>
@@ -3138,7 +3146,7 @@ Load the module and it pairs every tab with the panel its `aria-controls` names,
 </div>
 ```
 
-```html
+```html demo sm
 <div class="tabs" data-orientation="vertical">
 	<div role="tablist" aria-label="Settings">
 		<button type="button" role="tab" id="t-general" aria-controls="p-general">General</button>
@@ -3213,12 +3221,12 @@ The list may itself be a `cluster` instead of a plain `ul`, for a row of content
 
 `data-numbered` turns the list into a contents list. Every `ul` resets a CSS counter and every `li` counts, so a nested list picks up where its parent left off and reads `2.1` rather than starting over at `1`. The number sits before the link, in the muted color, with tabular figures, in a box wide enough for a two-figure count or a nested 2.1, so the link text lines up. A title that wraps hangs from the number: its second line starts under its first word, not under the digits.
 
-```html
+```html demo md
 <nav class="toc" aria-label="Contents" data-numbered>
 	<ul role="list">
-		<li><a href="#one">Getting the files</a></li>
-		<li><a href="#two">The stylesheet</a>
-			<ul role="list"><li><a href="#linking">Linking it</a></li></ul>
+		<li><a href="#">Getting the files</a></li>
+		<li><a href="#">The stylesheet</a>
+			<ul role="list"><li><a href="#">Linking it</a></li></ul>
 		</li>
 	</ul>
 </nav>
@@ -3972,7 +3980,9 @@ Every public custom property, with its group and default. A theme is a file that
 
 ## Guide: Color
 
-<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page starts with why it is built that way, and then how to use it. The <a href="theming.md">theming guide</a> is how to change it.</p>
+<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page starts with why it is built that way, and then how to use it.</p>
+
+The [theming guide](theming.md) is how to change it.
 
 ### A color is three answers
 

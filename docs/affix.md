@@ -41,6 +41,12 @@ A price with its currency, a distance with its unit, a search box with its butto
 
 A flex row. Every control grows; a `span` becomes a labelled box on the sunken surface; a `button` keeps its own colors. Inner corners are squared and each border overlaps the next by one width, so the seam is a single line. The group sets no size of its own: it reads the field around it, so `data-size` on the field scales the whole row. A focused member rises above its neighbours and draws its focus ring inside its own border rather than outside it, where the ring would cross the seam onto the next member; a text control shows that ring on a click as well as on a Tab, by the browser's own rule for `:focus-visible`.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;field&quot; data-size=&quot;lg&quot;&gt;&#10;	&lt;label for=&quot;site&quot;&gt;Site&lt;/label&gt;&#10;	&lt;div class=&quot;affix&quot;&gt;&#10;		&lt;input id=&quot;site&quot; type=&quot;text&quot; aria-describedby=&quot;site-domain&quot;&gt;&#10;		&lt;span id=&quot;site-domain&quot;&gt;.foundationcss.com&lt;/span&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <div class="field" data-size="lg">
 	<label for="site">Site</label>
@@ -51,9 +57,18 @@ A flex row. Every control grows; a `span` becomes a labelled box on the sunken s
 </div>
 ```
 
+</details>
+</figure>
+
 ## Accessibility
 
 The prefix is not part of the control, so a screen reader will not read it with the value unless you connect them: give the `span` an id and put it in the control's `aria-describedby`, or include the unit in the label ("Price in dollars"). The field's label still points at one control with `for`; when the affix joins two controls, the other one needs its own `aria-label`.
+
+<figure class="demo" data-height="sm">
+<div data-preview="Accessibility"><iframe title="Accessibility, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;field&quot;&gt;&#10;	&lt;label for=&quot;phone&quot;&gt;Phone&lt;/label&gt;&#10;	&lt;div class=&quot;affix&quot;&gt;&#10;		&lt;select aria-label=&quot;Country code&quot;&gt;&lt;option&gt;+1&lt;/option&gt;&lt;option&gt;+44&lt;/option&gt;&lt;/select&gt;&#10;		&lt;input id=&quot;phone&quot; type=&quot;tel&quot;&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <div class="field">
@@ -64,6 +79,9 @@ The prefix is not part of the control, so a screen reader will not read it with 
 	</div>
 </div>
 ```
+
+</details>
+</figure>
 
 ## Attributes
 

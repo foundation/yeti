@@ -110,6 +110,12 @@ To keep one section open at a time, give sibling `details` the same `name`. That
 
 A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fallback to the variant's subtle tint, so setting it to `transparent` turns the fill off without touching the variant.
 
+<figure class="demo" data-height="md">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;nav class=&quot;subnav&quot; aria-label=&quot;Settings&quot; data-variant=&quot;secondary&quot;&gt;&#10;	&lt;ul role=&quot;list&quot;&gt;&#10;		&lt;li&gt;&#10;			&lt;details name=&quot;settings&quot; open&gt;&#10;				&lt;summary&gt;Account&lt;/summary&gt;&#10;				&lt;ul role=&quot;list&quot;&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot; aria-current=&quot;page&quot;&gt;Profile&lt;/a&gt;&lt;/li&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Password&lt;/a&gt;&lt;/li&gt;&#10;				&lt;/ul&gt;&#10;			&lt;/details&gt;&#10;		&lt;/li&gt;&#10;		&lt;li&gt;&#10;			&lt;details name=&quot;settings&quot;&gt;&#10;				&lt;summary&gt;Billing&lt;/summary&gt;&#10;				&lt;ul role=&quot;list&quot;&gt;&#10;					&lt;li&gt;&lt;a href=&quot;#&quot;&gt;Plan&lt;/a&gt;&lt;/li&gt;&#10;				&lt;/ul&gt;&#10;			&lt;/details&gt;&#10;		&lt;/li&gt;&#10;	&lt;/ul&gt;&#10;&lt;/nav&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <nav class="subnav" aria-label="Settings" data-variant="secondary">
 	<ul role="list">
@@ -117,8 +123,8 @@ A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fa
 			<details name="settings" open>
 				<summary>Account</summary>
 				<ul role="list">
-					<li><a href="/settings/profile/" aria-current="page">Profile</a></li>
-					<li><a href="/settings/password/">Password</a></li>
+					<li><a href="#" aria-current="page">Profile</a></li>
+					<li><a href="#">Password</a></li>
 				</ul>
 			</details>
 		</li>
@@ -126,13 +132,16 @@ A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fa
 			<details name="settings">
 				<summary>Billing</summary>
 				<ul role="list">
-					<li><a href="/settings/plan/">Plan</a></li>
+					<li><a href="#">Plan</a></li>
 				</ul>
 			</details>
 		</li>
 	</ul>
 </nav>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 

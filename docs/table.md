@@ -44,6 +44,12 @@ Rows and columns of data: prices, results, comparisons. If the content is a list
 
 The class goes on the `table`. Cells get padding from `data-size` and a line beneath each row; the header row gets a stronger rule. `data-striped` tints every other row, `data-hover` the row under the pointer, `data-border` draws every cell. Mark a column of numbers with `data-numeric` on its cells and header: they align to the end with tabular figures, so the digits line up. The marker works on any element, a price or a legend's values, where it gives the figures alone. A comparison, a feature column and a column per plan, reads across best when the columns are equal: `data-fixed` gives every column the same share of the width, whatever it holds. To make the first column wider, give its header cell a width, `<th style="inline-size: 40%">`, and the others share the rest. `data-align="center"` (or `start`, `end`) on a `th` or `td` aligns that cell, and on a `tr` every cell in the row; a cell's own value, or its `data-numeric`, outranks its row's. A tick in a centered cell is an inline `svg`, and the reset makes an `svg` a block, so wrap it in an `icon` or give it `display: inline-block` for the alignment to reach it.
 
+<figure class="demo" data-height="sm">
+<div data-preview="How it works"><iframe title="How it works, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;table class=&quot;table&quot; data-fixed aria-label=&quot;Plans compared&quot;&gt;&#10;	&lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot; style=&quot;inline-size: 40%&quot;&gt;Feature&lt;/th&gt;&lt;th scope=&quot;col&quot; data-align=&quot;center&quot;&gt;Free&lt;/th&gt;&lt;th scope=&quot;col&quot; data-align=&quot;center&quot;&gt;Walker&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&#10;	&lt;tbody&gt;&lt;tr data-align=&quot;center&quot;&gt;&lt;th scope=&quot;row&quot; data-align=&quot;start&quot;&gt;Offline maps&lt;/th&gt;&lt;td&gt;No&lt;/td&gt;&lt;td&gt;Yes&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&#10;&lt;/table&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
 ```html
 <table class="table" data-fixed aria-label="Plans compared">
 	<thead><tr><th scope="col" style="inline-size: 40%">Feature</th><th scope="col" data-align="center">Free</th><th scope="col" data-align="center">Walker</th></tr></thead>
@@ -51,7 +57,16 @@ The class goes on the `table`. Cells get padding from `data-size` and a line ben
 </table>
 ```
 
+</details>
+</figure>
+
 `data-sticky` on the `thead` pins the header row at `--yeti-sticky-offset` while the rows scroll under it; its cells take the surface color so the rows do not show through, and the rule beneath them moves with them. Set the offset to `0` on the `thead` to pin it flush with the top. A table that is wider than its container goes inside a `scroller`, which scrolls it sideways while the table itself stays a table. `data-nowrap` on the table keeps every cell's line; on a single `th` or `td` it keeps just that cell's; either way, put the table in a scroller so the kept line has somewhere to go.
+
+<figure class="demo" data-height="md">
+<div data-preview="How it works (2)"><iframe title="How it works (2), live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;scroller&quot; role=&quot;region&quot; aria-label=&quot;Quarterly results&quot; tabindex=&quot;0&quot;&gt;&#10;	&lt;table class=&quot;table&quot; data-size=&quot;sm&quot; data-border&gt;&#10;		&lt;caption&gt;Quarterly results&lt;/caption&gt;&#10;		&lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Region&lt;/th&gt;&lt;th scope=&quot;col&quot; data-numeric&gt;Q1&lt;/th&gt;&lt;th scope=&quot;col&quot; data-numeric&gt;Q2&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&#10;		&lt;tbody&gt;&lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;North&lt;/th&gt;&lt;td data-numeric&gt;120&lt;/td&gt;&lt;td data-numeric&gt;132&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&#10;	&lt;/table&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
 
 ```html
 <div class="scroller" role="region" aria-label="Quarterly results" tabindex="0">
@@ -62,6 +77,9 @@ The class goes on the `table`. Cells get padding from `data-size` and a line ben
 	</table>
 </div>
 ```
+
+</details>
+</figure>
 
 ## Accessibility
 
