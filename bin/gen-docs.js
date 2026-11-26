@@ -84,7 +84,7 @@ export function escapeAttribute(text) {
 // ahead of everything else points relative example URLs — images, above all —
 // at the stylesheet's own folder, since a srcdoc frame otherwise resolves
 // them against the docs page.
-export function renderDemo({ title, exampleHtml, stylesheet, height = 'lg', width, resize, bleed = false }) {
+export function renderDemo({ title, exampleHtml, stylesheet, height = 'lg', width, resize, bleed = false, code = true }) {
 	// More than one stylesheet is allowed, and is how a themed host should do
 	// it: the page has already fetched yeti.css, so naming that same URL first
 	// and a small theme after it costs the frame one short file rather than a
@@ -113,9 +113,14 @@ export function renderDemo({ title, exampleHtml, stylesheet, height = 'lg', widt
 	const padding = bleed ? '0' : 'var(--yeti-space-md)';
 	const doc = `<base href="${base}">${links}<script type="module" src="${base}yeti.js${key}"></script>${inert}<body style="margin:0;padding:${padding}">${exampleHtml.trim()}`;
 	const srcdoc = escapeAttribute(doc).replace(/\r?\n/g, '&#10;');
+	const figure = `<figure class="demo" data-height="${height}"${width ? ` data-width="${width}"` : ''}${resize ? ` data-resize="${resize}"` : ''}>`;
+	const preview = `<div data-preview="${escapeAttribute(title)}"><iframe title="${escapeAttribute(title)}, live" srcdoc="${srcdoc}"></iframe></div>`;
+	// A demo whose markup is not the lesson (a control panel wired by its own
+	// script, say) asks to be shown without its code.
+	if (!code) return [figure, preview, '</figure>'].join('\n');
 	return [
-		`<figure class="demo" data-height="${height}"${width ? ` data-width="${width}"` : ''}${resize ? ` data-resize="${resize}"` : ''}>`,
-		`<div data-preview="${escapeAttribute(title)}"><iframe title="${escapeAttribute(title)}, live" srcdoc="${srcdoc}"></iframe></div>`,
+		figure,
+		preview,
 		'',
 		'<details markdown="1">',
 		'<summary>View Code</summary>',
@@ -322,10 +327,10 @@ export function frontMatterTitle(markdown) {
 // renders the same figure the component pages use, the frame filled and the
 // code beneath it, so a layout that stacks at its own width is something the
 // reader watches happen rather than something the paragraph promises. The
-// tokens after demo describe the box: a height, a width, and "both" to let the
-// reader drag it taller as well as wider. The two lists come from the schema so
-// they cannot drift from the demo component's own attributes, and they are read
-// here rather than from the tree being generated, because a host generating
+// tokens after demo describe the box: a height, a width, "both" to let the
+// reader drag it taller as well as wider, and "nocode" to show the frame
+// alone. The two lists come from the schema so they cannot drift from the
+// demo component's own attributes, and they are read here rather than from the tree being generated, because a host generating
 // into its own folder still writes this repo's guides.
 const VOCABULARY = loadVocabulary(path.join(SCHEMA_DIR, 'vocabulary.json'));
 export const DEMO_HEIGHTS = VOCABULARY.height;
@@ -348,6 +353,9 @@ export function parseDemoFence(info, { file, line }) {
 		if (token === 'both') {
 			if (options.resize) fail('html demo: both is given twice');
 			options.resize = 'both';
+		} else if (token === 'nocode') {
+			if (options.code === false) fail('html demo: nocode is given twice');
+			options.code = false;
 		} else if (height && options.height === undefined) {
 			options.height = token;
 		} else if (width && options.width === undefined) {
@@ -355,7 +363,7 @@ export function parseDemoFence(info, { file, line }) {
 		} else if (height || width) {
 			fail(`html demo: ${token} is a second ${height ? 'height' : 'width'}; a demo takes one height and one width`);
 		} else {
-			fail(`html demo: unknown token ${token}; expected a height (${DEMO_HEIGHTS.join(' ')}), a width (${DEMO_WIDTHS.join(' ')}), or both`);
+			fail(`html demo: unknown token ${token}; expected a height (${DEMO_HEIGHTS.join(' ')}), a width (${DEMO_WIDTHS.join(' ')}), both, or nocode`);
 		}
 	}
 	return { options, errors };

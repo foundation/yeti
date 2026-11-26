@@ -539,6 +539,21 @@ test('parseDemoFence reads a height, a width and both', () => {
 	assert.deepEqual(parseDemoFence(' both', at).options, { resize: 'both' });
 });
 
+test('parseDemoFence reads nocode, and refuses it twice', () => {
+	// A demo whose markup is not the lesson, such as a control panel wired by a
+	// script, shows the frame alone.
+	assert.deepEqual(parseDemoFence(' xl md nocode', at).options, { height: 'xl', width: 'md', code: false });
+	assert.match(parseDemoFence(' nocode nocode', at).errors[0].message, /nocode is given twice/);
+});
+
+test('renderDemo leaves out the code when code is false', () => {
+	const out = renderDemo({ title: 'Mixer', exampleHtml: '<p>One</p>', stylesheet: '/y.css', code: false });
+	assert.ok(!out.includes('<details'));
+	assert.ok(!out.includes('View Code'));
+	assert.ok(out.includes('<iframe title="Mixer, live"'));
+	assert.ok(out.endsWith('</iframe></div>\n</figure>'));
+});
+
 test('parseDemoFence takes a size in both vocabularies as the height first, the width second', () => {
 	// sm, md, lg and xl are in both lists, so their order is what decides.
 	assert.deepEqual(parseDemoFence(' lg sm', at).options, { height: 'lg', width: 'sm' });
