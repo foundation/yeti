@@ -1,7 +1,7 @@
 ---
 raw: true
 title: "Color"
-description: "How color works in Yeti and how to use it: six hues and a ladder, text that reads on every one of them, the same six words as status on a component, a color by name on anything, a greyscale that flips with the scheme, and the tokens behind all of it."
+description: "How color works in Yeti and how to use it: why a color is a lightness, a chroma and a hue, six hues and a ladder, text that reads on every one of them, the same six words as status on a component, a color by name on anything, a greyscale that flips with the scheme, and the tokens behind all of it."
 nav_group: "Guides"
 nav_order: 8
 ---
@@ -9,7 +9,209 @@ nav_order: 8
 
 # Color
 
-<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page is how to use it. The <a href="theming.md">theming guide</a> is how to change it.</p>
+<p class="lede">Color in Yeti is six words and a distance. A hue has a name, <code>primary</code> or <code>warning</code>, and the same name means the same thing on a badge, a button, an alert and a painted section. A grey has a number, how far it sits from the page toward the page's own text, and that number means the same thing in light mode and in dark. The browser picks the scheme; Yeti keeps every pair of colors readable in both. This page starts with why it is built that way, and then how to use it. The <a href="theming.md">theming guide</a> is how to change it.</p>
+
+## A color is three answers
+
+A hex code says how much red, green and blue light a screen should give off. `#006bbb` is exact, and it tells you nothing you can design with: not how bright the color is, not how strong, and not what to change to get a lighter one that still looks related.
+
+Yeti writes a color as `oklch(lightness chroma hue)`. Those are three questions you already ask of every color:
+
+- **Lightness: how bright is it?** `0` is black and `1` is white. `0.5` looks half-way between them.
+- **Chroma: how colorful is it?** `0` is grey. `0.15` is a clear accent. There is no fixed top: how far it can go depends on the other two.
+- **Hue: which color is it?** An angle around a wheel: 25 is red, 80 amber, 145 green, 195 teal, 250 blue, 300 violet.
+
+The three are built to match the eye and not the screen, so you can change one and the other two look much as they did. Try it: start from a color you know, then move one slider at a time.
+
+<figure class="demo" data-height="xl" data-width="md">
+<div data-preview="A color is three answers"><iframe title="A color is three answers, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;style&gt;&#10;	.mixer { --color: oklch(var(--l) var(--c) var(--h)); }&#10;	.swatch { background: var(--color); padding: var(--yeti-space-lg); border-radius: var(--yeti-radius-md); }&#10;	.strip { block-size: 0.75rem; border-radius: var(--yeti-radius-sm); }&#10;&lt;/style&gt;&#10;&lt;div class=&quot;mixer stack&quot; data-gap=&quot;md&quot; style=&quot;--l: 0.52; --c: 0.15; --h: 250&quot;&gt;&#10;	&lt;div class=&quot;swatch cluster&quot; data-gap=&quot;lg&quot;&gt;&lt;strong style=&quot;color: white&quot;&gt;White text&lt;/strong&gt;&lt;strong style=&quot;color: black&quot;&gt;Black text&lt;/strong&gt;&lt;/div&gt;&#10;	&lt;code id=&quot;value&quot;&gt;oklch(0.52 0.15 250)&lt;/code&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;l&quot;&gt;Lightness&lt;/label&gt;&#10;		&lt;output for=&quot;l&quot; aria-hidden=&quot;true&quot;&gt;&lt;/output&gt;&#10;		&lt;input id=&quot;l&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;1&quot; step=&quot;0.01&quot; value=&quot;0.52&quot;&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;strip&quot; style=&quot;background: linear-gradient(to right in oklch, oklch(0 var(--c) var(--h)), oklch(1 var(--c) var(--h)))&quot;&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;c&quot;&gt;Chroma&lt;/label&gt;&#10;		&lt;output for=&quot;c&quot; aria-hidden=&quot;true&quot;&gt;&lt;/output&gt;&#10;		&lt;input id=&quot;c&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;0.3&quot; step=&quot;0.005&quot; value=&quot;0.15&quot;&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;strip&quot; style=&quot;background: linear-gradient(to right in oklch, oklch(var(--l) 0 var(--h)), oklch(var(--l) 0.3 var(--h)))&quot;&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;h&quot;&gt;Hue&lt;/label&gt;&#10;		&lt;output for=&quot;h&quot; aria-hidden=&quot;true&quot;&gt;&lt;/output&gt;&#10;		&lt;input id=&quot;h&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;360&quot; step=&quot;1&quot; value=&quot;250&quot;&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;strip&quot; style=&quot;background: linear-gradient(to right in oklch longer hue, oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 360))&quot;&gt;&lt;/div&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;start&quot;&gt;Start from a color you know&lt;/label&gt;&#10;		&lt;input id=&quot;start&quot; type=&quot;color&quot; value=&quot;#006bbb&quot;&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;&#10;&lt;script&gt;&#10;	const mixer = document.querySelector(&#39;.mixer&#39;);&#10;	const sliders = [&#39;l&#39;, &#39;c&#39;, &#39;h&#39;].map((id) =&gt; document.getElementById(id));&#10;	mixer.addEventListener(&#39;input&#39;, (event) =&gt; {&#10;		if (event.target.id === &#39;start&#39;) {&#10;			// The browser converts the hex code; read the three numbers back.&#10;			const probe = document.createElement(&#39;i&#39;);&#10;			probe.style.color = `oklch(from ${event.target.value} l c h)`;&#10;			mixer.append(probe);&#10;			const numbers = getComputedStyle(probe).color.match(/[\d.]+(e-?\d+)?/g).map(Number);&#10;			probe.remove();&#10;			sliders.forEach((slider, i) =&gt; {&#10;				slider.value = numbers[i];&#10;				slider.dispatchEvent(new Event(&#39;input&#39;, { bubbles: true }));&#10;			});&#10;			return;&#10;		}&#10;		sliders.forEach((slider) =&gt; mixer.style.setProperty(`--${slider.id}`, slider.value));&#10;		document.getElementById(&#39;value&#39;).textContent = `oklch(${sliders.map((s) =&gt; s.value).join(&#39; &#39;)})`;&#10;	});&#10;&lt;/script&gt;"></iframe></div>
+</figure>
+
+Watch the two words as you move lightness: white text fades as the color gets brighter, and black text fades as it gets darker. Then move the hue. The words hardly change. That is the idea the rest of this page is built on.
+
+You may know the same three letters as LCH. It is the same idea in an older form. OKLCH corrects it, most visibly in blues, which drift toward purple in LCH as they get lighter.
+
+## Why HSL cannot do this
+
+HSL has a hue and a lightness too, and it looks like the same thing. But its lightness is arithmetic on the screen's numbers. Pure yellow and pure blue are both 50% light in HSL. White text on that yellow is about 1:1, which is invisible, and on that blue it is about 8.6:1.
+
+Here are six colors made two ways. Each row keeps its other two numbers the same and changes only the hue. Then take the color away, and what is left is how bright each one really is.
+
+<figure class="demo" data-height="lg" data-width="lg">
+<div data-preview="Why HSL cannot do this"><iframe title="Why HSL cannot do this, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;style&gt;&#10;	.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr)); gap: var(--yeti-space-xs); }&#10;	.row &gt; * { color: white; text-align: center; }&#10;	.compare:has(:checked) .row { filter: grayscale(1); }&#10;&lt;/style&gt;&#10;&lt;div class=&quot;compare stack&quot; data-gap=&quot;md&quot;&gt;&#10;	&lt;div class=&quot;stack&quot; data-gap=&quot;xs&quot;&gt;&#10;		&lt;code&gt;hsl(hue 70% 45%)&lt;/code&gt;&#10;		&lt;div class=&quot;row&quot;&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(0 70% 45%)&quot;&gt;Red&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(50 70% 45%)&quot;&gt;Yellow&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(130 70% 45%)&quot;&gt;Green&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(180 70% 45%)&quot;&gt;Teal&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(225 70% 45%)&quot;&gt;Blue&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: hsl(270 70% 45%)&quot;&gt;Violet&lt;/div&gt;&#10;		&lt;/div&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;stack&quot; data-gap=&quot;xs&quot;&gt;&#10;		&lt;code&gt;oklch(0.52 0.15 hue)&lt;/code&gt;&#10;		&lt;div class=&quot;row&quot;&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 25)&quot;&gt;Red&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 100)&quot;&gt;Yellow&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 145)&quot;&gt;Green&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 195)&quot;&gt;Teal&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 250)&quot;&gt;Blue&lt;/div&gt;&#10;			&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: oklch(0.52 0.15 300)&quot;&gt;Violet&lt;/div&gt;&#10;		&lt;/div&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;input id=&quot;grey&quot; type=&quot;checkbox&quot; role=&quot;switch&quot;&gt;&#10;		&lt;label for=&quot;grey&quot;&gt;Take the color away&lt;/label&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
+```html
+<style>
+	.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr)); gap: var(--yeti-space-xs); }
+	.row > * { color: white; text-align: center; }
+	.compare:has(:checked) .row { filter: grayscale(1); }
+</style>
+<div class="compare stack" data-gap="md">
+	<div class="stack" data-gap="xs">
+		<code>hsl(hue 70% 45%)</code>
+		<div class="row">
+			<div class="box" data-gap="sm" style="background: hsl(0 70% 45%)">Red</div>
+			<div class="box" data-gap="sm" style="background: hsl(50 70% 45%)">Yellow</div>
+			<div class="box" data-gap="sm" style="background: hsl(130 70% 45%)">Green</div>
+			<div class="box" data-gap="sm" style="background: hsl(180 70% 45%)">Teal</div>
+			<div class="box" data-gap="sm" style="background: hsl(225 70% 45%)">Blue</div>
+			<div class="box" data-gap="sm" style="background: hsl(270 70% 45%)">Violet</div>
+		</div>
+	</div>
+	<div class="stack" data-gap="xs">
+		<code>oklch(0.52 0.15 hue)</code>
+		<div class="row">
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 25)">Red</div>
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 100)">Yellow</div>
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 145)">Green</div>
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 195)">Teal</div>
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 250)">Blue</div>
+			<div class="box" data-gap="sm" style="background: oklch(0.52 0.15 300)">Violet</div>
+		</div>
+	</div>
+	<div class="field">
+		<input id="grey" type="checkbox" role="switch">
+		<label for="grey">Take the color away</label>
+	</div>
+</div>
+```
+
+</details>
+</figure>
+
+In HSL, every hue needs its own hand-picked lightness before the words read. In OKLCH, one lightness serves them all. Measured at every fifteen degrees, white text on the HSL recipe runs from 1.9:1 to 10:1. On the OKLCH one it runs from 4.7:1 to 6:1, so it never drops under the 4.5:1 that body text needs.
+
+There is a cost, and it is in the second row. A yellow dark enough to carry white text is an olive. No system can give you a bright yellow that white words read on, because there isn't one. If your brand is that yellow, use it as [a brand color](#a-brand-color), and Yeti puts black words on it.
+
+## Lightness does the work
+
+Two colors read against each other when one is much lighter than the other. Hue and chroma add very little. So Yeti fixes the lightness, and gives each step of it one job:
+
+<figure class="demo" data-height="lg" data-width="lg">
+<div data-preview="Lightness does the work"><iframe title="Lightness does the work, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;grid&quot; data-min=&quot;xs&quot; data-gap=&quot;md&quot; data-palette style=&quot;--yeti-hue-primary: 250; --yeti-chroma: 0.15&quot;&gt;&#10;	&lt;div class=&quot;box stack&quot; data-surface=&quot;base&quot; data-gap=&quot;sm&quot; style=&quot;color-scheme: light&quot;&gt;&#10;		&lt;strong&gt;Light&lt;/strong&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-subtle)&quot;&gt;Subtle, 0.95&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-soft)&quot;&gt;Soft, 0.85&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary); color: var(--yeti-on-primary)&quot;&gt;Base, 0.52&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-strong); color: var(--yeti-on-primary)&quot;&gt;Strong, 0.42&lt;/div&gt;&#10;		&lt;div style=&quot;color: var(--yeti-color-primary-text)&quot;&gt;Text, 0.35&lt;/div&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;box stack&quot; data-surface=&quot;base&quot; data-gap=&quot;sm&quot; style=&quot;color-scheme: dark&quot;&gt;&#10;		&lt;strong&gt;Dark&lt;/strong&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-subtle)&quot;&gt;Subtle, 0.25&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-soft)&quot;&gt;Soft, 0.35&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary); color: var(--yeti-on-primary)&quot;&gt;Base, 0.70&lt;/div&gt;&#10;		&lt;div class=&quot;box&quot; data-gap=&quot;sm&quot; style=&quot;background: var(--yeti-color-primary-strong); color: var(--yeti-on-primary)&quot;&gt;Strong, 0.80&lt;/div&gt;&#10;		&lt;div style=&quot;color: var(--yeti-color-primary-text)&quot;&gt;Text, 0.85&lt;/div&gt;&#10;	&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
+```html
+<div class="grid" data-min="xs" data-gap="md" data-palette style="--yeti-hue-primary: 250; --yeti-chroma: 0.15">
+	<div class="box stack" data-surface="base" data-gap="sm" style="color-scheme: light">
+		<strong>Light</strong>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-subtle)">Subtle, 0.95</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-soft)">Soft, 0.85</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary); color: var(--yeti-on-primary)">Base, 0.52</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-strong); color: var(--yeti-on-primary)">Strong, 0.42</div>
+		<div style="color: var(--yeti-color-primary-text)">Text, 0.35</div>
+	</div>
+	<div class="box stack" data-surface="base" data-gap="sm" style="color-scheme: dark">
+		<strong>Dark</strong>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-subtle)">Subtle, 0.25</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-soft)">Soft, 0.35</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary); color: var(--yeti-on-primary)">Base, 0.70</div>
+		<div class="box" data-gap="sm" style="background: var(--yeti-color-primary-strong); color: var(--yeti-on-primary)">Strong, 0.80</div>
+		<div style="color: var(--yeti-color-primary-text)">Text, 0.85</div>
+	</div>
+</div>
+```
+
+</details>
+</figure>
+
+- **Distance from the page is the job.** Subtle sits close to the page, so it can go behind a paragraph. Text sits far from it, so it can be one. Base is in between, far enough to be seen as a button and to carry words of its own.
+- **Dark mode is the same jobs from the other end.** It is not the light palette turned upside down. Each step has a second lightness, measured from a dark page, and the words on a base button turn from near white to near black.
+- **The hue is free.** Because the jobs belong to the lightness, any hue can do all of them. That is why you give Yeti one number and get a whole family that reads.
+
+Lightness is very close to contrast, but it is not the same sum. The ratio that accessibility rules use is worked out from luminance, so the same lightness gives slightly different ratios at different hues. That is the spread in the figures above, and it is why Yeti measures [the pairs it promises](#text-on-color) and does not assume them.
+
+## Chroma is how loud
+
+Put a strong red beside a soft blue and the red looks more important, whether you meant it or not. When colors share a chroma, no hue shouts over another, and six unrelated hues look like one set. Importance is then something you choose, with size, position and `data-emphasis`, and not an accident of which color a thing happened to be.
+
+<figure class="demo" data-height="md" data-width="lg">
+<div data-preview="Chroma is how loud"><iframe title="Chroma is how loud, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;stack&quot; data-gap=&quot;md&quot; data-palette style=&quot;--yeti-chroma: 0.15; --yeti-hue-primary: 250&quot;&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;chroma&quot;&gt;One chroma, every color&lt;/label&gt;&#10;		&lt;output for=&quot;chroma&quot; aria-hidden=&quot;true&quot;&gt;&lt;/output&gt;&#10;		&lt;input id=&quot;chroma&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;0.25&quot; step=&quot;0.01&quot; value=&quot;0.15&quot; oninput=&quot;this.closest(&#39;[data-palette]&#39;).style.setProperty(&#39;--yeti-chroma&#39;, this.value)&quot;&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;cluster&quot; data-gap=&quot;sm&quot;&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-variant=&quot;primary&quot;&gt;Primary&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-variant=&quot;secondary&quot;&gt;Secondary&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-variant=&quot;success&quot;&gt;Success&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-variant=&quot;warning&quot;&gt;Warning&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-variant=&quot;alert&quot;&gt;Alert&lt;/button&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;alert&quot; role=&quot;status&quot; data-variant=&quot;success&quot;&gt;&lt;div&gt;Your changes are live.&lt;/div&gt;&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
+```html
+<div class="stack" data-gap="md" data-palette style="--yeti-chroma: 0.15; --yeti-hue-primary: 250">
+	<div class="field">
+		<label for="chroma">One chroma, every color</label>
+		<output for="chroma" aria-hidden="true"></output>
+		<input id="chroma" type="range" min="0" max="0.25" step="0.01" value="0.15" oninput="this.closest('[data-palette]').style.setProperty('--yeti-chroma', this.value)">
+	</div>
+	<div class="cluster" data-gap="sm">
+		<button class="button" type="button" data-variant="primary">Primary</button>
+		<button class="button" type="button" data-variant="secondary">Secondary</button>
+		<button class="button" type="button" data-variant="success">Success</button>
+		<button class="button" type="button" data-variant="warning">Warning</button>
+		<button class="button" type="button" data-variant="alert">Alert</button>
+	</div>
+	<div class="alert" role="status" data-variant="success"><div>Your changes are live.</div></div>
+</div>
+```
+
+</details>
+</figure>
+
+`--yeti-chroma` is one number for a site's whole temperament: near `0.05` it is quiet, and at the default `0.15` it is clear. Going higher costs contrast, for the reason below.
+
+One number does not mean every step gets all of it. A pale tint at full chroma is a highlighter pen, and words have to sit on it. So the base and strong steps take all of the chroma, the soft step 70% of it, the subtle step 40%, and words in the hue 80%.
+
+Screens set a limit too. How colorful a color can be depends on its hue and its lightness, and the edge is uneven: at the base step's 0.52, an ordinary screen can show violet far past `0.15`, while teal stops near `0.09` and amber near `0.11`. Past the edge the browser shows the nearest color it can, so teal looks quieter than the others and may shift a little. A wide-gamut screen shows more.
+
+That edge is why `0.15` is a good place to stop. The color a screen falls back to is a little brighter, so the words on it lose contrast. At `0.15` the weakest hue, near teal, holds about 4.6:1 in light mode. At `0.2` it is about 4.2:1, under what body text needs. If you raise the chroma, check your own hue. At `0.08` or lower, the base step of every hue fits on an ordinary screen, so all six match.
+
+## Hue is the brand decision
+
+With lightness doing the work and chroma set once, hue is the only part left to choose, and at the default chroma every angle reads. Turn it:
+
+<figure class="demo" data-height="lg" data-width="lg">
+<div data-preview="Hue is the brand decision"><iframe title="Hue is the brand decision, live" srcdoc="&lt;base href=&quot;/yeti/&quot;&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/yeti/yeti.css&quot;&gt;&lt;script type=&quot;module&quot; src=&quot;/yeti/yeti.js&quot;&gt;&lt;/script&gt;&lt;script&gt;addEventListener(&quot;click&quot;,function(e){var a=e.target.closest&amp;&amp;e.target.closest(&#39;a[href=&quot;#&quot;]&#39;);if(a)e.preventDefault();});&lt;/script&gt;&lt;body style=&quot;margin:0;padding:var(--yeti-space-md)&quot;&gt;&lt;div class=&quot;stack&quot; data-gap=&quot;md&quot; data-palette style=&quot;--yeti-chroma: 0.15; --yeti-hue-primary: 250&quot;&gt;&#10;	&lt;div class=&quot;field&quot;&gt;&#10;		&lt;label for=&quot;hue&quot;&gt;Primary hue&lt;/label&gt;&#10;		&lt;output for=&quot;hue&quot; aria-hidden=&quot;true&quot;&gt;&lt;/output&gt;&#10;		&lt;input id=&quot;hue&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;360&quot; step=&quot;1&quot; value=&quot;250&quot; oninput=&quot;this.closest(&#39;[data-palette]&#39;).style.setProperty(&#39;--yeti-hue-primary&#39;, this.value)&quot;&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;cluster&quot; data-gap=&quot;sm&quot; data-align=&quot;center&quot;&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot;&gt;Save&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-emphasis=&quot;medium&quot;&gt;Preview&lt;/button&gt;&#10;		&lt;button class=&quot;button&quot; type=&quot;button&quot; data-emphasis=&quot;low&quot;&gt;Cancel&lt;/button&gt;&#10;		&lt;span class=&quot;badge&quot; data-variant=&quot;primary&quot;&gt;New&lt;/span&gt;&#10;	&lt;/div&gt;&#10;	&lt;div class=&quot;alert&quot; role=&quot;status&quot; data-variant=&quot;primary&quot;&gt;&lt;div&gt;&lt;strong&gt;Draft saved.&lt;/strong&gt; It is not published yet.&lt;/div&gt;&lt;/div&gt;&#10;	&lt;p&gt;Not sure? &lt;a href=&quot;#&quot;&gt;Read it through&lt;/a&gt; first.&lt;/p&gt;&#10;	&lt;div class=&quot;box&quot; data-paint=&quot;primary&quot;&gt;A painted band, with the words made for it.&lt;/div&gt;&#10;&lt;/div&gt;"></iframe></div>
+
+<details markdown="1">
+<summary>View Code</summary>
+
+```html
+<div class="stack" data-gap="md" data-palette style="--yeti-chroma: 0.15; --yeti-hue-primary: 250">
+	<div class="field">
+		<label for="hue">Primary hue</label>
+		<output for="hue" aria-hidden="true"></output>
+		<input id="hue" type="range" min="0" max="360" step="1" value="250" oninput="this.closest('[data-palette]').style.setProperty('--yeti-hue-primary', this.value)">
+	</div>
+	<div class="cluster" data-gap="sm" data-align="center">
+		<button class="button" type="button">Save</button>
+		<button class="button" type="button" data-emphasis="medium">Preview</button>
+		<button class="button" type="button" data-emphasis="low">Cancel</button>
+		<span class="badge" data-variant="primary">New</span>
+	</div>
+	<div class="alert" role="status" data-variant="primary"><div><strong>Draft saved.</strong> It is not published yet.</div></div>
+	<p>Not sure? <a href="#">Read it through</a> first.</p>
+	<div class="box" data-paint="primary">A painted band, with the words made for it.</div>
+</div>
+```
+
+</details>
+</figure>
+
+Every part moved, every tint and hover moved with it, and nothing had to be picked again. In your own stylesheet that is one line:
+
+```css
+:root { --yeti-hue-primary: 160; }
+```
+
+To find the hue of a color you already have, put it into the mixer at the top of this page, or click its swatch in your browser's developer tools and change the format to OKLCH. The third number is the hue.
+
+Even lightness has one consequence to design for. With the color taken away, a success button and an alert button are nearly the same grey, and some readers see them almost that way. So a hue should never be the only thing that tells two statuses apart: say it in words, or add an icon.
+
+## When to break it
+
+Some brands are one exact color, and a hue at Yeti's lightness is a relative of it and not the thing itself. Then give Yeti the color, as [a brand color](#a-brand-color). The base step becomes exactly that color, the words on it become black or white, whichever reads, and the steps around it keep the ladder's lightness, so the tints and the text are as dependable as before.
+
+Start with a hue if you are choosing. Use a brand color if it has already been chosen for you.
 
 ## Six hues, one chroma
 

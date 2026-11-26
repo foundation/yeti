@@ -42,11 +42,7 @@ Two things to know about where you set tokens. The scale inputs, the neutral hue
 
 ## Reading an oklch value
 
-Yeti writes colors as `oklch(lightness chroma hue)`.
-
-- **Lightness** runs from 0 (black) to 1 (white) and, unlike hex or HSL, looks evenly spaced to the eye. Two colors with the same lightness feel equally bright whatever their hue.
-- **Chroma** is saturation: 0 is gray, and around 0.15 is a clear but not shouting accent. Above 0.2 some hues cannot be displayed on ordinary screens and the browser pulls them back into range.
-- **Hue** is an angle: 25 red, 80 amber, 145 green, 250 blue, 300 violet.
+Yeti writes colors as `oklch(lightness chroma hue)`: how bright, how colorful, and which color. The [color guide](color.md#a-color-is-three-answers) shows what each one does, with sliders to try, and why Yeti is built on them.
 
 The comment beside each color token in `yeti.css` gives its hex equivalent in light mode, so you can match it against a value you already know.
 
