@@ -16,12 +16,12 @@ The list may itself be a `cluster` instead of a plain `ul`, for a row of content
 
 `data-numbered` turns the list into a contents list. Every `ul` resets a CSS counter and every `li` counts, so a nested list picks up where its parent left off and reads `2.1` rather than starting over at `1`. The number sits before the link, in the muted color, with tabular figures, in a box wide enough for a two-figure count or a nested 2.1, so the link text lines up. A title that wraps hangs from the number: its second line starts under its first word, not under the digits.
 
-```html
+```html demo md
 <nav class="toc" aria-label="Contents" data-numbered>
 	<ul role="list">
-		<li><a href="#one">Getting the files</a></li>
-		<li><a href="#two">The stylesheet</a>
-			<ul role="list"><li><a href="#linking">Linking it</a></li></ul>
+		<li><a href="#">Getting the files</a></li>
+		<li><a href="#">The stylesheet</a>
+			<ul role="list"><li><a href="#">Linking it</a></li></ul>
 		</li>
 	</ul>
 </nav>

@@ -8,7 +8,7 @@ A card is a flex column on the raised surface with a border and a radius. A pict
 
 Two things follow from how that query works. Only a card with a picture is a size container, because a size container has no intrinsic width: a card that always was one collapsed to its padding as a cluster item. And anything pressable inside a card sits above a stretched link, so a footer button in a card whose heading carries `data-stretch` still takes the click.
 
-```html
+```html demo lg
 <ul class="grid" data-min="sm" role="list">
 	<li class="card" data-raised>
 		<figure>

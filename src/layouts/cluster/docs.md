@@ -16,7 +16,7 @@ A cluster is a wrapping flex row with a `gap`. `data-justify` distributes the it
 
 A term and its value on one line, parted to the two ends, is a cluster with `data-justify="between"`. A `div` may wrap a `dt` and its `dd`, so a whole legend is a `dl` that is a `stack` whose rows are clusters; add `data-rule` to the stack for a line between them and `data-numeric` to the values so the digits line up.
 
-```html
+```html demo sm
 <dl class="stack" data-gap="xs">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
 	<div class="cluster" data-justify="between"><dt>Ascent</dt><dd data-numeric>1,120 m</dd></div>
@@ -28,7 +28,7 @@ A term and its value on one line, parted to the two ends, is a cluster with `dat
 
 `data-threshold` takes a width, `3xs` to `2xl`, and turns the cluster into a column of full-width items whenever its own width is below that size; at or above it, the cluster is the wrapping row again. It is for a row of actions or filters that sits in a sidebar or a stacked region, where a ragged wrap reads worse than a clean column.
 
-```html
+```html demo md xs
 <div class="cluster" data-threshold="sm" data-gap="xs">
 	<a class="button" href="#">Save</a>
 	<a class="button" href="#" data-emphasis="medium">Preview</a>

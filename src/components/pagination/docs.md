@@ -6,7 +6,7 @@ Under a list that is split into pages: search results, an archive, a table too l
 
 A row of links, each at least a control's width and height so it is easy to hit, the current page filled with the hue. An ellipsis in a `span` stands for skipped pages. Below `data-threshold`, the pagination's own width, everything but Previous, the current page, and Next is hidden, so the same markup is a full row in a wide column and three targets in a narrow one, with no breakpoint. `data-justify` places the row.
 
-```html
+```html demo sm sm
 <nav class="pagination" aria-label="Pagination" data-justify="center" data-threshold="md">
 	<ol role="list">
 		<li><a href="#" rel="prev">Previous</a></li>

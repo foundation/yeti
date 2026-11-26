@@ -10,18 +10,20 @@ A button is at least the control height, and a large one grows by the same step 
 
 Two values of `data-variant` are not hues: `black` and `white`. They do not follow the theme and do not flip with the scheme, which is what a button on a painted band needs, where the band's own hue would vanish into itself. They keep every state: black steps to a dark grey under the pointer, its outline and text forms wash with a translucent black, and white mirrors it.
 
-```html
+```html demo sm
 <section class="box" data-paint="warning">
 	<h2>Start the season early</h2>
 	<a class="button" href="#" data-variant="black">Book a place</a>
 </section>
 ```
 
-```html
-<a class="button" href="/docs" data-variant="secondary" data-emphasis="medium" data-size="lg">
-	<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-	Read the docs
-</a>
+```html demo sm
+<p>
+	<a class="button" href="#" data-variant="secondary" data-emphasis="medium" data-size="lg">
+		<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+		Read the docs
+	</a>
+</p>
 ```
 
 A toggle needs no script when it is a native input. Put the class on a `label` wrapping a `radio` or `checkbox`: the input is hidden from sight but stays in Tab order, the label is filled while the input is checked, exactly as a pressed button is, draws the focus ring when the input has it, and dims when the input is disabled. The checked state submits with a form and, for radios sharing a name, the arrow keys move it. A real `<button aria-pressed>` looks the same, but moving `aria-pressed` from one button to the next is your script's job.

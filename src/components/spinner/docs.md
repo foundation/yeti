@@ -6,7 +6,7 @@ A wait with no known end: a page section still fetching, a search running. When 
 
 A one-em ring: a border in the hue's subtle step with the top edge in the hue, turning once per `--yeti-spinner-duration`. `data-size` sets the em through the text step, so a spinner sits in a line of text at that text's size. A button with `aria-busy="true"` draws the same ring after its label from its own text color, so it reads on a filled button and an outlined one alike.
 
-```html
+```html demo sm
 <button class="button" aria-busy="true" aria-disabled="true">Saving</button>
 ```
 

@@ -8,7 +8,7 @@ A flex row: an optional icon, the message, and an optional close button pushed t
 
 The close button is a `button` carrying `data-close`. Yeti's `alert.js`, loaded once with `<script type="module" src="…/js/alert.js">`, listens on the document: a click fades the alert over the fast duration and removes it. Without the module the button does nothing, so leave it out on pages that do not load the module.
 
-```html
+```html demo sm
 <div class="alert" role="alert" data-variant="alert" data-emphasis="high">
 	<div><strong>Payment failed.</strong> The card was declined.</div>
 	<button type="button" data-close aria-label="Dismiss">×</button>

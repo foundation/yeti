@@ -6,13 +6,13 @@ A word or a number that labels something else: a status beside a title, a count 
 
 An inline box one step smaller than the text around it, with a pill corner by default. `data-emphasis="medium"`, the default, is a subtle tint of the hue with the hue's darker text, quiet enough to repeat down a list. `high` fills the badge for the one state that must stand out; `low` is the text alone.
 
-```html
+```html demo sm
 <h3>Release notes <span class="badge" data-emphasis="high">New</span></h3>
 ```
 
 On a painted band use `data-variant="black"` or `"white"`, the two constants, which read the same in both schemes.
 
-```html
+```html demo sm
 <div class="box" data-paint="primary">Build status <span class="badge" data-variant="white">Passing</span></div>
 ```
 

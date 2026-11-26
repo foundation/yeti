@@ -10,7 +10,7 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 
 `data-slides` sets how many slides are visible at once, and each slide takes an equal share of the track less the gaps. Smooth scrolling comes from a token, `--yeti-carousel-scroll`, rather than from the reset, because a components-layer declaration would otherwise outrank it; the token itself collapses to `auto` under `prefers-reduced-motion`, so the preference still reaches the track. The track itself carries `tabindex="0"` and a name, because a region that scrolls has to be reachable from the keyboard; once it has focus, the arrow keys scroll it.
 
-```html
+```html demo sm
 <section class="carousel" data-slides="2" aria-roledescription="carousel" aria-label="Quotes">
 	<div data-track role="group" aria-label="Slides" tabindex="0">
 		<blockquote id="quote-1" data-slide><p>It just worked.</p></blockquote>
@@ -18,9 +18,9 @@ The scrollbar under the track is hidden, since the dots already say where you ar
 		<blockquote id="quote-3" data-slide><p>Nothing to learn.</p></blockquote>
 	</div>
 	<ol data-dots role="list">
-		<li><a href="#quote-1"><span class="visually-hidden">Quote 1</span></a></li>
-		<li><a href="#quote-2"><span class="visually-hidden">Quote 2</span></a></li>
-		<li><a href="#quote-3"><span class="visually-hidden">Quote 3</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 1</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 2</span></a></li>
+		<li><a href="#"><span class="visually-hidden">Quote 3</span></a></li>
 	</ol>
 </section>
 ```

@@ -22,12 +22,12 @@ The links sit in one row and their text never wraps. A rule in `--yeti-tabs-bord
 
 `data-variant` picks the hue, primary by default. `data-emphasis="high"` fills the marked link with the variant, as a solid chip with rounded top corners.
 
-```html
+```html demo sm
 <nav class="tabnav" aria-label="Account" data-variant="secondary" data-emphasis="high">
 	<ul role="list">
-		<li><a href="/account/profile/" aria-current="page">Profile</a></li>
-		<li><a href="/account/keys/">Keys</a></li>
-		<li><a href="/account/billing/">Billing</a></li>
+		<li><a href="#" aria-current="page">Profile</a></li>
+		<li><a href="#">Keys</a></li>
+		<li><a href="#">Billing</a></li>
 	</ul>
 </nav>
 ```

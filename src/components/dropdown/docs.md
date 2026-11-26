@@ -53,19 +53,19 @@ A parent that is not a page has no link. Its button is the label, as in the firs
 
 Any item in a list panel can be a dropdown itself, a split parent or a label, and the same shape repeats at every depth. A submenu flies out beside its own row, toward the inline end (the right in a left-to-right page, the left in a right-to-left one), level with the row's top. Where it would run off the screen it flips to the other side. Where anchor positioning is missing the browser centres every panel, as it does for one level.
 
-```html
+```html demo md
 <ul role="list">
 	<li class="dropdown">
-		<a href="/about/">About</a>
+		<a href="#">About</a>
 		<button type="button" popovertarget="menu-/about/" aria-label="About pages"></button>
 		<ul id="menu-/about/" popover role="list">
-			<li><a href="/about/history/">History</a></li>
+			<li><a href="#">History</a></li>
 			<li class="dropdown">
-				<a href="/about/team/">Team</a>
+				<a href="#">Team</a>
 				<button type="button" popovertarget="menu-/about/team/" aria-label="Team pages"></button>
 				<ul id="menu-/about/team/" popover role="list">
-					<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
-					<li><a href="/about/team/ana/">Ana</a></li>
+					<li><a href="#" aria-current="page">Joe</a></li>
+					<li><a href="#">Ana</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -85,26 +85,26 @@ Mark the page being read with `aria-current="page"` on its link, and nothing els
 
 `data-grouped` on a dropdown lays its panel out as columns instead of flyouts. Each second-level item that is a split parent becomes a small, strong heading, still a link to its own page, with its pages listed under it, and its button is hidden. Use it for a section with a few groups of pages that a reader should see at once.
 
-```html
+```html demo md
 <ul role="list">
 	<li class="dropdown" data-grouped>
-		<a href="/products/">Products</a>
+		<a href="#">Products</a>
 		<button type="button" popovertarget="menu-products" aria-label="Products pages"></button>
 		<ul id="menu-products" popover role="list">
 			<li class="dropdown">
-				<a href="/products/design/">Design</a>
+				<a href="#">Design</a>
 				<button type="button" popovertarget="menu-products-design" aria-label="Design pages"></button>
 				<ul id="menu-products-design" popover role="list">
-					<li><a href="/products/design/sketch/">Sketch</a></li>
-					<li><a href="/products/design/print/">Print</a></li>
+					<li><a href="#">Sketch</a></li>
+					<li><a href="#">Print</a></li>
 				</ul>
 			</li>
 			<li class="dropdown">
-				<a href="/products/build/">Build</a>
+				<a href="#">Build</a>
 				<button type="button" popovertarget="menu-products-build" aria-label="Build pages"></button>
 				<ul id="menu-products-build" popover role="list">
-					<li><a href="/products/build/code/">Code</a></li>
-					<li><a href="/products/build/deploy/">Deploy</a></li>
+					<li><a href="#">Code</a></li>
+					<li><a href="#">Deploy</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -132,7 +132,7 @@ The module closes only a panel it opened itself. A panel you opened with Enter o
 
 With submenus the same rules hold at every level. Leaving the menu for the page closes every level the module opened. Crossing the small gap from a row to its flyout keeps the panels above it open. A press on any level's button is never raced by an opening that is still waiting. Hover leaves alone a submenu that is already shown in place, such as a section of a grouped panel, so it is never lifted out of its column.
 
-```html
+```html demo md
 <div class="dropdown" data-trigger="hover">
 	<button class="button" type="button" popovertarget="products" data-emphasis="low">Products</button>
 	<div id="products" popover>
@@ -140,8 +140,9 @@ With submenus the same rules hold at every level. Leaving the menu for the page 
 		<a href="#">Pricing</a>
 	</div>
 </div>
-<script type="module" src="…/js/hover.js"></script>
 ```
+
+The demo's frame already loads the module. On your own page, add the script tag above.
 
 This module is a stopgap and says so. The `interestfor` attribute is this feature standardised, and it is in one engine today. When it reaches Baseline the module goes and the attribute maps to it instead.
 

@@ -38,7 +38,7 @@ Set by hand, it is a number rather than a percentage: `style="--yeti-range-value
 
 Give a form that loads it `novalidate`. Without that attribute the browser opens its own bubble on the first invalid control and never fires a submit event at all, so the module never runs and the page gets the bubble instead of its own error text. An error element you fill in yourself is never overwritten; an empty one is the slot the module writes into.
 
-```html
+```html demo md
 <form class="stack" data-gap="md" novalidate>
 	<div class="field">
 		<label for="signup-email">Email</label>

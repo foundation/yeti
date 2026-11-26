@@ -27,7 +27,7 @@ The gap is the stack's, but one child can ask for a different gap before it. `da
 
 `data-rule` on the stack draws a line between each pair of children, the border width in the border color, in the middle of the gap; the gap itself does not change, and `data-space` moves the line with it. A legend, a settings list, a run of plan features: anywhere rows want separating without boxing. The line is a `::before` on each child after the first, so a child that already draws its own `::before` keeps its own and loses the line. The line is lost too on a child that clips its overflow, a card, a frame, an accordion or a progress bar, and on a replaced element such as an image, which has no `::before` to draw. A child that is itself a stack still has its line placed by the ruled stack's gap, but a ruled stack directly inside another ruled stack places its line by its own gap, the same limit `data-space` has; give it a plain wrapper.
 
-```html
+```html demo sm
 <dl class="stack" data-rule data-gap="sm">
 	<div class="cluster" data-justify="between"><dt>Distance</dt><dd data-numeric>14.2 km</dd></div>
 	<div class="cluster" data-justify="between"><dt>Ascent</dt><dd data-numeric>1,120 m</dd></div>

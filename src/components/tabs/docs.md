@@ -8,7 +8,7 @@ A tab list of buttons over their panels. The CSS styles the list and marks the s
 
 Load the module and it pairs every tab with the panel its `aria-controls` names, shows one, hides the rest, and takes over the keyboard: arrows move selection, Home and End jump to the ends, and only the selected tab is in the tab order, so Tab leaves the list rather than walking it. A link into a hidden panel opens its tab: on load and on every `hashchange` the module looks for the URL's fragment inside a panel and, if it finds one, selects that panel's tab and brings the target into view, without moving keyboard focus to the tab. Tabs may nest inside another tab's panel: each set keeps its own selection and its own arrow keys, and a link into the inner set opens every enclosing panel on the way. `data-emphasis="high"` fills the selected tab with the variant instead of underlining it, its top corners (or, in a vertical list, the corners away from the divider) rounded like any other filled control.
 
-```html
+```html demo sm
 <div class="tabs" data-emphasis="high">
 	<div role="tablist" aria-label="Report">
 		<button type="button" role="tab" id="t-summary" aria-controls="p-summary" aria-selected="true">Summary</button>
@@ -19,7 +19,7 @@ Load the module and it pairs every tab with the panel its `aria-controls` names,
 </div>
 ```
 
-```html
+```html demo sm
 <div class="tabs" data-orientation="vertical">
 	<div role="tablist" aria-label="Settings">
 		<button type="button" role="tab" id="t-general" aria-controls="p-general">General</button>

@@ -6,7 +6,7 @@ Two or more buttons that belong together: a form's submit and cancel, a set of v
 
 Loose is a wrapping flex row at `data-gap`. `data-affix` removes the gap, squares the inner corners, and overlaps each border with the next so the seam is one line wide. A focused member is lifted above its neighbours and draws its focus ring inside its own border, where it cannot cross the seam onto the members either side. An affixed group is one control, so it never wraps onto a second row: short of room, its members narrow and their labels wrap inside them.
 
-```html
+```html demo sm
 <div class="buttons" role="group" aria-label="Form actions">
 	<button class="button" type="submit">Save</button>
 	<button class="button" type="button" data-emphasis="low">Cancel</button>

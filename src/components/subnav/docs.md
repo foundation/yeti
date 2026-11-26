@@ -48,15 +48,15 @@ To keep one section open at a time, give sibling `details` the same `name`. That
 
 A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fallback to the variant's subtle tint, so setting it to `transparent` turns the fill off without touching the variant.
 
-```html
+```html demo md
 <nav class="subnav" aria-label="Settings" data-variant="secondary">
 	<ul role="list">
 		<li>
 			<details name="settings" open>
 				<summary>Account</summary>
 				<ul role="list">
-					<li><a href="/settings/profile/" aria-current="page">Profile</a></li>
-					<li><a href="/settings/password/">Password</a></li>
+					<li><a href="#" aria-current="page">Profile</a></li>
+					<li><a href="#">Password</a></li>
 				</ul>
 			</details>
 		</li>
@@ -64,7 +64,7 @@ A link or a toggle under the pointer takes `--yeti-subnav-hover`, read with a fa
 			<details name="settings">
 				<summary>Billing</summary>
 				<ul role="list">
-					<li><a href="/settings/plan/">Plan</a></li>
+					<li><a href="#">Plan</a></li>
 				</ul>
 			</details>
 		</li>

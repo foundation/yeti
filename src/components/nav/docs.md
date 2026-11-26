@@ -8,7 +8,7 @@ One list of links, two modes. The list carries `popover` and the button carries 
 
 `data-panel` chooses the shape of the open list. `sheet`, the default, hangs under the bar at the full width. `drawer` slides in from the start edge as a column with the page dimmed behind it. `screen` fills the viewport with the links large and centred. `bar` is not a panel that opens: it puts the links in a row along the bottom of the screen, and has a section of its own below. Where anchor positioning exists the sheet sits exactly under the bar; elsewhere it starts at the top of the viewport and covers the bar, and Escape or a click outside still closes it. A close item, an `li` carrying `data-close` with a button that hides the popover, sits in the panel's top end corner and disappears in the bar; `screen` needs one, since there is no outside to click.
 
-```html
+```html demo md sm
 <nav class="nav" aria-label="Site" data-threshold="sm" data-panel="drawer">
 	<a href="#" data-brand>Yeti</a>
 	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -64,17 +64,19 @@ Many phone designs keep the main links in a row along the bottom of the screen, 
 
 Give each link an icon and a short label. The icon is an `svg` or `img` straight inside the link, and it sits above the label. A link with no icon shows its label alone. At the threshold and above, in the top bar, an `svg` icon sits beside its label, before it, at the size of the text, as it does in a row of a dropdown's panel such as More's. An `img` keeps its own size there, so give it a `width` and a `height` that suit both places. There is no toggle in this mode, so you can leave it out:
 
-```html
+```html demo md sm
 <nav class="nav" aria-label="Site" data-panel="bar">
-	<a href="/" data-brand>Yeti</a>
-	<ul id="menu" popover role="list">
-		<li><a href="/" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Home</a></li>
-		<li><a href="/search/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Search</a></li>
-		<li><a href="/inbox/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Inbox</a></li>
-		<li><a href="/account/"><svg aria-hidden="true" viewBox="0 0 16 16">…</svg>Account</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<ul id="bar-menu" popover role="list">
+		<li><a href="#" aria-current="page"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 8l6-6 6 6M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Home</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5"/></svg>Search</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 9l2-6h8l2 6v4H2zM2 9h4l1 2h2l1-2h4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Inbox</a></li>
+		<li><a href="#"><svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 15c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Account</a></li>
 	</ul>
 </nav>
 ```
+
+Drag the demo's frame wider and the links go back to the top bar.
 
 The label is the link's name, so the icon is decoration: `aria-hidden` on an `svg`, an empty `alt` on an `img`. The current page's link is marked as it is in the top bar, with the same color and weight.
 
@@ -100,35 +102,34 @@ A fixed bar is placed against the screen only while no ancestor of the nav has a
 
 A nav item may hold a `dropdown`. Its panel is in the top layer, so the bar's own containment cannot clip it. A section that is a page in its own right is a split parent: the item's link, then an empty button with an `aria-label` that opens the submenu. A section that is not a page has no link, and its button is the label. Submenus can hold submenus, to any depth. The dropdown page covers both shapes and the nesting in full.
 
-```html
+```html demo md
 <nav class="nav" aria-label="Site" data-panel="drawer">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/">Home</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="sub-menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="sub-menu" popover role="list">
+		<li><a href="#">Home</a></li>
 		<li class="dropdown">
-			<a href="/about/">About</a>
-			<button type="button" popovertarget="menu-about" aria-label="About pages"></button>
-			<ul id="menu-about" popover role="list">
-				<li><a href="/about/history/">History</a></li>
+			<a href="#">About</a>
+			<button type="button" popovertarget="sub-menu-about" aria-label="About pages"></button>
+			<ul id="sub-menu-about" popover role="list">
+				<li><a href="#">History</a></li>
 				<li class="dropdown">
-					<a href="/about/team/">Team</a>
-					<button type="button" popovertarget="menu-about-team" aria-label="Team pages"></button>
-					<ul id="menu-about-team" popover role="list">
-						<li><a href="/about/team/joe/" aria-current="page">Joe</a></li>
+					<a href="#">Team</a>
+					<button type="button" popovertarget="sub-menu-about-team" aria-label="Team pages"></button>
+					<ul id="sub-menu-about-team" popover role="list">
+						<li><a href="#" aria-current="page">Joe</a></li>
 					</ul>
 				</li>
 			</ul>
 		</li>
 		<li class="dropdown">
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list">
-				<li><a href="/changelog/">Changelog</a></li>
+			<button type="button" popovertarget="sub-menu-more">More</button>
+			<ul id="sub-menu-more" popover role="list">
+				<li><a href="#">Changelog</a></li>
 			</ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
 
 In the bar a split parent is its link followed by a compact button with a chevron, and a label button carries a chevron after its text. The first level opens under its item as the dropdown's usual card, and a submenu inside it flies out to the side. The current page's `aria-current="page"` is the only mark to write: each parent above it, in the bar and in every panel, takes the current color at the normal weight. A grouped dropdown's heading keeps its strong weight and only changes color.
@@ -153,22 +154,26 @@ A bar with many links runs out of room before it reaches its threshold, and its 
 
 You write the More item yourself, as the last item of the list, hidden. A close item, if the nav has one, may come after it:
 
-```html
+```html demo md lg
 <nav class="nav" aria-label="Site">
-	<a href="/" data-brand>Yeti</a>
-	<button type="button" popovertarget="menu" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-	<ul id="menu" popover role="list">
-		<li><a href="/docs/">Docs</a></li>
-		<li><a href="/guides/">Guides</a></li>
-		<li><a href="/blog/">Blog</a></li>
-		<li><a href="/pricing/">Pricing</a></li>
+	<a href="#" data-brand>Yeti</a>
+	<button type="button" popovertarget="more-list" aria-label="Menu"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+	<ul id="more-list" popover role="list">
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">Guides</a></li>
+		<li><a href="#">Components</a></li>
+		<li><a href="#">Layouts</a></li>
+		<li><a href="#">Examples</a></li>
+		<li><a href="#">Blog</a></li>
+		<li><a href="#">Pricing</a></li>
+		<li><a href="#">Changelog</a></li>
+		<li><a href="#">Community</a></li>
 		<li class="dropdown" data-more hidden>
-			<button type="button" popovertarget="menu-more">More</button>
-			<ul id="menu-more" popover role="list"></ul>
+			<button type="button" popovertarget="more-list-more">More</button>
+			<ul id="more-list-more" popover role="list"></ul>
 		</li>
 	</ul>
 </nav>
-<script type="module" src="…/js/nav.js"></script>
 ```
 
 The label and the id are yours, so you can write the label in your page's language. The script creates no markup. It needs `nav.js`. Without it the More item stays hidden and the nav works exactly as it does without one.

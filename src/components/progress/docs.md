@@ -6,7 +6,7 @@ Work with a known length: an upload, a wizard's steps, a quota. Leave the value 
 
 The native `progress` element, with its own drawing switched off and a thin rounded track in its place. The filled part is the hue, through the engines' own pseudo-elements, and slides when the value changes. Without a `value` the element is indeterminate: the track takes diagonal stripes that move along it. `data-size` sets the thickness to half of the size's space step.
 
-```html
+```html demo sm
 <progress class="progress" data-variant="success" data-size="lg" value="3" max="5" aria-label="Steps">3 of 5</progress>
 <progress class="progress" aria-label="Loading">Loading</progress>
 ```

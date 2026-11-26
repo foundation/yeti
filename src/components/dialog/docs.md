@@ -28,7 +28,7 @@ Add `data-panel="drawer"`, and pick the edge with `data-placement`: `start` (the
 
 A long drawer scrolls as one piece. The footer sits at the bottom when the content is short, and scrolls with the content when it is long.
 
-```html
+```html demo lg
 <button class="button" type="button" commandfor="filters" command="show-modal">Filters</button>
 
 <dialog class="dialog" id="filters" data-panel="drawer" data-placement="end" aria-labelledby="filters-title">

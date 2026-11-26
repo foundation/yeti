@@ -15,10 +15,10 @@ Each child of `leaders` is a row. Its first child is the name and its second is 
 
 The rows can be any elements, so a contents page is a list. `role="list"` takes the list's markers off:
 
-```html
+```html demo sm
 <ol class="leaders" role="list">
-	<li><a href="#starters">Starters</a><span>12</span></li>
-	<li><a href="#mains">Mains</a><span>18</span></li>
+	<li><a href="#">Starters</a><span>12</span></li>
+	<li><a href="#">Mains</a><span>18</span></li>
 </ol>
 ```
 
@@ -26,7 +26,7 @@ A row with no value draws no line. The second child is always the value, so a ro
 
 Anything after the value sits below the row at the full width, which is where a dish's description goes:
 
-```html
+```html demo sm
 <div class="leaders" data-gap="md">
 	<article>
 		<h3>Trout</h3>

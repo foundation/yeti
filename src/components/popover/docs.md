@@ -32,7 +32,7 @@ By default the panel opens below its button, lined up with the button's start ed
 
 Where there is no room on that side, the panel flips to the other. Where it would run past the end of the screen, it lines up with the button's other edge instead, and it shifts to stay on the screen when neither fits.
 
-```html
+```html demo sm
 <button class="button" type="button" popovertarget="hint">What is this?</button>
 
 <div class="popover" id="hint" popover data-placement="end">
@@ -50,7 +50,7 @@ The panel is as wide as its content, up to `data-max`, from the width scale. The
 
 Make the panel a `dialog` element when it holds a form. A screen reader then announces a named dialog, and `autofocus` on a field works. It is still not modal: the page behind stays usable, and a click outside closes it.
 
-```html
+```html demo md
 <button class="button" type="button" popovertarget="rename">Rename</button>
 
 <dialog class="popover" id="rename" popover aria-labelledby="rename-title">
