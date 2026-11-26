@@ -16,6 +16,8 @@ The table covers the grid and every component in the version 6 kitchen sink. "No
 
 ### Grid
 
+<div class="scroller" role="region" aria-label="Grid classes in version 6 and in Yeti" tabindex="0" markdown="1">
+
 | Foundation 6 | Yeti | Notes |
 | --- | --- | --- |
 | `.grid-container` | `center` with `data-max` | the reading column |
@@ -31,9 +33,13 @@ The table covers the grid and every component in the version 6 kitchen sink. "No
 | `.padding-1`, `.padding-horizontal-2` and the rest | `box` with `data-gap`, `data-gap-inline`, `data-gap-block` | any element is a box with the class; the box says how much |
 | `.margin-1`, `.margin-top-2` and the rest | a `stack` gap, with `data-space` on the one child that differs | spacing belongs to the layout; two things with nothing around them go in a stack |
 
+</div>
+
 ### Visibility
 
 Version 6 had a class for each of these. Most of them are the browser's job, and the [visibility guide](visibility.md) has the whole set side by side.
+
+<div class="scroller" role="region" aria-label="Visibility classes in version 6 and in Yeti" tabindex="0" markdown="1">
 
 | Foundation 6 | Yeti | Notes |
 | --- | --- | --- |
@@ -44,7 +50,11 @@ Version 6 had a class for each of these. Most of them are the browser's job, and
 | `.show-for-print` | `print` | on paper and nowhere else |
 | `.hide-for-print` | `print` with `data-print="none"` | everywhere but paper |
 
+</div>
+
 ### Components
+
+<div class="scroller" role="region" aria-label="Component classes in version 6 and in Yeti" tabindex="0" markdown="1">
 
 | Foundation 6 | Yeti | Notes |
 | --- | --- | --- |
@@ -87,6 +97,8 @@ Version 6 had a class for each of these. Most of them are the browser's job, and
 | Interchange | none | `<picture>` and `srcset` |
 | Toggler | none | `<details>`, `popover`, `<dialog>`, and `:has()` cover every case it had |
 | Motion UI | none | components transition on the motion tokens; reduced motion is honoured through them |
+
+</div>
 
 ### What Yeti does instead
 

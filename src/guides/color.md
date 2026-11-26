@@ -300,6 +300,8 @@ Two of the six steps exist only so that words read. `--yeti-on-primary` is what 
 
 These are promises, not intentions. The browser tests check them at every hue angle, at chromas from `0.05` to `0.3`, in both schemes:
 
+<div class="scroller" role="region" aria-label="The contrast each pair holds" tabindex="0" markdown="1">
+
 | Pair | Holds at least |
 | --- | --- |
 | page text on the page surface | 7:1 |
@@ -308,9 +310,13 @@ These are promises, not intentions. The browser tests check them at every hue an
 | `-text` of every hue on the page surface | 4.5:1 |
 | page text on every `-subtle` tint | 7:1 |
 
+</div>
+
 A theme that sets a hue keeps every one of these, because the ladder is fixed and only the angle moved. A theme that raises the chroma keeps them up to `0.3`, because the base step [goes darker to make room](#chroma-is-how-loud).
 
 A brand color keeps its own set. The browser tests check these over a grid of brand colors from black to white, in both schemes, at the default chroma and at `0.25`:
+
+<div class="scroller" role="region" aria-label="The contrast each pair holds with a brand color" tabindex="0" markdown="1">
 
 | Pair | Holds at least |
 | --- | --- |
@@ -319,6 +325,8 @@ A brand color keeps its own set. The browser tests check these over a grid of br
 | the `-line` step on the page surface | 4.5:1 |
 | `-text` on `-subtle` | 4.5:1 |
 | `-text` on `-soft` | 4.5:1 |
+
+</div>
 
 Page text on a `-subtle` tint still reaches 7:1.
 
